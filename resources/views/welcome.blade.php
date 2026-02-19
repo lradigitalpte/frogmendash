@@ -3,8 +3,12 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="FrogmenDash - ERP & CRM Management System">
+        <meta name="theme-color" content="#2563eb">
+        <meta property="og:title" content="FrogmenDash - ERP & CRM Management System">
+        <meta property="og:image" content="{{ asset('images/logo.png') }}">
 
-        <title>Laravel</title>
+        <title>{{ config('app.name', 'FrogmenDash') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

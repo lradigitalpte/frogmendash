@@ -13,6 +13,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Width;
 use Filament\Auth\MultiFactor\App\AppAuthentication;
+use Filament\Views\Components\Modal;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -27,7 +28,7 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        set_time_limit(300);
+        set_time_limit(0); // Unlimited execution time for panel setup
 
         return $panel
             ->default()
@@ -35,7 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->favicon(asset('images/favicon.ico'))
-            ->brandLogo(asset('images/logo.svg'))
+            ->brandLogo(asset('images/logo.png'))
             ->brandLogoHeight('2rem')
             ->passwordReset()
             ->emailVerification()
@@ -47,6 +48,10 @@ class AdminPanelProvider extends PanelProvider
             ->topNavigation()
             ->maxContentWidth(Width::Full)
             ->databaseNotifications()
+            ->renderHook(
+                'panels::layout.start',
+                fn () => view('filament.layout-assets'),
+            )
             ->userMenuItems([
                 'profile' => Action::make('profile')
                     ->label(fn () => filament()->auth()->user()?->name)

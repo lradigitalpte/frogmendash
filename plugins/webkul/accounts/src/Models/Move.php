@@ -571,7 +571,7 @@ class Move extends Model implements Sortable
             'source_line.id as source_line_id',
             'source_line.move_id as source_move_id',
             'account.account_type as source_line_account_type',
-            DB::raw('JSON_ARRAYAGG(opposite_move.move_type) as opposite_move_types'),
+            DB::raw('GROUP_CONCAT(opposite_move.move_type) as opposite_move_types'),
             DB::raw('
                 CASE 
                     WHEN SUM(opposite_move.origin_payment_id IS NOT NULL) = 0 
@@ -597,7 +597,7 @@ class Move extends Model implements Sortable
             'source_line.id as source_line_id',
             'source_line.move_id as source_move_id',
             'account.account_type as source_line_account_type',
-            DB::raw('JSON_ARRAYAGG(opposite_move.move_type) as opposite_move_types'),
+            DB::raw('GROUP_CONCAT(opposite_move.move_type) as opposite_move_types'),
             DB::raw('
                 CASE 
                     WHEN SUM(opposite_move.origin_payment_id IS NOT NULL) = 0 

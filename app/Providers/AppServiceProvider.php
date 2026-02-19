@@ -6,6 +6,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Security\Models\User;
 
@@ -32,5 +33,10 @@ class AppServiceProvider extends ServiceProvider
 
         Section::configureUsing(fn (Section $section) => $section
             ->columnSpanFull());
+
+        // Ensure Alpine.js is loaded for Filament
+        Blade::directive('filamentAssets', function () {
+            return "@vite(['resources/css/app.css', 'resources/js/app.js'])";
+        });
     }
 }
