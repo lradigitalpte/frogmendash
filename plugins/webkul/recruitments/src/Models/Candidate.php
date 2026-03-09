@@ -10,6 +10,7 @@ use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Employee\Models\Employee;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -136,6 +137,8 @@ class Candidate extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($candidate) {
             $candidate->creator_id ??= filament()->auth()->id();

@@ -35,7 +35,7 @@ return [
      */
     'repositories' => [
         'database' => [
-            'type'       => Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository::class,
+            'type'       => \Webkul\Security\Settings\CompanyScopedDatabaseSettingsRepository::class,
             'model'      => null,
             'table'      => null,
             'connection' => null,

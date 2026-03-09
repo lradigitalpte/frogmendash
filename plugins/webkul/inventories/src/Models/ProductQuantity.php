@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Webkul\Inventory\Database\Factories\ProductQuantityFactory;
 use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -115,6 +116,8 @@ class ProductQuantity extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($productQuantity) {
             $productQuantity->updateScheduledAt();

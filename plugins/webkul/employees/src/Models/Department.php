@@ -12,6 +12,7 @@ use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Employee\Database\Factories\DepartmentFactory;
 use Webkul\Field\Traits\HasCustomFields;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -81,6 +82,8 @@ class Department extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($department) {
             $department->creator_id = filament()->auth()->id();

@@ -17,6 +17,7 @@ use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Partner\Models\Partner;
 use Webkul\Project\Database\Factories\ProjectFactory;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\Scopes\UserPermissionScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -196,6 +197,7 @@ class Project extends Model implements Sortable
 
     protected static function booted()
     {
+        static::addGlobalScope(new CompanyScope);
         static::addGlobalScope(new UserPermissionScope('user'));
     }
 

@@ -3,6 +3,7 @@
 namespace Webkul\Sale\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
@@ -53,6 +54,8 @@ class OrderTemplateProduct extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($orderTemplateProduct) {
             $orderTemplateProduct->company_id = $orderTemplateProduct->company_id ?? Company::first()?->id;

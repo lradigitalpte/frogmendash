@@ -9,6 +9,7 @@ use Webkul\Product\Database\Factories\PriceRuleItemFactory;
 use Webkul\Product\Enums\PriceRuleApplyTo;
 use Webkul\Product\Enums\PriceRuleBase;
 use Webkul\Product\Enums\PriceRuleType;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -99,6 +100,13 @@ class PriceRuleItem extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 
     protected static function newFactory(): PriceRuleItemFactory

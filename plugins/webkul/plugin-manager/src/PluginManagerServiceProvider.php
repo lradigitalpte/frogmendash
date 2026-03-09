@@ -6,7 +6,9 @@ use Filament\Panel;
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Event;
+use Webkul\PluginManager\Console\Commands\CreateTenant;
 use Webkul\PluginManager\Console\Commands\InstallERP;
+use Webkul\PluginManager\Console\Commands\MakePlatformAdmin;
 
 class PluginManagerServiceProvider extends PackageServiceProvider
 {
@@ -22,12 +24,15 @@ class PluginManagerServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 '2024_11_05_105102_create_plugins_table',
+                '2026_03_08_create_company_plugins_table',
             ])
             ->hasSeeder('Webkul\\PluginManager\\Database\\Seeders\\PluginSeeder')
             ->runsMigrations()
             ->runsSeeders()
             ->hasCommands([
                 InstallERP::class,
+                CreateTenant::class,
+                MakePlatformAdmin::class,
             ]);
     }
 

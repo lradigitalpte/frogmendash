@@ -62,6 +62,36 @@ class UserResource extends Resource
         return __('security::filament/resources/user.navigation.group');
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->forCurrentTenant();
+    }
+
+    /**
+     * Scope company options to those the current user is allowed to see.
+     * Platform admin: all companies. Tenant: only their companies + sub-companies (branches).
+     */
+    protected static function scopeCompaniesVisibleToCurrentUser(Builder $query): Builder
+    {
+        if (User::isPlatformAdmin()) {
+            return $query;
+        }
+        $user = Auth::user();
+        if (! $user) {
+            return $query->whereRaw('0 = 1');
+        }
+        $baseIds = $user->allowedCompanies()->pluck('companies.id')->toArray();
+        $baseIds[] = $user->default_company_id;
+        $baseIds = array_values(array_unique(array_filter($baseIds)));
+        if (empty($baseIds)) {
+            return $query->whereRaw('0 = 1');
+        }
+
+        return $query->where(function (Builder $q) use ($baseIds) {
+            $q->whereIn('companies.id', $baseIds)->orWhereIn('companies.parent_id', $baseIds);
+        });
+    }
+
     public static function getGloballySearchableAttributes(): array
     {
         return ['name', 'email'];
@@ -166,7 +196,11 @@ class UserResource extends Resource
                                     ->schema([
                                         Select::make('allowed_companies')
                                             ->label(__('security::filament/resources/user.form.sections.multi-company.allowed-companies'))
-                                            ->relationship('allowedCompanies', 'name')
+                                            ->relationship(
+                                                'allowedCompanies',
+                                                'name',
+                                                modifyQueryUsing: fn (Builder $query) => static::scopeCompaniesVisibleToCurrentUser($query),
+                                            )
                                             ->multiple()
                                             ->preload()
                                             ->searchable(),
@@ -175,7 +209,7 @@ class UserResource extends Resource
                                             ->relationship(
                                                 'defaultCompany',
                                                 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
+                                                modifyQueryUsing: fn (Builder $query) => static::scopeCompaniesVisibleToCurrentUser($query)->withTrashed(),
                                             )
                                             ->getOptionLabelFromRecordUsing(function ($record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
@@ -275,12 +309,20 @@ class UserResource extends Resource
                     ->options(PermissionType::options())
                     ->preload(),
                 SelectFilter::make('default_company')
-                    ->relationship('defaultCompany', 'name')
+                    ->relationship(
+                        'defaultCompany',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query) => static::scopeCompaniesVisibleToCurrentUser($query),
+                    )
                     ->label(__('security::filament/resources/user.table.filters.default-company'))
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('allowed_companies')
-                    ->relationship('allowedCompanies', 'name')
+                    ->relationship(
+                        'allowedCompanies',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query) => static::scopeCompaniesVisibleToCurrentUser($query),
+                    )
                     ->label(__('security::filament/resources/user.table.filters.allowed-companies'))
                     ->multiple()
                     ->searchable()

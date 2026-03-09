@@ -10,6 +10,7 @@ return [
         'accounting'  => 'Accounting',
         'inventory'   => 'Inventory',
         'project'     => 'Project',
+        'rov-inspection' => 'ROV Inspections',
         'employee'    => 'Employees',
         'time-off'    => 'Time Off',
         'recruitment' => 'Recruitments',

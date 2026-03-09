@@ -60,6 +60,44 @@ class CompanyResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
+    /**
+     * Only platform admins can see/create Companies. Tenant users must not create other tenants.
+     * Platform = Super Admin role, or is_default user (installer), or the single "Admin" if no is_default exists (fallback).
+     */
+    protected static function isPlatformAdmin(): bool
+    {
+        $user = Auth::user();
+
+        if (! $user) {
+            return false;
+        }
+
+        // First user (installer) always sees Companies
+        if (isset($user->id) && (int) $user->id === 1) {
+            return true;
+        }
+
+        if ($user->is_default === true || $user->hasRole('super_admin')) {
+            return true;
+        }
+
+        // Fallback: if no user has is_default, treat users with panel "Admin" role as platform (e.g. first setup)
+        $panelRoleName = \BezhanSalleh\FilamentShield\Support\Utils::getPanelUserRoleName();
+
+        return $user->hasRole($panelRoleName)
+            && ! \Webkul\Security\Models\User::where('is_default', true)->exists();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return static::isPlatformAdmin();
+    }
+
+    public static function canViewAny(): bool
+    {
+        return static::isPlatformAdmin();
+    }
+
     public static function getNavigationLabel(): string
     {
         return __('security::filament/resources/company.navigation.title');

@@ -1,6 +1,6 @@
 <div class="fi-topbar-ctn">
     @php
-        $navigation = filament()->getNavigation();
+        $navigation = \Webkul\PluginManager\Support\PluginNavigationHelper::filterNavigationForCompany(filament()->getNavigation());
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();

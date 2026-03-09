@@ -128,4 +128,12 @@ class Plugin extends Model implements Sortable
 
         return $dependents;
     }
+
+    /**
+     * Whether this plugin is enabled for the current user's company (multi-tenant).
+     */
+    public function isEnabledForCurrentCompany(): bool
+    {
+        return CompanyPlugin::isEnabledForCompany($this->name);
+    }
 }

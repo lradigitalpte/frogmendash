@@ -1,6 +1,6 @@
 <div>
     @php
-        $navigation = filament()->getNavigation();
+        $navigation = \Webkul\PluginManager\Support\PluginNavigationHelper::filterNavigationForCompany(filament()->getNavigation());
         $isRtl = __('filament-panels::layout.direction') === 'rtl';
         $isSidebarCollapsibleOnDesktop = filament()->isSidebarCollapsibleOnDesktop();
         $isSidebarFullyCollapsibleOnDesktop = filament()->isSidebarFullyCollapsibleOnDesktop();
@@ -56,10 +56,6 @@
                         $groupItems = $group->getItems();
                         $groupLabel = $group->getLabel();
                         $groupExtraSidebarAttributeBag = $group->getExtraSidebarAttributeBag();
-
-                        if ($isAdminPanel && ! $isGroupActive) {
-                            continue;
-                        }
                     @endphp
 
                     {{-- <x-filament-panels::sidebar.group

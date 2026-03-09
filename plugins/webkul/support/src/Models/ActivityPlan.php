@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Field\Traits\HasCustomFields;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 
 class ActivityPlan extends Model
@@ -51,6 +52,8 @@ class ActivityPlan extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($activityPlan) {
             $activityPlan->creator_id = filament()->auth()->id();

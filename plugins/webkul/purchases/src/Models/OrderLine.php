@@ -17,6 +17,7 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Packaging;
 use Webkul\Purchase\Database\Factories\OrderLineFactory;
 use Webkul\Purchase\Enums\QtyReceivedMethod;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -158,6 +159,13 @@ class OrderLine extends Model implements Sortable
     public function orderPoint(): BelongsTo
     {
         return $this->belongsTo(OrderPoint::class, 'order_point_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 
     protected static function newFactory(): OrderLineFactory

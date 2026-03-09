@@ -14,6 +14,7 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Purchase\Database\Factories\RequisitionFactory;
 use Webkul\Purchase\Enums\RequisitionState;
 use Webkul\Purchase\Enums\RequisitionType;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -112,6 +113,8 @@ class Requisition extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($order) {
             $order->updateName();

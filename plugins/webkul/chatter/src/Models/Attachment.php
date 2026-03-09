@@ -4,6 +4,7 @@ namespace Webkul\Chatter\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -53,6 +54,8 @@ class Attachment extends Model
     public static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::deleted(function ($attachment) {
             $filePath = $attachment->file_path;

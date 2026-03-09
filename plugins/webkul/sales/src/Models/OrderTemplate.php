@@ -8,6 +8,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Webkul\Account\Models\Journal;
 use Webkul\Sale\Enums\OrderDisplayType;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -70,5 +71,12 @@ class OrderTemplate extends Model implements Sortable
         return $this
             ->hasMany(OrderTemplateProduct::class, 'order_template_id')
             ->where('display_type', OrderDisplayType::NOTE->value);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 }

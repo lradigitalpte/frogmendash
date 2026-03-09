@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Employee\Database\Factories\CalendarFactory;
 use Webkul\Field\Traits\HasCustomFields;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -46,6 +47,8 @@ class Calendar extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($calendar) {
             $calendar->creator_id = filament()->auth()->id();

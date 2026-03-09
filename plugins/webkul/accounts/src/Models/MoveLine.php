@@ -14,6 +14,7 @@ use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\TypeTaxUse;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -253,6 +254,8 @@ class MoveLine extends Model implements Sortable
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($moveLine) {
             $moveLine->move_name = $moveLine->move->name;

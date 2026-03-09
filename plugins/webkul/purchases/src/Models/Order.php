@@ -21,6 +21,7 @@ use Webkul\Purchase\Database\Factories\OrderFactory;
 use Webkul\Purchase\Enums\OrderInvoiceStatus;
 use Webkul\Purchase\Enums\OrderReceiptStatus;
 use Webkul\Purchase\Enums\OrderState;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -225,6 +226,8 @@ class Order extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($order) {
             $order->updateName();

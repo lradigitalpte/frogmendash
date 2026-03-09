@@ -14,6 +14,7 @@ use Webkul\Employee\Database\Factories\EmployeeFactory;
 use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Partner\Models\BankAccount;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Country;
@@ -254,6 +255,8 @@ class Employee extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saved(function (self $employee) {
             $employee->creator_id = filament()->auth()->id();

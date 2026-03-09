@@ -4,6 +4,7 @@ namespace Webkul\Employee\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -41,6 +42,8 @@ class CalendarLeaves extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($calendarLeave) {
             $calendarLeave->creator_id = filament()->auth()->id();

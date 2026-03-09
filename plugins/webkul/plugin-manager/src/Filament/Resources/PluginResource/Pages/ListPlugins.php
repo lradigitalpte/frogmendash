@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Throwable;
 use Webkul\PluginManager\Filament\Resources\PluginResource;
+use Webkul\PluginManager\Models\CompanyPlugin;
 use Webkul\PluginManager\Models\Plugin;
 
 class ListPlugins extends ListRecords
@@ -33,7 +34,19 @@ class ListPlugins extends ListRecords
             $extra[] = $key;
         }
 
+        $companyId = auth()->user()?->default_company_id;
+        $enabledNames = $companyId ? CompanyPlugin::where('company_id', $companyId)->pluck('plugin_name')->toArray() : [];
+
         return [
+            'enabled_for_you' => Tab::make(__('Enabled for your company'))
+                ->badge(count($enabledNames))
+                ->modifyQueryUsing(function (Builder $query) use ($enabledNames) {
+                    if (empty($enabledNames)) {
+                        return $query->whereRaw('0 = 1');
+                    }
+                    return $query->whereIn('name', $enabledNames);
+                }),
+
             'apps' => Tab::make(__('plugin-manager::filament/resources/plugin/pages/list-plugins.tabs.apps'))
                 ->badge(Plugin::whereNotIn('name', $extra)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereNotIn('name', $extra)),
@@ -42,13 +55,14 @@ class ListPlugins extends ListRecords
                 ->badge(Plugin::whereIn('name', $extra)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereIn('name', $extra)),
 
-            'installed' => Tab::make(__('plugin-manager::filament/resources/plugin/pages/list-plugins.tabs.installed'))
-                ->badge(Plugin::where('is_installed', true)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_installed', true)),
-
-            'not_installed' => Tab::make(__('plugin-manager::filament/resources/plugin/pages/list-plugins.tabs.not-installed'))
-                ->badge(Plugin::where('is_installed', false)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_installed', false)),
+            'not_enabled' => Tab::make(__('Not enabled for your company'))
+                ->badge(Plugin::query()->whereNotIn('name', $enabledNames)->count())
+                ->modifyQueryUsing(function (Builder $query) use ($enabledNames) {
+                    if (! empty($enabledNames)) {
+                        $query->whereNotIn('name', $enabledNames);
+                    }
+                    return $query;
+                }),
         ];
     }
 

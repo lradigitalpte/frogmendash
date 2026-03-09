@@ -17,6 +17,7 @@ use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Packaging;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Enums\QtyDeliveredMethod;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -158,5 +159,12 @@ class OrderLine extends Model implements Sortable
     public function route(): BelongsTo
     {
         return $this->belongsTo(Route::class, 'route_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 }

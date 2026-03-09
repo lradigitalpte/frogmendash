@@ -1,7 +1,7 @@
 # Multi-Tenancy Implementation Guide
 
-**Status:** 70% Complete - Foundation exists, automatic query scoping needed  
-**Last Updated:** February 18, 2026  
+**Status:** Implemented - CompanyScope added to company-scoped models  
+**Last Updated:** March 8, 2026  
 **Priority:** Medium - Implement after app is stable
 
 ---
@@ -72,23 +72,80 @@ Handles GLOBAL/INDIVIDUAL/GROUP filtering:
 
 ---
 
-## What's Missing ❌
+## Implemented ✅ (March 2026)
 
-### No Automatic Company-Based Query Scoping
+### Automatic Company-Based Query Scoping
 
-**Problem:**
-```php
-// These queries DON'T automatically filter by company_id
-Task::all();                    // ❌ Returns ALL tasks (security issue!)
-Task::where('status', 'open')->get();  // ❌ Could include other companies' data
+- **CompanyScope** created at `plugins/webkul/security/src/Models/Scopes/CompanyScope.php`
+  - Optional column parameter for models using `employee_company_id` (e.g. LeaveAllocation)
+  - Skips when no user or `default_company_id` is null
+- All models with `company_id` (or `employee_company_id`) now use `static::addGlobalScope(new CompanyScope)` (or `new CompanyScope('employee_company_id')`).
+- **Excluded:** Currency (global + company-specific rows); Company model itself; Account (many-to-many with companies).
+- To query across companies (e.g. admin): `Model::withoutGlobalScope(CompanyScope::class)->get()`
 
-// Users can accidentally (or maliciously) see other companies' data
+### Models with CompanyScope (full list)
+
+**Accounts:** Move, MoveLine, MoveReversal, Journal, Payment, Reconcile, Tax, TaxPartition, TaxGroup, BankStatement, PaymentTerm, FiscalPosition, FiscalPositionAccount, FiscalPositionTax, PartialReconcile, PaymentRegister.
+
+**Inventories:** Warehouse, Location, Operation, Move, MoveLine, PackageType, PackageLevel, Lot, StorageCategory, OrderPoint, Package, Rule, OperationType, Route, ProductQuantity, Scrap.
+
+**Products:** Product, PriceList, Packaging, PriceRule, PriceRuleItem, ProductSupplier.
+
+**Employees:** Employee, Department, Calendar, EmployeeJobPosition, WorkLocation, CalendarLeaves.
+
+**Projects:** Project, ProjectStage, Task, TaskStage.
+
+**Sales:** Order, OrderLine, Team, AdvancedPaymentInvoice, OrderTemplate, OrderTemplateProduct.
+
+**Purchases:** Order, Requisition, RequisitionLine, OrderLine.
+
+**Support:** ActivityPlan, UtmCampaign.
+
+**Recruitments:** Candidate, Applicant.
+
+**Time-off:** LeaveType, LeaveMandatoryDay, LeaveAccrualPlan, Leave, LeaveAllocation (column: `employee_company_id`).
+
+**Chatter:** Message, Attachment.
+
+**Partners:** Partner.
+
+**Analytics:** Record.
+
+---
+
+## Adding new tenants (admin-created only, SaaS leverage)
+
+Self-service registration is **disabled**. Only **you** (platform admin) create tenants. Tenant users **cannot** create other companies or other tenants — the **Companies** menu and create-company access are restricted to platform admins so you keep full control (SaaS leverage).
+
+**Who can create companies**
+- Users with **Super Admin** role, or the **original installer** user (`is_default = true`). Only they see **Companies** in the nav and can create companies/users for new tenants.
+- Tenant users (any other role, e.g. **Admin** without `super_admin`) do **not** see Companies and cannot open company list/create — so they cannot create other tenants.
+
+**Ways to add a tenant (installer-style = company + first user in one go):**
+
+**Option A – From the admin UI (recommended)**  
+1. Log in as platform admin.  
+2. Go to **Companies**.  
+3. Click **"Add tenant (company + first user)"**.  
+4. Fill in: **Company name**, **Tenant admin name**, **Tenant admin email**, **Tenant admin password**.  
+5. Submit. The app creates the company and the first user (with the same role as the installer’s admin, but not platform admin), so the tenant is ready like after an install.  
+6. Send the tenant the login URL; they sign in with that email and password.
+
+**Option B – From the command line**  
+Run once per new tenant (same idea as the installer, but for an independent company):
+
+```bash
+php artisan erp:tenant:create --company-name="Acme Inc" --admin-name="Jane Doe" --admin-email="jane@acme.com" --admin-password="secret123"
 ```
 
-**Should be:**
-```php
-Task::forCurrentCompany()->get();  // ✅ Only current company's tasks
-```
+Or run without options and answer the prompts. The command creates the company and first user with the correct role so they can log in; they do **not** get `super_admin` / platform powers.
+
+**Option C – Manual (company + user separately)**  
+1. **Companies** → **Create** → enter company name, save.  
+2. **Users** → **Create** → set name, email, password, **Default company** = that company, **Roles** = e.g. Admin (not Super Admin). Save.  
+3. Tenant logs in at `/admin/login`.
+
+In all cases, the new tenant is independent (their own company, first user can use the app). Only you (platform) can create new tenants; tenant admins cannot see **Companies** or create other tenants.
 
 ---
 

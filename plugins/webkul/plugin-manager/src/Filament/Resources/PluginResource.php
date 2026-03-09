@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Throwable;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
+use Webkul\PluginManager\Models\CompanyPlugin;
 use Webkul\PluginManager\Models\Plugin;
 use Webkul\PluginManager\Package;
 
@@ -97,14 +98,15 @@ class PluginResource extends Resource
                             ->wrap(),
 
                         Split::make([
-                            TextColumn::make('is_installed')
+                            TextColumn::make('enabled_for_company')
                                 ->badge()
                                 ->inline()
                                 ->grow(false)
-                                ->formatStateUsing(fn ($record) => $record->is_installed
+                                ->label(__('Enabled for your company'))
+                                ->formatStateUsing(fn ($record) => $record->isEnabledForCurrentCompany()
                                     ? __('plugin-manager::filament/resources/plugin.status.installed')
                                     : __('plugin-manager::filament/resources/plugin.status.not_installed'))
-                                ->color(fn ($record) => $record->is_installed ? 'success' : 'gray'),
+                                ->color(fn ($record) => $record->isEnabledForCurrentCompany() ? 'success' : 'gray'),
 
                             TextColumn::make('dependencies_count')
                                 ->label(__('plugin-manager::filament/resources/plugin.table.dependencies'))
@@ -132,45 +134,29 @@ class PluginResource extends Resource
                         ->label(__('plugin-manager::filament/resources/plugin.actions.install.title'))
                         ->icon('heroicon-o-arrow-down-tray')
                         ->color('success')
-                        ->visible(fn ($record) => ! $record->is_installed)
+                        ->visible(fn ($record) => ! $record->isEnabledForCurrentCompany())
                         ->requiresConfirmation()
                         ->modalHeading(fn ($record) => __('plugin-manager::filament/resources/plugin.actions.install.heading', ['name' => $record->name]))
-                        ->modalDescription(fn ($record) => __('plugin-manager::filament/resources/plugin.actions.install.description', ['name' => $record->name]))
+                        ->modalDescription(fn ($record) => __('Enable this plugin for your company. Other companies are not affected.'))
                         ->modalSubmitActionLabel(__('plugin-manager::filament/resources/plugin.actions.install.submit'))
                         ->action(function ($record) {
-                            try {
-                                $php = escapeshellarg(PHP_BINARY);
-                                $artisan = escapeshellarg(base_path('artisan'));
-                                $commandName = "{$record->name}:install";
-
-                                $cmd = "$php $artisan $commandName 2>&1";
-
-                                $output = [];
-                                $exitCode = 0;
-                                exec($cmd, $output, $exitCode);
-
-                                if ($exitCode !== 0) {
-                                    throw new RuntimeException(
-                                        "Installation command failed with exit code {$exitCode}. ".
-                                        'Output: '.implode(PHP_EOL, $output)
-                                    );
-                                }
-
-                                $record->update(['is_installed' => true, 'is_active' => true]);
-
+                            $companyId = \Illuminate\Support\Facades\Auth::user()?->default_company_id;
+                            if (! $companyId) {
                                 Notification::make()
-                                    ->title(__('plugin-manager::filament/resources/plugin.notifications.installed.title'))
-                                    ->body(__('plugin-manager::filament/resources/plugin.notifications.installed.body', ['name' => $record->name]))
-                                    ->success()
-                                    ->send();
-                            } catch (Throwable $e) {
-                                Notification::make()
-                                    ->title(__('plugin-manager::filament/resources/plugin.notifications.installed-failed.title'))
-                                    ->body($e->getMessage())
+                                    ->title(__('No company'))
+                                    ->body(__('You must have a default company to enable plugins.'))
                                     ->danger()
-                                    ->persistent()
                                     ->send();
+                                return;
                             }
+                            CompanyPlugin::firstOrCreate(
+                                ['company_id' => $companyId, 'plugin_name' => $record->name]
+                            );
+                            Notification::make()
+                                ->title(__('plugin-manager::filament/resources/plugin.notifications.installed.title'))
+                                ->body(__('Enabled for your company. Other companies are not affected.'))
+                                ->success()
+                                ->send();
                         })
                         ->after(fn () => redirect(self::getUrl('index'))),
 
@@ -179,39 +165,24 @@ class PluginResource extends Resource
                         ->icon('heroicon-o-trash')
                         ->color('danger')
                         ->modalWidth(Width::ExtraLarge)
-                        ->visible(fn ($record) => $record->is_installed)
+                        ->visible(fn ($record) => $record->isEnabledForCurrentCompany())
                         ->modalHeading(__('plugin-manager::filament/resources/plugin.actions.uninstall.heading'))
                         ->modalSubmitActionLabel(__('plugin-manager::filament/resources/plugin.actions.uninstall.submit'))
-                        ->modalContent(function ($record) {
-                            $dependents = $record->getDependentsFromConfig();
-
-                            $packages = collect([$record->name => $record->package])
-                                ->merge($dependents
-                                    ? collect($dependents)->mapWithKeys(fn ($dep) => [$dep => Plugin::where('name', $dep)->first()?->package])
-                                    : []
-                                );
-
-                            $tables = $packages
-                                ->flatMap(fn ($package) => collect($package?->migrationFileNames ?? []))
-                                ->map(function ($migrationFile) {
-                                    if (preg_match('/create_(.*?)_table/', $migrationFile, $matches)) {
-                                        $table = $matches[1];
-
-                                        return DBSchema::hasTable($table)
-                                            ? ['table' => $table, 'count' => DB::table($table)->count()]
-                                            : null;
-                                    }
-
-                                    return null;
-                                })
-                                ->filter()
-                                ->filter(fn ($item) => $item['count'] > 0)
-                                ->unique('table')
-                                ->values();
-
-                            return view('plugin-manager::uninstall-modal', compact('record', 'dependents', 'tables'));
+                        ->modalDescription(__('Disable this plugin for your company only. Other companies are not affected.'))
+                        ->requiresConfirmation()
+                        ->action(function ($record) {
+                            $companyId = \Illuminate\Support\Facades\Auth::user()?->default_company_id;
+                            if ($companyId) {
+                                CompanyPlugin::where('company_id', $companyId)
+                                    ->where('plugin_name', $record->name)
+                                    ->delete();
+                            }
+                            Notification::make()
+                                ->title(__('plugin-manager::filament/resources/plugin.notifications.uninstalled.title'))
+                                ->body(__('Disabled for your company. Other companies are not affected.'))
+                                ->success()
+                                ->send();
                         })
-                        ->action(fn ($record) => self::uninstallPlugin($record))
                         ->after(fn () => redirect(self::getUrl('index'))),
                 ]),
             ], position: RecordActionsPosition::BeforeColumns)
@@ -241,8 +212,9 @@ class PluginResource extends Resource
 
                     Grid::make(2)
                         ->schema([
-                            IconEntry::make('is_installed')
-                                ->label(__('plugin-manager::filament/resources/plugin.infolist.is_installed'))
+                            IconEntry::make('enabled_for_company')
+                                ->label(__('Enabled for your company'))
+                                ->getStateUsing(fn ($record) => $record->isEnabledForCurrentCompany())
                                 ->boolean()
                                 ->trueIcon('heroicon-s-check-circle')
                                 ->falseIcon('heroicon-o-x-circle')

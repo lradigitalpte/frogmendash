@@ -4,6 +4,7 @@ namespace Webkul\TimeOff\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\TimeOff\Enums\AccruedGainTime;
@@ -62,6 +63,8 @@ class LeaveAccrualPlan extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($leaveAccrualPlan) {
             $leaveAccrualPlan->creator_id = filament()->auth()->id();

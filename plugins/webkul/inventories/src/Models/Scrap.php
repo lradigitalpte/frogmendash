@@ -13,6 +13,7 @@ use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Inventory\Database\Factories\ScrapFactory;
 use Webkul\Inventory\Enums\ScrapState;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
@@ -162,6 +163,8 @@ class Scrap extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($scrap) {
             $scrap->updateName();

@@ -10,6 +10,7 @@ use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Employee\Models\Calendar;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\TimeOff\Enums\RequestDateFromPeriod;
@@ -154,6 +155,8 @@ class Leave extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($leave) {
             $leave->creator_id = filament()->auth()->id();

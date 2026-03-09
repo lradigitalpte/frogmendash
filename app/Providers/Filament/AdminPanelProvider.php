@@ -21,6 +21,9 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Webkul\PluginManager\Http\Middleware\EnsurePluginEnabledForCompany;
+use Webkul\RovInspection\RovInspectionPlugin;
+use Webkul\Security\Http\Middleware\EnsureAdminLoginNoRedirectLoop;
 use Webkul\Support\Filament\Pages\Profile;
 use Webkul\Support\GlobalSearchProvider;
 
@@ -35,6 +38,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->registration(false) // Tenants created by admins: Companies + Users (assign role so they can access panel)
             ->favicon(asset('images/favicon.ico'))
             ->brandLogo(asset('images/logo.png'))
             ->brandLogoHeight('2rem')
@@ -83,6 +87,9 @@ class AdminPanelProvider extends PanelProvider
                     ->label(__('admin.navigation.project'))
                     ->icon('icon-projects'),
                 NavigationGroup::make()
+                    ->label(__('admin.navigation.rov-inspection'))
+                    ->icon('heroicon-o-map'),
+                NavigationGroup::make()
                     ->label(__('admin.navigation.employee'))
                     ->icon('icon-employees'),
                 NavigationGroup::make()
@@ -102,6 +109,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('icon-settings'),
             ])
             ->plugins([
+                RovInspectionPlugin::make(),
                 FilamentShieldPlugin::make()
                     ->gridColumns([
                         'default' => 1,
@@ -127,11 +135,13 @@ class AdminPanelProvider extends PanelProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 AuthenticateSession::class,
+                EnsureAdminLoginNoRedirectLoop::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                EnsurePluginEnabledForCompany::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

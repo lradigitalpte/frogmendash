@@ -1,0 +1,118 @@
+<?php
+
+namespace Webkul\PluginManager\Support;
+
+use Illuminate\Support\Collection;
+use Webkul\PluginManager\Models\CompanyPlugin;
+
+class PluginNavigationHelper
+{
+    /** Plugin names that are always shown in navigation (Settings, Plugins, core). */
+    protected static array $alwaysShowPlugins = [
+        'webkul.support',
+        'webkul.plugin-manager',
+        'webkul.security',
+    ];
+
+    /**
+     * Filter navigation groups so only groups for enabled plugins (and core) are shown.
+     *
+     * @param  array<\Filament\Navigation\NavigationGroup>|Collection  $navigation
+     * @return Collection<int, \Filament\Navigation\NavigationGroup>
+     */
+    public static function filterNavigationForCompany($navigation): Collection
+    {
+        $navigation = collect($navigation);
+
+        if (! auth()->check() || ! auth()->user()->default_company_id) {
+            return $navigation;
+        }
+
+        return $navigation->filter(function ($group) {
+            $label = $group->getLabel();
+            $pluginName = self::pluginNameForNavigationGroup($label);
+            if ($pluginName === null) {
+                return true;
+            }
+            if (in_array($pluginName, self::$alwaysShowPlugins, true)) {
+                return true;
+            }
+            return self::isPluginEnabledForCurrentCompany($pluginName);
+        })->values();
+    }
+    /**
+     * Get plugin name from a class namespace (e.g. Webkul\Sales\Filament\... => webkul.sales,
+     * Webkul\RovInspection\... => webkul.rov-inspection).
+     */
+    public static function pluginNameFromClass(string $class): ?string
+    {
+        if (! str_starts_with($class, 'Webkul\\')) {
+            return null;
+        }
+        $parts = explode('\\', $class);
+        if (! isset($parts[1])) {
+            return null;
+        }
+        $segment = $parts[1];
+        // CamelCase to kebab-case so RovInspection => rov-inspection (matches plugin id in DB)
+        $kebab = strtolower((string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $segment));
+
+        return 'webkul.'.$kebab;
+    }
+
+    /**
+     * Get plugin name that "owns" the given navigation group (label or key).
+     */
+    public static function pluginNameForNavigationGroup(?string $group): ?string
+    {
+        if (! $group) {
+            return null;
+        }
+        $config = config('plugin-navigation-groups', []);
+        foreach ($config as $pluginName => $groups) {
+            if (in_array($group, (array) $groups, true)) {
+                return $pluginName;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Whether the current user's company has the given plugin enabled (for nav/access).
+     */
+    public static function isPluginEnabledForCurrentCompany(string $pluginName): bool
+    {
+        return CompanyPlugin::isEnabledForCompany($pluginName);
+    }
+
+    /**
+     * Whether the current user can access a resource/page (by class or nav group).
+     */
+    public static function canAccessByClass(string $class): bool
+    {
+        $pluginName = self::pluginNameFromClass($class);
+        if (! $pluginName) {
+            return true;
+        }
+        // Core/plugin-manager always allowed (plugin-manager from config, pluginmanager from class namespace)
+        if (in_array($pluginName, ['webkul.support', 'webkul.plugin-manager', 'webkul.pluginmanager', 'webkul.security'], true)) {
+            return true;
+        }
+
+        return self::isPluginEnabledForCurrentCompany($pluginName);
+    }
+
+    /**
+     * Whether the current user can access a resource/page by its navigation group.
+     */
+    public static function canAccessByNavigationGroup(?string $group): bool
+    {
+        $pluginName = self::pluginNameForNavigationGroup($group);
+        if (! $pluginName) {
+            return true;
+        }
+
+        return self::isPluginEnabledForCurrentCompany($pluginName);
+    }
+}

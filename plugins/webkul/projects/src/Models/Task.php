@@ -16,6 +16,7 @@ use Webkul\Field\Traits\HasCustomFields;
 use Webkul\Partner\Models\Partner;
 use Webkul\Project\Database\Factories\TaskFactory;
 use Webkul\Project\Enums\TaskState;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\Scopes\UserPermissionScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
@@ -175,6 +176,7 @@ class Task extends Model implements Sortable
 
     protected static function booted()
     {
+        static::addGlobalScope(new CompanyScope);
         static::addGlobalScope(new UserPermissionScope('users'));
     }
 

@@ -5,6 +5,7 @@ namespace Webkul\Chatter\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\ActivityType;
 use Webkul\Support\Models\Company;
@@ -72,6 +73,8 @@ class Message extends Model
     public static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         $user = filament()->auth()->user();
 

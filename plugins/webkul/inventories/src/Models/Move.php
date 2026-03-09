@@ -13,6 +13,7 @@ use Webkul\Inventory\Enums\MoveState;
 use Webkul\Partner\Models\Partner;
 use Webkul\Purchase\Models\OrderLine as PurchaseOrderLine;
 use Webkul\Sale\Models\OrderLine as SaleOrderLine;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UOM;
@@ -247,6 +248,13 @@ class Move extends Model
     public function saleOrderLine(): BelongsTo
     {
         return $this->belongsTo(SaleOrderLine::class, 'sale_order_line_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 
     protected static function newFactory(): MoveFactory

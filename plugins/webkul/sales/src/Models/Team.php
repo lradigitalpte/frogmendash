@@ -10,6 +10,7 @@ use Spatie\EloquentSortable\SortableTrait;
 use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Sale\Database\Factories\TeamFactory;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -70,6 +71,13 @@ class Team extends Model implements Sortable
     public function members()
     {
         return $this->belongsToMany(User::class, 'sales_team_members', 'team_id', 'user_id');
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 
     protected static function newFactory(): TeamFactory

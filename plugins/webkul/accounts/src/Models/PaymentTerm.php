@@ -9,6 +9,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Webkul\Account\Enums\DelayType;
 use Webkul\Account\Enums\DueTermValue;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -165,6 +166,8 @@ class PaymentTerm extends Model implements Sortable
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::created(function ($paymentTerm) {
             $paymentTerm->dueTerms()->create([

@@ -8,6 +8,7 @@ use Webkul\Chatter\Traits\HasChatter;
 use Webkul\Chatter\Traits\HasLogActivity;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\TimeOff\Enums\AllocationType;
@@ -141,6 +142,8 @@ class LeaveAllocation extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope('employee_company_id'));
 
         static::creating(function ($leaveAllocation) {
             $leaveAllocation->creator_id = filament()->auth()->id();

@@ -73,6 +73,7 @@ class TeamResource extends Resource
             ->emptyStateActions([
                 CreateAction::make()
                     ->icon('heroicon-o-plus-circle')
+                    ->color('success')
                     ->successNotification(
                         Notification::make()
                             ->success()

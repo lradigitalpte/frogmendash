@@ -24,9 +24,9 @@ class ListUsers extends ListRecords
     {
         return [
             'all' => Tab::make(__('security::filament/resources/user/pages/list-user.tabs.all'))
-                ->badge(User::count()),
+                ->badge(User::forCurrentTenant()->count()),
             'archived' => Tab::make(__('security::filament/resources/user/pages/list-user.tabs.archived'))
-                ->badge(User::onlyTrashed()->count())
+                ->badge(User::forCurrentTenant()->onlyTrashed()->count())
                 ->modifyQueryUsing(function ($query) {
                     return $query->onlyTrashed();
                 }),

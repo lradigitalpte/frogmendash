@@ -1,0 +1,31 @@
+{
+    "name": "webkul/rov-inspection",
+    "description": "ROV inspection projects with site maps, markers, media and shareable reports",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "FrogmenDash",
+            "email": "support@frogmendash.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\RovInspection\\RovInspectionServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\RovInspection\\": "src/",
+            "Webkul\\RovInspection\\Database\\Factories\\": "database/factories/",
+            "Webkul\\RovInspection\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\RovInspection\\Tests\\": "tests/"
+        }
+    }
+}

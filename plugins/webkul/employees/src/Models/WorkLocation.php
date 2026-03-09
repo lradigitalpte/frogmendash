@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Employee\Database\Factories\WorkLocationFactory;
 use Webkul\Employee\Enums\WorkLocation as WorkLocationEnum;
 use Webkul\Field\Traits\HasCustomFields;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -54,6 +55,8 @@ class WorkLocation extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($workLocation) {
             $workLocation->creator_id = filament()->auth()->id();

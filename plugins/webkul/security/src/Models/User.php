@@ -9,8 +9,10 @@ use Filament\Auth\MultiFactor\Email\Contracts\HasEmailAuthentication;
 use Filament\Auth\MultiFactor\Email\Concerns\InteractsWithEmailAuthentication;
 use Filament\Auth\MultiFactor\App\Contracts\HasAppAuthenticationRecovery;
 use Filament\Auth\MultiFactor\App\Concerns\InteractsWithAppAuthenticationRecovery;
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +23,7 @@ use Spatie\Permission\Traits\HasRoles;
 use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Support\Models\Company;
 
 class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEmailAuthentication, HasAppAuthenticationRecovery
@@ -90,6 +93,45 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEm
         return $this->belongsTo(Company::class, 'default_company_id');
     }
 
+    /**
+     * Whether the current user is the platform admin (installer) who can see all tenants and all users.
+     */
+    public static function isPlatformAdmin(): bool
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return false;
+        }
+        if (isset($user->id) && (int) $user->id === 1) {
+            return true;
+        }
+        if ($user->is_default === true || $user->hasRole('super_admin')) {
+            return true;
+        }
+        $panelRoleName = Utils::getPanelUserRoleName();
+
+        return $user->hasRole($panelRoleName)
+            && ! self::where('is_default', true)->exists();
+    }
+
+    /**
+     * Scope so tenant users only see users from their company; platform admin sees all.
+     */
+    public function scopeForCurrentTenant(Builder $query): Builder
+    {
+        $user = Auth::user();
+        if (! $user) {
+            return $query->whereRaw('0 = 1');
+        }
+        if (self::isPlatformAdmin()) {
+            return $query;
+        }
+        $companyIds = $user->allowedCompanies()->pluck('companies.id')->toArray();
+        $companyIds[] = $user->default_company_id;
+
+        return $query->whereIn('default_company_id', array_unique(array_filter($companyIds)));
+    }
+
     protected static function boot()
     {
         parent::boot();
@@ -113,12 +155,12 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEm
         ]);
 
         $user->partner_id = $partner->id;
-        $user->save();
+        $user->saveQuietly();
     }
 
     private function handlePartnerUpdation(self $user)
     {
-        $partner = Partner::updateOrCreate(
+        $partner = Partner::withoutGlobalScope(CompanyScope::class)->updateOrCreate(
             ['id' => $user->partner_id],
             [
                 'creator_id' => Auth::user()->id ?? $user->id,
@@ -130,7 +172,7 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEm
 
         if ($user->partner_id !== $partner->id) {
             $user->partner_id = $partner->id;
-            $user->save();
+            $user->saveQuietly();
         }
     }
 }

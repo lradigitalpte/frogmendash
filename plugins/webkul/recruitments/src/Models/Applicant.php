@@ -12,6 +12,7 @@ use Webkul\Employee\Models\Department;
 use Webkul\Employee\Models\Employee;
 use Webkul\Recruitment\Enums\ApplicationStatus;
 use Webkul\Recruitment\Traits\HasApplicationStatus;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\UTMMedium;
@@ -232,6 +233,8 @@ class Applicant extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($applicant) {
             $applicant->creator_id ??= filament()->auth()->id();

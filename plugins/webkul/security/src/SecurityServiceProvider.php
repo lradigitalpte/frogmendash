@@ -3,8 +3,10 @@
 namespace Webkul\Security;
 
 use Filament\Panel;
+use Livewire\Livewire;
 use Webkul\PluginManager\Package;
 use Webkul\PluginManager\PackageServiceProvider;
+use Webkul\Security\Filament\Auth\Register;
 
 class SecurityServiceProvider extends PackageServiceProvider
 {
@@ -40,6 +42,8 @@ class SecurityServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         $this->app->singleton(PermissionRegistrar::class);
+
+        Livewire::component(Register::class);
     }
 
     public function packageRegistered(): void

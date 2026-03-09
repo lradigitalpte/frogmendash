@@ -3,6 +3,7 @@
 namespace Webkul\Account\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -50,6 +51,8 @@ class MoveReversal extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($moveReversal) {
             $moveReversal->creator_id = filament()->auth()->id();

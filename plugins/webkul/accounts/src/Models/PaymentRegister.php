@@ -12,6 +12,7 @@ use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Settings\DefaultAccountSettings;
 use Webkul\Partner\Models\BankAccount;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -111,6 +112,8 @@ class PaymentRegister extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::retrieved(function ($paymentRegister) {
             $paymentRegister->computeBatches();

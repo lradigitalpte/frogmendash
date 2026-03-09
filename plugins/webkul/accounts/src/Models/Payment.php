@@ -18,6 +18,7 @@ use Webkul\Partner\Models\BankAccount;
 use Webkul\Partner\Models\Partner;
 use Webkul\Payment\Models\PaymentToken;
 use Webkul\Payment\Models\PaymentTransaction;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -218,6 +219,8 @@ class Payment extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::created(function ($move) {
             $move->computeName();

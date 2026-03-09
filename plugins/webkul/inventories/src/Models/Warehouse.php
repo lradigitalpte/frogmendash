@@ -14,6 +14,7 @@ use Webkul\Inventory\Database\Factories\WarehouseFactory;
 use Webkul\Inventory\Enums\DeliveryStep;
 use Webkul\Inventory\Enums\ReceptionStep;
 use Webkul\Partner\Models\Partner;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -224,6 +225,8 @@ class Warehouse extends Model implements Sortable
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::updated(function ($warehouse) {
             if ($warehouse->wasChanged('code')) {

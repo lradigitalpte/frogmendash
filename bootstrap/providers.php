@@ -18,6 +18,7 @@ return [
     Webkul\Payment\PaymentServiceProvider::class,
     Webkul\Product\ProductServiceProvider::class,
     Webkul\Project\ProjectServiceProvider::class,
+    Webkul\RovInspection\RovInspectionServiceProvider::class,
     Webkul\Purchase\PurchaseServiceProvider::class,
     Webkul\Recruitment\RecruitmentServiceProvider::class,
     Webkul\Sale\SaleServiceProvider::class,

@@ -11,6 +11,7 @@ use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\PaymentType;
 use Webkul\Account\Settings\DefaultAccountSettings;
 use Webkul\Partner\Models\BankAccount;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\Support\Models\Currency;
@@ -155,6 +156,8 @@ class Journal extends Model implements Sortable
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($journal) {
             $journal->computeSuspenseAccountId();

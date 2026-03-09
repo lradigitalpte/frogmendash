@@ -14,7 +14,9 @@ class ManageTeams extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->icon('heroicon-o-plus-circle')
+            CreateAction::make()
+                ->icon('heroicon-o-plus-circle')
+                ->color('success')
                 ->successNotification(
                     Notification::make()
                         ->success()

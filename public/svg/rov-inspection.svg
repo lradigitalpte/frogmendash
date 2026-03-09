@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" fill="white"/>
+<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" stroke="#DCE0E5"/>
+<!-- Map outline -->
+<path d="M14 22V46C14 47.1046 14.8954 48 16 48H48C49.1046 48 50 47.1046 50 46V22C50 20.8954 49.1046 20 48 20H16C14.8954 20 14 20.8954 14 22Z" stroke="#0070F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+<!-- Grid lines (map detail) -->
+<path d="M20 20V48M32 20V48M44 20V48" stroke="#0070F2" stroke-width="1.5" stroke-opacity="0.5" stroke-linecap="round"/>
+<path d="M14 32H50M14 40H50" stroke="#0070F2" stroke-width="1.5" stroke-opacity="0.5" stroke-linecap="round"/>
+<!-- Location/marker pin -->
+<path d="M32 28C28.6863 28 26 30.6863 26 34C26 38 32 44 32 44C32 44 38 38 38 34C38 30.6863 35.3137 28 32 28Z" fill="#0070F2"/>
+<circle cx="32" cy="34" r="3" fill="white"/>
+</svg>

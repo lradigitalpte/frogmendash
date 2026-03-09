@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Inventory\Database\Factories\LocationFactory;
 use Webkul\Inventory\Enums\LocationType;
 use Webkul\Product\Enums\ProductRemoval;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -125,6 +126,8 @@ class Location extends Model
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::saving(function ($category) {
             $category->updateParentPath();

@@ -10,6 +10,7 @@ use Spatie\EloquentSortable\Sortable;
 use Spatie\EloquentSortable\SortableTrait;
 use Webkul\Employee\Database\Factories\EmployeeJobPositionFactory;
 use Webkul\Field\Traits\HasCustomFields;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -77,6 +78,8 @@ class EmployeeJobPosition extends Model implements Sortable
     protected static function boot()
     {
         parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
 
         static::creating(function ($employeeJobPosition) {
             $employeeJobPosition->creator_id = filament()->auth()->id();

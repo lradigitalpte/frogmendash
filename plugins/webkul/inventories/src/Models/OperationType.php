@@ -14,6 +14,7 @@ use Webkul\Inventory\Enums;
 use Webkul\Inventory\Enums\CreateBackorder;
 use Webkul\Inventory\Enums\MoveType;
 use Webkul\Inventory\Enums\ReservationMethod;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 
@@ -139,6 +140,13 @@ class OperationType extends Model implements Sortable
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::addGlobalScope(new CompanyScope);
     }
 
     protected static function newFactory(): OperationTypeFactory
