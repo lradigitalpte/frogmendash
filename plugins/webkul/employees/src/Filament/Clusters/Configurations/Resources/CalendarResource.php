@@ -96,7 +96,7 @@ class CalendarResource extends Resource
                                             ->hintIcon('heroicon-o-question-mark-circle', tooltip: __('employees::filament/clusters/configurations/resources/calendar.form.sections.general.fields.timezone-tooltip')),
                                         Select::make('company_id')
                                             ->label(__('employees::filament/clusters/configurations/resources/calendar.form.sections.general.fields.company'))
-                                            ->relationship('company', 'name')
+                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                             ->searchable()
                                             ->preload(),
                                     ])->columns(2),
@@ -224,7 +224,7 @@ class CalendarResource extends Resource
             ->filtersFormColumns(2)
             ->filters([
                 SelectFilter::make('company')
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                     ->label(__('employees::filament/clusters/configurations/resources/calendar.table.filters.company')),
                 TernaryFilter::make('is_active')
                     ->label(__('employees::filament/clusters/configurations/resources/calendar.table.filters.is-active')),

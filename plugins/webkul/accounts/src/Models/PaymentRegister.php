@@ -115,6 +115,14 @@ class PaymentRegister extends Model
 
         static::addGlobalScope(new CompanyScope);
 
+        static::creating(function ($paymentRegister) {
+            $paymentRegister->creator_id = filament()->auth()->id();
+
+            if (empty($paymentRegister->company_id)) {
+                $paymentRegister->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
+
         static::retrieved(function ($paymentRegister) {
             $paymentRegister->computeBatches();
 

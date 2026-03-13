@@ -62,6 +62,14 @@ class FiscalPosition extends Model implements Sortable
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($fiscalPosition) {
+            $fiscalPosition->creator_id = filament()->auth()->id();
+
+            if (empty($fiscalPosition->company_id)) {
+                $fiscalPosition->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 
     public function taxes()

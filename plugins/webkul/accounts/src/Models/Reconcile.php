@@ -68,5 +68,13 @@ class Reconcile extends Model implements Sortable
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($reconcile) {
+            $reconcile->created_by = filament()->auth()->id();
+
+            if (empty($reconcile->company_id)) {
+                $reconcile->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 }

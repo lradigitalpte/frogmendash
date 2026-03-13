@@ -74,7 +74,7 @@ class PackagingResource extends Resource
                     ->maxValue(99999999),
                 Select::make('company_id')
                     ->label(__('products::filament/resources/packaging.form.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                     ->searchable()
                     ->preload(),
             ]);

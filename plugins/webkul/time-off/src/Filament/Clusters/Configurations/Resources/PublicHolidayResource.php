@@ -136,12 +136,12 @@ class PublicHolidayResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('company_id')
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($query) => $query?->forCurrentUser() ?? $query)
                     ->searchable()
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/public-holiday.table.filters.company-name')),
                 SelectFilter::make('creator_id')
-                    ->relationship('createdBy', 'name')
+                    ->relationship('createdBy', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/public-holiday.table.filters.created-by')),

@@ -39,8 +39,10 @@ use Webkul\RovInspection\Enums\ProjectStatus;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\CreateRovProject;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\EditRovProject;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ListRovProjects;
-use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ManageInspectionPoints;
+use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ManageMedia;
+use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ManageObservations;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ManageReports;
+use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ManageStructures;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource\Pages\ViewRovProject;
 use Webkul\RovInspection\Models\RovProject;
 
@@ -53,6 +55,16 @@ class RovProjectResource extends Resource
     protected static ?\Filament\Pages\Enums\SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getModelLabel(): string
+    {
+        return 'Inspection Project';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Inspection Projects';
+    }
 
     public static function getNavigationLabel(): string
     {
@@ -126,16 +138,33 @@ class RovProjectResource extends Resource
                             ])
                             ->columns(2),
 
-                        Section::make('Site Map')
+                        Section::make('GPS Location')
+                            ->description('Used to pin the project on a satellite map in the client report.')
                             ->schema([
-                                FileUpload::make('site_map_path')
-                                    ->label('Upload Site Map / Blueprint')
+                                TextInput::make('latitude')
+                                    ->label('Latitude')
+                                    ->numeric()
+                                    ->placeholder('e.g. 25.1972')
+                                    ->prefixIcon('heroicon-o-globe-alt'),
+                                TextInput::make('longitude')
+                                    ->label('Longitude')
+                                    ->numeric()
+                                    ->placeholder('e.g. 55.2744')
+                                    ->prefixIcon('heroicon-o-globe-alt'),
+                            ])
+                            ->columns(2),
+
+                        Section::make('Plan View')
+                            ->description('Top-down CAD or engineering drawing shown in the Plan View modal on client reports.')
+                            ->schema([
+                                FileUpload::make('plan_view_path')
+                                    ->label('Upload Plan View Drawing')
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(20480)
                                     ->disk('public')
-                                    ->directory('rov-inspection/site-maps')
-                                    ->helperText('Upload a site map, blueprint or diagram. Inspection points will be plotted on this image.'),
+                                    ->directory('rov-inspection/plan-views')
+                                    ->helperText('Upload a top-down CAD, architectural or engineering plan drawing.'),
                             ]),
                     ])
                     ->columnSpan(['lg' => 2]),
@@ -152,7 +181,7 @@ class RovProjectResource extends Resource
                                     ->native(false),
                                 Select::make('company_id')
                                     ->label('Company')
-                                    ->relationship('company', 'name')
+                                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
                                     ->searchable()
                                     ->preload()
                                     ->default(fn () => filament()->auth()->user()?->default_company_id)
@@ -190,12 +219,12 @@ class RovProjectResource extends Resource
                     ->formatStateUsing(fn (string $state) => ProjectStatus::tryFrom($state)?->getLabel() ?? ucfirst($state))
                     ->color(fn (string $state) => ProjectStatus::tryFrom($state)?->getColor() ?? 'gray')
                     ->icon(fn (string $state) => ProjectStatus::tryFrom($state)?->getIcon() ?? null),
-                TextColumn::make('inspection_points_count')
-                    ->label('Points')
-                    ->counts('inspectionPoints')
+                TextColumn::make('structures_count')
+                    ->label('Structures')
+                    ->counts('structures')
                     ->badge()
                     ->color('info')
-                    ->icon('heroicon-o-map-pin'),
+                    ->icon('heroicon-o-building-office'),
                 TextColumn::make('start_date')
                     ->label('Start Date')
                     ->date('d M Y')
@@ -297,18 +326,31 @@ class RovProjectResource extends Resource
                             ])
                             ->columns(2),
 
-                        Section::make('Site Map')
+                        Section::make('GPS Location')
                             ->schema([
-                                ImageEntry::make('site_map_path')
+                                TextEntry::make('latitude')
+                                    ->label('Latitude')
+                                    ->icon('heroicon-o-globe-alt')
+                                    ->placeholder('—'),
+                                TextEntry::make('longitude')
+                                    ->label('Longitude')
+                                    ->icon('heroicon-o-globe-alt')
+                                    ->placeholder('—'),
+                            ])
+                            ->columns(2),
+
+                        Section::make('Plan View')
+                            ->schema([
+                                ImageEntry::make('plan_view_path')
                                     ->label('')
                                     ->disk('public')
-                                    ->height(400)
+                                    ->height(300)
                                     ->extraImgAttributes(['class' => 'rounded-lg border w-full object-contain'])
-                                    ->hidden(fn ($record) => ! $record->site_map_path),
-                                TextEntry::make('no_map')
+                                    ->hidden(fn ($record) => ! $record->plan_view_path),
+                                TextEntry::make('no_plan_view')
                                     ->label('')
-                                    ->state('No site map uploaded yet.')
-                                    ->visible(fn ($record) => ! $record->site_map_path),
+                                    ->state('No plan view drawing uploaded yet.')
+                                    ->visible(fn ($record) => ! $record->plan_view_path),
                             ]),
                     ])
                     ->columnSpan(['lg' => 2]),
@@ -347,7 +389,9 @@ class RovProjectResource extends Resource
         return $page->generateNavigationItems([
             ViewRovProject::class,
             EditRovProject::class,
-            ManageInspectionPoints::class,
+            ManageStructures::class,
+            ManageObservations::class,
+            ManageMedia::class,
             ManageReports::class,
         ]);
     }
@@ -355,12 +399,14 @@ class RovProjectResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index'             => ListRovProjects::route('/'),
-            'create'            => CreateRovProject::route('/create'),
-            'view'              => ViewRovProject::route('/{record}'),
-            'edit'              => EditRovProject::route('/{record}/edit'),
-            'inspection-points' => ManageInspectionPoints::route('/{record}/inspection-points'),
-            'reports'           => ManageReports::route('/{record}/reports'),
+            'index'        => ListRovProjects::route('/'),
+            'create'       => CreateRovProject::route('/create'),
+            'view'         => ViewRovProject::route('/{record}'),
+            'edit'         => EditRovProject::route('/{record}/edit'),
+            'structures'   => ManageStructures::route('/{record}/structures'),
+            'observations' => ManageObservations::route('/{record}/observations'),
+            'media'        => ManageMedia::route('/{record}/media'),
+            'reports'      => ManageReports::route('/{record}/reports'),
         ];
     }
 

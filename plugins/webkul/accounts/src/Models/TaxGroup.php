@@ -51,5 +51,13 @@ class TaxGroup extends Model implements Sortable
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($taxGroup) {
+            $taxGroup->creator_id = filament()->auth()->id();
+
+            if (empty($taxGroup->company_id)) {
+                $taxGroup->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 }

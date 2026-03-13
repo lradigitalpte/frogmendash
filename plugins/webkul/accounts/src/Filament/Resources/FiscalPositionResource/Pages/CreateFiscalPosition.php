@@ -6,9 +6,11 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Filament\Resources\FiscalPositionResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
 class CreateFiscalPosition extends CreateRecord
 {
+    use HasRepeaterColumnManager;
     protected static string $resource = FiscalPositionResource::class;
 
     public function getSubNavigation(): array

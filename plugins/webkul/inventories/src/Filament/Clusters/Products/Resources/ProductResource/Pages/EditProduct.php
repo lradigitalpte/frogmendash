@@ -147,10 +147,46 @@ class EditProduct extends BaseEditProduct
                     }
 
                     $warehouse = Warehouse::first();
+                    
+                    // Use warehouse's dedicated stock location if available
+                    $adjustmentLocation = null;
+                    if ($warehouse && $warehouse->lot_stock_location_id) {
+                        $adjustmentLocation = Location::find($warehouse->lot_stock_location_id);
+                    }
+                    
+                    // Fallback: search for any internal location if warehouse stock location not found
+                    if (!$adjustmentLocation) {
+                        $adjustmentLocation = Location::where('type', LocationType::INTERNAL)
+                            ->where('is_scrap', false)
+                            ->first();
+                    }
+                    
+                    // Last resort: search for INVENTORY type location
+                    if (!$adjustmentLocation) {
+                        $adjustmentLocation = Location::where('type', LocationType::INVENTORY)
+                            ->where('is_scrap', false)
+                            ->first();
+                    }
 
-                    $adjustmentLocation = Location::where('type', LocationType::INVENTORY)
-                        ->where('is_scrap', false)
-                        ->first();
+                    if (!$warehouse) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Configuration Error')
+                            ->body('No warehouse has been configured. Please create a warehouse first.')
+                            ->send();
+
+                        throw new Halt;
+                    }
+
+                    if (!$adjustmentLocation) {
+                        Notification::make()
+                            ->danger()
+                            ->title('Configuration Error')
+                            ->body('No inventory location has been configured. Please create an inventory location first.')
+                            ->send();
+
+                        throw new Halt;
+                    }
 
                     $currentQuantity = $data['quantity'] - $previousQuantity;
 

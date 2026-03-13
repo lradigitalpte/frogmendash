@@ -330,7 +330,6 @@ class UserResource extends Resource
                 SelectFilter::make('teams')
                     ->relationship('teams', 'name')
                     ->label(__('security::filament/resources/user.table.filters.teams'))
-                    ->options(fn (): array => Role::query()->pluck('name', 'id')->all())
                     ->multiple()
                     ->searchable()
                     ->preload(),

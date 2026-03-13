@@ -268,7 +268,10 @@ class MoveLine extends Model implements Sortable
 
             $moveLine->journal_id = $moveLine->move->journal_id;
 
-            $moveLine->company_currency_id = $moveLine->move->company->currency_id;
+            // Ensure company and currency relationship are set before accessing
+            if (!empty($moveLine->move->company_id) && $moveLine->move->company) {
+                $moveLine->company_currency_id = $moveLine->move->company->currency_id ?? $moveLine->move->company_currency_id;
+            }
 
             $moveLine->date = $moveLine->move->date;
 
@@ -562,7 +565,7 @@ class MoveLine extends Model implements Sortable
             return $this;
         }
 
-        $debit = PartialReconcile::select(
+        $debit = PartialReconcile::withoutGlobalScopes()->select(
             DB::raw('COALESCE(SUM(amount), 0) AS amount'),
             DB::raw('COALESCE(SUM(debit_amount_currency), 0) AS amount_currency'),
             'currencies.decimal_places'
@@ -572,7 +575,7 @@ class MoveLine extends Model implements Sortable
             ->groupBy('currencies.decimal_places')
             ->first();
 
-        $credit = PartialReconcile::select(
+        $credit = PartialReconcile::withoutGlobalScopes()->select(
             DB::raw('COALESCE(SUM(amount), 0) AS amount'),
             DB::raw('COALESCE(SUM(credit_amount_currency), 0) AS amount_currency'),
             'currencies.decimal_places'
@@ -602,15 +605,24 @@ class MoveLine extends Model implements Sortable
             $creditAmountCurrency = round($credit->amount_currency, $decimalPlaces);
         }
 
-        $companyCurrency = $this->companyCurrency ?? $this->company->currency;
+        $companyCurrency = $this->companyCurrency ?? $this->company?->currency;
 
         $foreignCurrency = $this->currency ?? $companyCurrency;
 
-        $this->amount_residual = $companyCurrency->round($this->balance - $debitAmount + $creditAmount);
+        // Handle null currency fallback - use raw values if no currency available
+        if ($companyCurrency) {
+            $this->amount_residual = $companyCurrency->round($this->balance - $debitAmount + $creditAmount);
+        } else {
+            $this->amount_residual = $this->balance - $debitAmount + $creditAmount;
+        }
 
-        $this->amount_residual_currency = $foreignCurrency->round($this->amount_currency - $debitAmountCurrency + $creditAmountCurrency);
+        if ($foreignCurrency) {
+            $this->amount_residual_currency = $foreignCurrency->round($this->amount_currency - $debitAmountCurrency + $creditAmountCurrency);
+        } else {
+            $this->amount_residual_currency = $this->amount_currency - $debitAmountCurrency + $creditAmountCurrency;
+        }
 
-        $this->reconciled = $companyCurrency->isZero($this->amount_residual)
-            && $foreignCurrency->isZero($this->amount_residual_currency);
+        $this->reconciled = ($companyCurrency ? $companyCurrency->isZero($this->amount_residual) : $this->amount_residual == 0.0)
+            && ($foreignCurrency ? $foreignCurrency->isZero($this->amount_residual_currency) : $this->amount_residual_currency == 0.0);
     }
 }

@@ -154,6 +154,10 @@
                             if ($isAdminPanel && ! $isGroupActive) {
                                 continue;
                             }
+                            // Ensure header is never empty when group has items (uniform with other sections)
+                            if ($isAdminPanel && (string) $groupLabel === '' && $group->getItems()->isNotEmpty()) {
+                                $groupLabel = $group->getItems()->first()->getLabel();
+                            }
                         @endphp
 
                         @if ($groupLabel)

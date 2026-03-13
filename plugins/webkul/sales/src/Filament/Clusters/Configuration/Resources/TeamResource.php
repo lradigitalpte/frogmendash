@@ -81,12 +81,12 @@ class TeamResource extends Resource
                         Fieldset::make(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.title'))
                             ->schema([
                                 Select::make('user_id')
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                                     ->preload()
                                     ->label(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.fields.team-leader'))
                                     ->searchable(),
                                 Select::make('company_id')
-                                    ->relationship('company', 'name')
+                                    ->relationship('company', 'name', fn ($q) => $q->forCurrentUser())
                                     ->preload()
                                     ->label(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.fields.company'))
                                     ->searchable(),

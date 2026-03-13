@@ -103,7 +103,7 @@ class WarehouseResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('inventories::filament/clusters/configurations/resources/warehouse.form.sections.general.fields.company'))
-                                            ->relationship('company', 'name')
+                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                             ->required()
                                             ->disabled(fn () => Auth::user()->default_company_id)
                                             ->default(Auth::user()->default_company_id),
@@ -197,7 +197,7 @@ class WarehouseResource extends Resource
             ->filters([
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/configurations/resources/warehouse.table.filters.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                     ->searchable()
                     ->preload(),
             ])

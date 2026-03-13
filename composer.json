@@ -41,7 +41,8 @@
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
-            "Webkul\\RovInspection\\": "plugins/webkul/rov-inspection/src/"
+            "Webkul\\RovInspection\\": "plugins/webkul/rov-inspection/src/",
+            "Webkul\\Warranty\\": "plugins/webkul/warranty/src/"
         }
     },
     "autoload-dev": {

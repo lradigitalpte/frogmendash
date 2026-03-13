@@ -7,12 +7,14 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\HtmlString;
+use Livewire\Component;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\PaymentState;
 use Webkul\Account\Enums\PaymentType;
@@ -273,7 +275,7 @@ class PayAction extends Action
                 ])
                     ->columns(2);
             })
-            ->action(function (Move $record, $data): void {
+            ->action(function (Move $record, $data, Component $livewire): void {
                 $lineIds = $record->paymentTermLines
                     ->filter(fn ($line) => ! $line->reconciled)
                     ->pluck('id')
@@ -290,6 +292,16 @@ class PayAction extends Action
                 $paymentRegister->save();
 
                 AccountFacade::createPayments($paymentRegister);
+
+                // Refresh the invoice record to update payment state and all header action visibility
+                $record->refresh();
+                $livewire->refreshFormData(['state', 'payment_state']);
+
+                Notification::make()
+                    ->success()
+                    ->title(__('accounts::filament/resources/invoice/actions/pay-action.notification.title'))
+                    ->body(__('accounts::filament/resources/invoice/actions/pay-action.notification.body'))
+                    ->send();
             })
             ->hidden(function (Move $record) {
                 return $record->state != MoveState::POSTED

@@ -111,7 +111,7 @@ class ProductResource extends BaseProductResource
                     ->schema([
                         Select::make('responsible_id')
                             ->label(__('inventories::filament/clusters/products/resources/product.form.sections.inventory.fieldsets.logistics.fields.responsible'))
-                            ->relationship('responsible', 'name')
+                            ->relationship('responsible', 'name', fn ($query) => $query->forCurrentTenant())
                             ->searchable()
                             ->preload()
                             ->hintIcon('heroicon-m-question-mark-circle', tooltip: __('inventories::filament/clusters/products/resources/product.form.sections.inventory.fieldsets.logistics.fields.responsible-hint-tooltip')),

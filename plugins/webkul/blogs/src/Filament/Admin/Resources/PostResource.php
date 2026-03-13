@@ -215,12 +215,12 @@ class PostResource extends Resource
                     ->label(__('blogs::filament/admin/resources/post.table.filters.is-published')),
                 SelectFilter::make('author_id')
                     ->label(__('blogs::filament/admin/resources/post.table.filters.author'))
-                    ->relationship('author', 'name')
+                    ->relationship('author', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('blogs::filament/admin/resources/post.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('category_id')

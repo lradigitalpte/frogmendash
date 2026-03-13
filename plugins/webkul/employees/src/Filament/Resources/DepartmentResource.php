@@ -122,7 +122,7 @@ class DepartmentResource extends Resource
                                             ->nullable(),
                                         Select::make('company_id')
                                             ->label(__('employees::filament/resources/department.form.sections.general.fields.company'))
-                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
                                             ->getOptionLabelFromRecordUsing(function (Model $record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                             })

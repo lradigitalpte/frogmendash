@@ -182,7 +182,7 @@ class RouteResource extends Resource
             ->filters([
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/configurations/resources/route.table.filters.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
                     ->searchable()
                     ->preload(),
             ])

@@ -52,5 +52,13 @@ class FiscalPositionAccount extends Model
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($fiscalPositionAccount) {
+            $fiscalPositionAccount->creator_id = filament()->auth()->id();
+
+            if (empty($fiscalPositionAccount->company_id)) {
+                $fiscalPositionAccount->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 }

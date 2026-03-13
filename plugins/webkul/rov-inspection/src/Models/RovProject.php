@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\Scopes\CompanyScope;
@@ -22,8 +23,11 @@ class RovProject extends Model
         'name',
         'description',
         'location',
+        'latitude',
+        'longitude',
         'status',
         'site_map_path',
+        'plan_view_path',
         'start_date',
         'end_date',
         'company_id',
@@ -34,6 +38,8 @@ class RovProject extends Model
     protected $casts = [
         'start_date' => 'date',
         'end_date'   => 'date',
+        'latitude'   => 'float',
+        'longitude'  => 'float',
     ];
 
     protected static function booted(): void
@@ -56,9 +62,20 @@ class RovProject extends Model
         return $this->belongsTo(User::class, 'creator_id');
     }
 
-    public function inspectionPoints(): HasMany
+    public function structures(): HasMany
     {
-        return $this->hasMany(InspectionPoint::class, 'rov_project_id');
+        return $this->hasMany(ProjectStructure::class, 'rov_project_id')->orderBy('sort');
+    }
+
+    /** All inspection views across all structures. */
+    public function allViews(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            InspectionView::class,
+            ProjectStructure::class,
+            'rov_project_id',
+            'structure_id'
+        );
     }
 
     public function reports(): HasMany

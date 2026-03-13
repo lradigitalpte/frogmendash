@@ -66,7 +66,7 @@ class ManageTimesheets extends ManageRelatedRecords
                 Select::make('user_id')
                     ->label(__('projects::filament/resources/task/pages/manage-timesheets.form.employee'))
                     ->required()
-                    ->relationship('user', 'name')
+                    ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
                 TextInput::make('name')

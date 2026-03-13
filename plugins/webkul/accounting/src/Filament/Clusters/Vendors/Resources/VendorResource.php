@@ -77,7 +77,7 @@ class VendorResource extends BaseVendorResource
             Group::make()
                 ->schema([
                     Select::make('user_id')
-                        ->relationship('user', 'name')
+                        ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                         ->preload()
                         ->searchable()
                         ->label(__('accounting::filament/clusters/vendors/resources/vendor.form.fields.sales-person')),

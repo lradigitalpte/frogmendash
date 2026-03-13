@@ -136,7 +136,7 @@ class LocationResource extends Resource
                                     }),
                                 Select::make('company_id')
                                     ->label(__('inventories::filament/clusters/configurations/resources/location.form.sections.settings.fields.company'))
-                                    ->relationship('company', 'name')
+                                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
                                     ->searchable()
                                     ->preload()
                                     ->default(Auth::user()->default_company_id),
@@ -253,7 +253,7 @@ class LocationResource extends Resource
                     ->preload(),
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/configurations/resources/location.table.filters.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
                     ->searchable()
                     ->preload(),
             ])

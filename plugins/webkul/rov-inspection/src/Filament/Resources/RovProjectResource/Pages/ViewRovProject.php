@@ -16,12 +16,11 @@ class ViewRovProject extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Action::make('map_annotation')
-                ->label('Annotate Map')
-                ->icon('heroicon-o-map')
+            Action::make('view_structures')
+                ->label('Manage Structures')
+                ->icon('heroicon-o-building-office')
                 ->color('info')
-                ->url(fn () => '/admin/rov-inspection/map?project='.$this->getRecord()->id)
-                ->visible(fn () => $this->getRecord()->site_map_path !== null),
+                ->url(fn () => \Webkul\RovInspection\Filament\Resources\RovProjectResource::getUrl('structures', ['record' => $this->getRecord()])),
             EditAction::make(),
             DeleteAction::make()
                 ->successNotification(

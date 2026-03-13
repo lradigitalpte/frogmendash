@@ -7,11 +7,12 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Filament\Resources\FiscalPositionResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class EditFiscalPosition extends EditRecord
 {
-    use HasRecordNavigationTabs;
+    use HasRepeaterColumnManager, HasRecordNavigationTabs;
 
     protected static string $resource = FiscalPositionResource::class;
 

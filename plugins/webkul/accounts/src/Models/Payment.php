@@ -433,12 +433,19 @@ class Payment extends Model
         if ($this->move_id) {
             $this->amount_company_currency_signed = $this->seekForLines()[0]->sum('balance');
         } else {
-            $this->amount_company_currency_signed = $this->currency->convert(
-                fromAmount: $this->amount,
-                toCurrency: $this->company->currency,
-                company: $this->company,
-                date: $this->date
-            );
+            $companyCurrency = $this->company?->currency;
+            
+            if ($this->currency && $companyCurrency) {
+                $this->amount_company_currency_signed = $this->currency->convert(
+                    fromAmount: $this->amount,
+                    toCurrency: $companyCurrency,
+                    company: $this->company,
+                    date: $this->date
+                );
+            } else {
+                // If currency conversion not available, use amount as-is
+                $this->amount_company_currency_signed = $this->amount;
+            }
         }
     }
 
@@ -528,11 +535,14 @@ class Payment extends Model
 
         $liquidityBalance = ! $writeOffLineVals && $forceBalance !== null
             ? ($liquidityAmountCurrency > 0 ? 1 : -1) * abs($forceBalance)
-            : $this->currency->convert(
-                $liquidityAmountCurrency,
-                $this->company->currency,
-                $this->company,
-                $this->date
+            : ($this->currency && $this->company?->currency 
+                ? $this->currency->convert(
+                    $liquidityAmountCurrency,
+                    $this->company->currency,
+                    $this->company,
+                    $this->date
+                )
+                : $liquidityAmountCurrency
             );
 
         $counterpartAmountCurrency = -$liquidityAmountCurrency - $writeOffAmountCurrency;

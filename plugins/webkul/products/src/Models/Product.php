@@ -65,6 +65,7 @@ class Product extends Model implements Sortable
         'category_id',
         'company_id',
         'creator_id',
+        'warranty_policy_id',
     ];
 
     /**
@@ -196,6 +197,16 @@ class Product extends Model implements Sortable
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+    }
+
+    public function warrantyPolicy(): BelongsTo
+    {
+        // Guard so the product model works even when the warranty plugin is not installed
+        if (! class_exists(\Webkul\Warranty\Models\WarrantyPolicy::class)) {
+            return $this->belongsTo(self::class, 'warranty_policy_id');
+        }
+
+        return $this->belongsTo(\Webkul\Warranty\Models\WarrantyPolicy::class, 'warranty_policy_id');
     }
 
     protected static function newFactory(): ProductFactory

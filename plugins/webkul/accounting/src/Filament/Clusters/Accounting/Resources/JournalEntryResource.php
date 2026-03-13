@@ -200,7 +200,7 @@ class JournalEntryResource extends Resource
                             ->schema([
                                 Select::make('company_id')
                                     ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.form.tabs.other-information.fields.company'))
-                                    ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                                    ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
                                     ->getOptionLabelFromRecordUsing(function ($record): string {
                                         return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                     })

@@ -111,83 +111,159 @@ class CreateWarehouse extends CreateRecord
 
     protected function createLocations(array $data): array
     {
-        $data['view_location_id'] = Location::create([
-            'type'         => LocationType::VIEW,
-            'name'         => $data['code'],
-            'is_scrap'     => false,
-            'is_replenish' => false,
-            'parent_id'    => 1,
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-        ])->id;
+        // Helper to get or create location, handling soft-deleted records
+        $getOrCreateLocation = function (array $search, array $attributes) {
+            $location = Location::withTrashed()->where(function ($q) use ($search) {
+                foreach ($search as $key => $value) {
+                    $q->where($key, $value);
+                }
+            })->first();
 
-        $data['lot_stock_location_id'] = Location::create([
-            'type'         => LocationType::INTERNAL,
-            'name'         => 'Stock',
-            'barcode'      => $data['code'].'STOCK',
-            'is_scrap'     => false,
-            'is_replenish' => true,
-            'parent_id'    => $data['view_location_id'],
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-        ])->id;
+            if ($location) {
+                // Restore if soft-deleted
+                if ($location->trashed()) {
+                    $location->restore();
+                }
+                // Update attributes
+                $location->update($attributes);
+                return $location;
+            }
 
-        $data['input_stock_location_id'] = Location::create([
-            'type'         => LocationType::INTERNAL,
-            'name'         => 'Input',
-            'barcode'      => $data['code'].'INPUT',
-            'is_scrap'     => false,
-            'is_replenish' => false,
-            'parent_id'    => $data['view_location_id'],
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-            'deleted_at'   => in_array($data['reception_steps'], [ReceptionStep::TWO_STEPS, ReceptionStep::THREE_STEPS]) ? null : now(),
-        ])->id;
+            // Create new location
+            return Location::create(array_merge($search, $attributes));
+        };
 
-        $data['qc_stock_location_id'] = Location::create([
-            'type'         => LocationType::INTERNAL,
-            'name'         => 'Quality Control',
-            'barcode'      => $data['code'].'QUALITY',
-            'is_scrap'     => false,
-            'is_replenish' => false,
-            'parent_id'    => $data['view_location_id'],
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-            'deleted_at'   => $data['reception_steps'] === ReceptionStep::THREE_STEPS ? null : now(),
-        ])->id;
+        $data['view_location_id'] = $getOrCreateLocation(
+            [
+                'type'       => LocationType::VIEW,
+                'name'       => $data['code'],
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'is_scrap'     => false,
+                'is_replenish' => false,
+                'parent_id'    => 1,
+                'creator_id'   => $data['creator_id'],
+            ]
+        )->id;
 
-        $data['output_stock_location_id'] = Location::create([
-            'type'         => LocationType::INTERNAL,
-            'name'         => 'Output',
-            'barcode'      => $data['code'].'OUTPUT',
-            'is_scrap'     => false,
-            'is_replenish' => false,
-            'parent_id'    => $data['view_location_id'],
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-            'deleted_at'   => in_array($data['delivery_steps'], [DeliveryStep::TWO_STEPS, DeliveryStep::THREE_STEPS]) ? null : now(),
-        ])->id;
+        $data['lot_stock_location_id'] = $getOrCreateLocation(
+            [
+                'barcode'    => $data['code'].'STOCK',
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'type'         => LocationType::INTERNAL,
+                'name'         => 'Stock',
+                'is_scrap'     => false,
+                'is_replenish' => true,
+                'parent_id'    => $data['view_location_id'],
+                'creator_id'   => $data['creator_id'],
+            ]
+        )->id;
 
-        $data['pack_stock_location_id'] = Location::create([
-            'type'         => LocationType::INTERNAL,
-            'name'         => 'Packing Zone',
-            'barcode'      => $data['code'].'PACKING',
-            'is_scrap'     => false,
-            'is_replenish' => false,
-            'parent_id'    => $data['view_location_id'],
-            'creator_id'   => $data['creator_id'],
-            'company_id'   => $data['company_id'],
-            'deleted_at'   => $data['delivery_steps'] === DeliveryStep::THREE_STEPS ? null : now(),
-        ])->id;
+        $data['input_stock_location_id'] = $getOrCreateLocation(
+            [
+                'barcode'    => $data['code'].'INPUT',
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'type'         => LocationType::INTERNAL,
+                'name'         => 'Input',
+                'is_scrap'     => false,
+                'is_replenish' => false,
+                'parent_id'    => $data['view_location_id'],
+                'creator_id'   => $data['creator_id'],
+                'deleted_at'   => in_array($data['reception_steps'], [ReceptionStep::TWO_STEPS, ReceptionStep::THREE_STEPS]) ? null : now(),
+            ]
+        )->id;
+
+        $data['qc_stock_location_id'] = $getOrCreateLocation(
+            [
+                'barcode'    => $data['code'].'QUALITY',
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'type'         => LocationType::INTERNAL,
+                'name'         => 'Quality Control',
+                'is_scrap'     => false,
+                'is_replenish' => false,
+                'parent_id'    => $data['view_location_id'],
+                'creator_id'   => $data['creator_id'],
+                'deleted_at'   => $data['reception_steps'] === ReceptionStep::THREE_STEPS ? null : now(),
+            ]
+        )->id;
+
+        $data['output_stock_location_id'] = $getOrCreateLocation(
+            [
+                'barcode'    => $data['code'].'OUTPUT',
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'type'         => LocationType::INTERNAL,
+                'name'         => 'Output',
+                'is_scrap'     => false,
+                'is_replenish' => false,
+                'parent_id'    => $data['view_location_id'],
+                'creator_id'   => $data['creator_id'],
+                'deleted_at'   => in_array($data['delivery_steps'], [DeliveryStep::TWO_STEPS, DeliveryStep::THREE_STEPS]) ? null : now(),
+            ]
+        )->id;
+
+        $data['pack_stock_location_id'] = $getOrCreateLocation(
+            [
+                'barcode'    => $data['code'].'PACKING',
+                'company_id' => $data['company_id'],
+            ],
+            [
+                'type'         => LocationType::INTERNAL,
+                'name'         => 'Packing Zone',
+                'is_scrap'     => false,
+                'is_replenish' => false,
+                'parent_id'    => $data['view_location_id'],
+                'creator_id'   => $data['creator_id'],
+                'deleted_at'   => $data['delivery_steps'] === DeliveryStep::THREE_STEPS ? null : now(),
+            ]
+        )->id;
 
         return $data;
     }
 
     protected function createOperationTypes(array $data): array
     {
-        $supplierLocation = Location::where('type', LocationType::SUPPLIER)->first();
+        $supplierLocation = Location::where('type', LocationType::SUPPLIER)
+            ->where('company_id', $data['company_id'])
+            ->first();
 
-        $customerLocation = Location::where('type', LocationType::CUSTOMER)->first();
+        if (!$supplierLocation) {
+            $supplierLocation = Location::create([
+                'type'       => LocationType::SUPPLIER,
+                'name'       => 'Suppliers',
+                'is_scrap'   => false,
+                'is_replenish' => false,
+                'company_id' => $data['company_id'],
+                'creator_id' => $data['creator_id'],
+                'parent_path' => '/',
+                'full_name'  => 'Suppliers',
+            ]);
+        }
+
+        $customerLocation = Location::where('type', LocationType::CUSTOMER)
+            ->where('company_id', $data['company_id'])
+            ->first();
+
+        if (!$customerLocation) {
+            $customerLocation = Location::create([
+                'type'       => LocationType::CUSTOMER,
+                'name'       => 'Customers',
+                'is_scrap'   => false,
+                'is_replenish' => false,
+                'company_id' => $data['company_id'],
+                'creator_id' => $data['creator_id'],
+                'parent_path' => '/',
+                'full_name'  => 'Customers',
+            ]);
+        }
 
         $data['in_type_id'] = OperationType::create([
             'sort'                    => 1,

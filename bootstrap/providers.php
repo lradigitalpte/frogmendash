@@ -28,6 +28,7 @@ return [
     Webkul\TimeOff\TimeOffServiceProvider::class,
     Webkul\FullCalendar\FullCalendarServiceProvider::class,
     Webkul\Timesheet\TimesheetServiceProvider::class,
+    Webkul\Warranty\WarrantyServiceProvider::class,
     Webkul\Website\WebsiteServiceProvider::class,
     Webkul\PluginManager\PluginManagerServiceProvider::class,
 ];

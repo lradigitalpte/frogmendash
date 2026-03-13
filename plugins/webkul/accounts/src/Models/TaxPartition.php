@@ -59,6 +59,14 @@ class TaxPartition extends Model implements Sortable
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($taxPartition) {
+            $taxPartition->creator_id = filament()->auth()->id();
+
+            if (empty($taxPartition->company_id)) {
+                $taxPartition->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 
     public static function validateRepartitionLines($taxId): void

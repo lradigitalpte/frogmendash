@@ -2,6 +2,7 @@
 
 namespace Webkul\Support\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -153,6 +154,35 @@ class Company extends Model implements Sortable
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    /**
+     * Scope company options to those visible to the current user.
+     * Platform admin: all companies. Tenant user: only their allowed companies + branches.
+     */
+    public function scopeForCurrentUser(Builder $query): Builder
+    {
+        if (User::isPlatformAdmin()) {
+            return $query;
+        }
+
+        $user = Auth::user();
+
+        if (! $user) {
+            return $query->whereRaw('0 = 1');
+        }
+
+        $baseIds = $user->allowedCompanies()->pluck('companies.id')->toArray();
+        $baseIds[] = $user->default_company_id;
+        $baseIds = array_values(array_unique(array_filter($baseIds)));
+
+        if (empty($baseIds)) {
+            return $query->whereRaw('0 = 1');
+        }
+
+        return $query->where(function (Builder $q) use ($baseIds) {
+            $q->whereIn('id', $baseIds)->orWhereIn('parent_id', $baseIds);
+        });
     }
 
     protected static function newFactory(): CompanyFactory

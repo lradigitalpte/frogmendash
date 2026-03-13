@@ -77,7 +77,7 @@ class FiscalPositionResource extends Resource
                                     ->label(__('accounts::filament/resources/fiscal-position.form.fields.zip-to'))
                                     ->required(),
                                 Select::make('company_id')
-                                    ->relationship('company', 'name')
+                                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                     ->searchable()
                                     ->preload()
                                     ->label(__('accounts::filament/resources/fiscal-position.form.fields.company'))

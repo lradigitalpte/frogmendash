@@ -509,7 +509,7 @@ class Move extends Model implements Sortable
             return 1;
         }
 
-        if ($this->currency_id) {
+        if ($this->currency_id && $this->currency && $this->company?->currency) {
             $this->invoice_currency_rate = $this->currency->getConversionRate(
                 fromCurrency: $this->company->currency,
                 toCurrency: $this->currency,
@@ -570,7 +570,7 @@ class Move extends Model implements Sortable
 
     public function computePaymentState()
     {
-        $debitResults = PartialReconcile::select(
+        $debitResults = PartialReconcile::withoutGlobalScopes()->select(
             'source_line.id as source_line_id',
             'source_line.move_id as source_move_id',
             'account.account_type as source_line_account_type',
@@ -596,7 +596,7 @@ class Move extends Model implements Sortable
             ->groupBy('source_line.id', 'source_line.move_id', 'account.account_type')
             ->get();
 
-        $creditResults = PartialReconcile::select(
+        $creditResults = PartialReconcile::withoutGlobalScopes()->select(
             'source_line.id as source_line_id',
             'source_line.move_id as source_move_id',
             'account.account_type as source_line_account_type',
@@ -853,12 +853,18 @@ class Move extends Model implements Sortable
             if ($line->currency_id == $this->currency_id) {
                 $amount = abs($line->amount_residual_currency);
             } else {
-                $amount = $line->companyCurrency->convert(
-                    abs($line->amount_residual),
-                    $this->currency,
-                    $this->company,
-                    $line->date
-                );
+                // Convert line amount to this move's currency
+                if ($line->companyCurrency && $this->currency) {
+                    $amount = $line->companyCurrency->convert(
+                        abs($line->amount_residual),
+                        $this->currency,
+                        $this->company,
+                        $line->date
+                    );
+                } else {
+                    // Fallback if currency conversion not available
+                    $amount = abs($line->amount_residual);
+                }
             }
 
             if ($this->currency->isZero($amount)) {
@@ -930,7 +936,7 @@ class Move extends Model implements Sortable
                 'move_type'               => $counterpartLine->move->move_type,
                 'ref'                     => $reconciliationRef,
                 'is_exchange'             => $reconciledPartial['is_exchange'],
-                'amount_company_currency' => money(abs($counterpartLine->balance), $counterpartLine->company->currency->name),
+                'amount_company_currency' => money(abs($counterpartLine->balance), $counterpartLine->company?->currency?->name ?? $counterpartLine->currency?->name ?? 'USD'),
                 'amount_foreign_currency' => $foreignCurrency
                     ? money(abs($counterpartLine->amount_currency), $foreignCurrency->name)
                     : null,

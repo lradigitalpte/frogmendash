@@ -48,7 +48,7 @@ class TimesheetsRelationManager extends RelationManager
                 Select::make('user_id')
                     ->label(__('projects::filament/resources/task/relation-managers/timesheets.form.employee'))
                     ->required()
-                    ->relationship('user', 'name')
+                    ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
                 TextInput::make('name')

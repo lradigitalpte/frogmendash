@@ -161,12 +161,12 @@ class PackageResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('inventories::filament/clusters/products/resources/package.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/products/resources/package.table.filters.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($query) => $query?->forCurrentUser() ?? $query)
                     ->searchable()
                     ->preload(),
             ])

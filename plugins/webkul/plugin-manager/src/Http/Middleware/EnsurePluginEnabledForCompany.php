@@ -36,6 +36,12 @@ class EnsurePluginEnabledForCompany
         // Resolve resource or page class from route name (e.g. filament.admin.resources.orders.index => OrderResource)
         $resourceClass = $this->getResourceOrPageClassFromRoute($route);
         if ($resourceClass && ! PluginNavigationHelper::canAccessByClass($resourceClass)) {
+            // Special case: any page/resource under the Projects namespace should send the user
+            // to the Plugins page instead of showing a hard 403 when Projects is disabled.
+            if (str_starts_with($resourceClass, 'Webkul\\Project\\')) {
+                return redirect('/admin/plugins?tab=apps');
+            }
+
             abort(403, __('This module is not enabled for your company. Enable it in Settings → Plugins.'));
         }
 

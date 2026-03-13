@@ -119,7 +119,7 @@ class PackageTypeResource extends Resource
                             ->maxLength(255),
                         Select::make('company_id')
                             ->label(__('inventories::filament/clusters/configurations/resources/package-type.form.sections.general.fields.company'))
-                            ->relationship('company', 'name')
+                            ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
                             ->searchable()
                             ->preload(),
                     ])->columnSpanFull(),

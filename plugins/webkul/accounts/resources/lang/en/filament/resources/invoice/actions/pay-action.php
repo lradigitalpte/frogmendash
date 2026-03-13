@@ -14,4 +14,9 @@ return [
             'communication'        => 'Memo',
         ],
     ],
+
+    'notification' => [
+        'title' => 'Payment Created',
+        'body'  => 'Payment has been successfully created and reconciled.',
+    ],
 ];

@@ -142,7 +142,7 @@ class VendorPriceResource extends Resource
                                     ->default(0),
                                 Select::make('company_id')
                                     ->label(__('purchases::filament/admin/clusters/configurations/resources/vendor-price.form.sections.prices.fields.company'))
-                                    ->relationship('company', 'name')
+                                    ->relationship('company', 'name', fn ($q) => $q->forCurrentUser())
                                     ->searchable()
                                     ->default(Auth::user()->default_company_id)
                                     ->preload(),
@@ -246,7 +246,7 @@ class VendorPriceResource extends Resource
 
                 SelectFilter::make('company_id')
                     ->label(__('purchases::filament/admin/clusters/configurations/resources/vendor-price.table.filters.company'))
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q->forCurrentUser())
                     ->searchable()
                     ->preload()
                     ->multiple(),

@@ -50,6 +50,11 @@ class Currency extends Model
 
     public function getConversionRate($fromCurrency, $toCurrency, $company = null, $date = null)
     {
+        // Handle null currencies
+        if (!$fromCurrency || !$toCurrency) {
+            return 1;
+        }
+
         if ($fromCurrency->id === $toCurrency->id) {
             return 1;
         }
@@ -70,7 +75,7 @@ class Currency extends Model
             ->orderByDesc('name')
             ->first();
 
-        return $toRateRecord->rate ?? 1.0;
+        return $toRateRecord?->rate ?? 1.0;
     }
 
     public function round(float $amount): float

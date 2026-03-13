@@ -163,7 +163,7 @@ class PageResource extends Resource
                     ->label(__('website::filament/admin/resources/page.table.filters.is-published')),
                 SelectFilter::make('creator_id')
                     ->label(__('website::filament/admin/resources/page.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
             ])

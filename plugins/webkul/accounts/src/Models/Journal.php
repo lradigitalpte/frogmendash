@@ -159,6 +159,14 @@ class Journal extends Model implements Sortable
 
         static::addGlobalScope(new CompanyScope);
 
+        static::creating(function ($journal) {
+            $journal->creator_id = filament()->auth()->id();
+
+            if (empty($journal->company_id)) {
+                $journal->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
+
         static::saving(function ($journal) {
             $journal->computeSuspenseAccountId();
         });

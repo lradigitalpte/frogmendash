@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Enums\AccountType;
 use Webkul\Account\Enums\DisplayType;
+use Webkul\Account\Enums\JournalType;
 use Webkul\Account\Enums\MoveState;
 use Webkul\Account\Enums\MoveType;
 use Webkul\Account\Enums\PaymentState;
@@ -128,7 +129,131 @@ class AccountManager
 
         MoveConfirmed::dispatch($record);
 
+        if ($record->move_type === MoveType::OUT_INVOICE) {
+            $this->postCogsEntries($record);
+        }
+
         return $record;
+    }
+
+    /**
+     * Auto-post COGS (Cost of Goods Sold) journal entries when a customer invoice is confirmed.
+     * Debit: 500000 – Cost of Goods Sold
+     * Credit: 110100 – Stock Valuation
+     */
+    public function postCogsEntries(AccountMove $invoice): void
+    {
+        // Find COGS and Stock Valuation accounts
+        $cogsAccount   = Account::where('code', '500000')->withoutGlobalScopes()->first()
+            ?? Account::withoutGlobalScopes()->where('account_type', AccountType::EXPENSE_DIRECT_COST)->first();
+        $stockAccount  = Account::where('code', '110100')->withoutGlobalScopes()->first()
+            ?? Account::withoutGlobalScopes()->where('code', 'LIKE', '110%')
+                ->where('account_type', AccountType::ASSET_CURRENT)->first();
+
+        if (! $cogsAccount || ! $stockAccount) {
+            return;
+        }
+
+        // Use Miscellaneous Operations journal (type=general) for COGS entries
+        $journal = \Webkul\Account\Models\Journal::withoutGlobalScopes()
+            ->where('type', \Webkul\Account\Enums\JournalType::GENERAL)
+            ->where('company_id', $invoice->company_id)
+            ->first();
+
+        if (! $journal) {
+            return;
+        }
+
+        $productLines = $invoice->lines->filter(
+            fn ($line) => $line->display_type->value === 'product'
+                && $line->product_id
+                && $line->quantity > 0
+        );
+
+        if ($productLines->isEmpty()) {
+            return;
+        }
+
+        $cogsLines = [];
+
+        foreach ($productLines as $line) {
+            $product = \Webkul\Account\Models\Product::withoutGlobalScopes()->find($line->product_id);
+
+            if (! $product) {
+                continue;
+            }
+
+            // Only post COGS for storable (inventoried) goods with a cost set
+            if (empty($product->cost) || $product->cost <= 0) {
+                continue;
+            }
+
+            $cogsAmount = round($line->quantity * $product->cost, 4);
+
+            if ($cogsAmount <= 0) {
+                continue;
+            }
+
+            // Debit COGS account
+            $cogsLines[] = [
+                'account_id'   => $cogsAccount->id,
+                'name'         => 'COGS: ' . ($product->name ?? $line->name),
+                'debit'        => $cogsAmount,
+                'credit'       => 0,
+                'balance'      => $cogsAmount,
+                'quantity'     => $line->quantity,
+                'product_id'   => $line->product_id,
+                'partner_id'   => $invoice->partner_id,
+                'currency_id'  => $invoice->currency_id,
+                'display_type' => DisplayType::PRODUCT,
+                'parent_state' => MoveState::POSTED,
+                'date'         => $invoice->invoice_date ?? now()->toDateString(),
+                'company_id'   => $invoice->company_id,
+                'creator_id'   => Auth::id(),
+            ];
+
+            // Credit Stock Valuation account
+            $cogsLines[] = [
+                'account_id'   => $stockAccount->id,
+                'name'         => 'COGS: ' . ($product->name ?? $line->name),
+                'debit'        => 0,
+                'credit'       => $cogsAmount,
+                'balance'      => -$cogsAmount,
+                'quantity'     => $line->quantity,
+                'product_id'   => $line->product_id,
+                'partner_id'   => $invoice->partner_id,
+                'currency_id'  => $invoice->currency_id,
+                'display_type' => DisplayType::PRODUCT,
+                'parent_state' => MoveState::POSTED,
+                'date'         => $invoice->invoice_date ?? now()->toDateString(),
+                'company_id'   => $invoice->company_id,
+                'creator_id'   => Auth::id(),
+            ];
+        }
+
+        if (empty($cogsLines)) {
+            return;
+        }
+
+        $cogsMove = AccountMove::create([
+            'move_type'   => MoveType::ENTRY,
+            'state'       => MoveState::POSTED,
+            'journal_id'  => $journal->id,
+            'company_id'  => $invoice->company_id,
+            'currency_id' => $invoice->currency_id,
+            'partner_id'  => $invoice->partner_id,
+            'date'        => $invoice->invoice_date ?? now()->toDateString(),
+            'invoice_origin' => $invoice->name,
+            'ref'         => 'COGS: ' . $invoice->name,
+            'posted_before' => true,
+            'creator_id'  => Auth::id(),
+        ]);
+
+        foreach ($cogsLines as $lineData) {
+            MoveLine::create($lineData + ['move_id' => $cogsMove->id, 'journal_id' => $journal->id]);
+        }
+
+        $this->computeAccountMove($cogsMove)->save();
     }
 
     public function setAsCheckedMove(AccountMove $record): AccountMove
@@ -460,9 +585,9 @@ class AccountManager
         $computeCashRounding = function ($move, $totalAmountCurrency) {
             $difference = $move->invoiceCashRounding->computeDifference($move->currency, $totalAmountCurrency);
 
-            if ($move->currency->id === $move->company->currency->id) {
+            if ($move->currency && $move->company?->currency && $move->currency->id === $move->company->currency->id) {
                 $diffAmountCurrency = $diffBalance = $difference;
-            } else {
+            } else if ($move->currency && $move->company?->currency) {
                 $diffAmountCurrency = $difference;
 
                 $diffBalance = $move->currency->convert(
@@ -471,6 +596,9 @@ class AccountManager
                     $move->company,
                     $move->invoice_date ?? $move->date
                 );
+            } else {
+                // Fallback if currencies not available
+                $diffAmountCurrency = $diffBalance = $difference;
             }
 
             return [$diffBalance, $diffAmountCurrency];
@@ -575,7 +703,7 @@ class AccountManager
 
         [$diffBalance, $diffAmountCurrency] = $computeCashRounding($move, $totalAmountCurrency);
 
-        if ($move->currency->isZero($diffBalance) && $move->currency->isZero($diffAmountCurrency)) {
+        if ($move->currency && $move->currency->isZero($diffBalance) && $move->currency->isZero($diffAmountCurrency)) {
             if ($existingCashRoundingLine) {
                 $existingCashRoundingLine->delete();
             }
@@ -904,7 +1032,7 @@ class AccountManager
 
         if (
             $paymentRegister->payment_difference_handling == 'reconcile'
-            && ! $paymentRegister->currency->isZero($paymentRegister->payment_difference)
+            && $paymentRegister->currency && ! $paymentRegister->currency->isZero($paymentRegister->payment_difference)
         ) {
             if ($paymentRegister->writeoff_is_exchange_account) {
                 if ($paymentRegister->currency_id != $paymentRegister->company_currency_id) {
@@ -915,18 +1043,24 @@ class AccountManager
                     ? $paymentRegister->payment_difference
                     : -$paymentRegister->payment_difference;
 
+                // Convert write-off amount to company currency
+                $balance = $writeOffAmountCurrency;
+                if ($paymentRegister->currency && $paymentRegister->company?->currency) {
+                    $balance = $paymentRegister->currency->convert(
+                        $writeOffAmountCurrency,
+                        $paymentRegister->company->currency,
+                        $paymentRegister->company,
+                        $paymentRegister->payment_date
+                    );
+                }
+
                 $paymentVals['write_off_line_vals'][] = [
                     'name'            => 'Write Off',
                     'account_id'      => $paymentRegister->writeoff_account_id,
                     'partner_id'      => $paymentRegister->partner_id,
                     'currency_id'     => $paymentRegister->currency_id,
                     'amount_currency' => $writeOffAmountCurrency,
-                    'balance'         => $paymentRegister->currency->convert(
-                        $writeOffAmountCurrency,
-                        $paymentRegister->company->currency,
-                        $paymentRegister->company,
-                        $paymentRegister->payment_date
-                    ),
+                    'balance'         => $balance,
                 ];
             }
         }
@@ -1027,7 +1161,7 @@ class AccountManager
 
             $paymentAmountCurrency = abs($counterpartLines->sum('amount_currency'));
 
-            if (! $payment->currency->isZero($sourceBalanceConverted - $paymentAmountCurrency)) {
+            if ($payment->currency && ! $payment->currency->isZero($sourceBalanceConverted - $paymentAmountCurrency)) {
                 continue;
             }
 
@@ -1097,7 +1231,10 @@ class AccountManager
         foreach ($paymentsToProcess as $values) {
             $payment = $values['payment']->refresh();
 
-            $paymentLines = $payment->move->lines->filter(function ($line) {
+            $paymentLines = $payment->move->lines
+                ->load('account', 'currency', 'company.currency');
+
+            $paymentLines = $paymentLines->filter(function ($line) {
                 return $line->parent_state == MoveState::POSTED
                     && in_array($line->account->account_type, [AccountType::ASSET_RECEIVABLE, AccountType::LIABILITY_PAYABLE])
                     && ! $line->reconciled;
@@ -1120,6 +1257,67 @@ class AccountManager
         }
     }
 
+    public function reconcilePaymentWithInvoices(Payment $payment): void
+    {
+        $payment->refresh();
+
+        if (! $payment->move_id || ! $payment->move) {
+            return;
+        }
+
+        $payment->move->load('lines.account', 'lines.currency', 'lines.company', 'lines.company.currency');
+
+        // Get payment's receivable/payable lines that are unreconciled
+        $paymentLines = $payment->move->lines->filter(function ($line) {
+            return $line->parent_state == MoveState::POSTED
+                && in_array($line->account->account_type, [AccountType::ASSET_RECEIVABLE, AccountType::LIABILITY_PAYABLE])
+                && ! $line->reconciled;
+        });
+
+        if ($paymentLines->isEmpty()) {
+            return;
+        }
+
+        // Get the invoices linked to this payment
+        $invoices = $payment->invoices;
+
+        if ($invoices->isEmpty()) {
+            return;
+        }
+
+        foreach ($invoices as $invoice) {
+            $invoiceLines = $invoice->paymentTermLines()
+                ->where('reconciled', false)
+                ->where('parent_state', MoveState::POSTED->value)
+                ->get();
+
+            if ($invoiceLines->isEmpty()) {
+                continue;
+            }
+
+            $invoiceLines->load('account', 'currency', 'company', 'company.currency');
+
+            foreach ($paymentLines->pluck('account_id')->unique() as $accountId) {
+                $lines = $paymentLines->merge($invoiceLines)
+                    ->filter(fn ($line) => $line->account_id == $accountId
+                        && ! $line->reconciled
+                        && $line->parent_state == MoveState::POSTED
+                    );
+
+                if ($lines->count() >= 2) {
+                    $this->reconcile($lines);
+                }
+            }
+
+            $invoice->matchedPayments()->syncWithoutDetaching([$payment->id]);
+        }
+
+        // Update payment reconciliation status
+        $payment->refresh();
+        $payment->computeReconciliationStatus();
+        $payment->save();
+    }
+
     public function reconcile($lines)
     {
         $lines->load([
@@ -1128,6 +1326,7 @@ class AccountManager
             'currency',
             'move',
             'company',
+            'company.currency',
             'matchedDebits',
             'matchedCredits',
         ]);
@@ -1310,7 +1509,8 @@ class AccountManager
                     $debitLine->amount_residual -= $partialValues['amount'];
                     $debitLine->amount_residual_currency -= $partialValues['debit_amount_currency'];
 
-                    if ($debitLine->companyCurrency->isZero($debitLine->amount_residual)) {
+                    $debitCc = $debitLine->companyCurrency ?? $debitLine->company?->currency ?? $debitLine->currency;
+                    if ($debitCc ? $debitCc->isZero($debitLine->amount_residual) : $debitLine->amount_residual == 0.0) {
                         $debitLine->reconciled = true;
                     }
 
@@ -1319,7 +1519,8 @@ class AccountManager
                     $creditLine->amount_residual += $partialValues['amount'];
                     $creditLine->amount_residual_currency += $partialValues['credit_amount_currency'];
 
-                    if ($creditLine->companyCurrency->isZero($creditLine->amount_residual)) {
+                    $creditCc = $creditLine->companyCurrency ?? $creditLine->company?->currency ?? $creditLine->currency;
+                    if ($creditCc ? $creditCc->isZero($creditLine->amount_residual) : $creditLine->amount_residual == 0.0) {
                         $creditLine->reconciled = true;
                     }
 
@@ -1432,7 +1633,17 @@ class AccountManager
 
         $debitCurrency = $debitLine->currency;
         $creditCurrency = $creditLine->currency;
-        $companyCurrency = $debitLine->company->currency;
+        // Fall back to the line's own currency when the company has no currency configured
+        $companyCurrency = $debitLine->company?->currency ?? $debitLine->currency;
+
+        // If any currency is null, cannot perform reconciliation
+        if (!$debitCurrency || !$creditCurrency || !$companyCurrency) {
+            return [
+                'debit_values'     => $debitValues,
+                'credit_values'    => $creditValues,
+                'partial_values'   => [],
+            ];
+        }
 
         $remainingDebitAmount = $debitValues['amount_residual'];
         $remainingCreditAmount = $creditValues['amount_residual'];
@@ -1464,8 +1675,9 @@ class AccountManager
         $creditReconValues = $creditAvailableResiduals[$reconciliationCurrency->id] ?? null;
 
         $res = [
-            'debit_values'  => $debitValues,
-            'credit_values' => $creditValues,
+            'debit_values'     => $debitValues,
+            'credit_values'    => $creditValues,
+            'partial_values'   => [],
         ];
 
         if (! $debitReconValues) {
@@ -1569,32 +1781,34 @@ class AccountManager
     {
         $getConversionRate = function ($currency, $line): float {
             if (
-                $line->currency_id != $line->company->currency->id
-                && ! $line->company->currency->isZero($line->balance)
-                && ! $line->currency->isZero($line->amount_currency)
+                $line->currency_id != $line->company?->currency?->id
+                && $line->company?->currency && ! $line->company->currency->isZero($line->balance)
+                && $line->currency && ! $line->currency->isZero($line->amount_currency)
             ) {
                 return abs($line->amount_currency / $line->balance);
             }
 
-            return $currency->rate ?? 1.0;
+            return $currency?->rate ?? 1.0;
         };
 
         $line = $lineValues['line'];
         $remainingAmount = $lineValues['amount_residual'];
         $remainingAmountCurrency = $lineValues['amount_residual_currency'];
+        // Fall back to line's own currency when the company has no currency configured
+        $effectiveCompanyCurrency = $line->company?->currency ?? $line->currency;
 
         $availableResidualPerCurrency = [];
 
-        if (! $line->company->currency->isZero($remainingAmount)) {
-            $availableResidualPerCurrency[$line->company->currency->id] = [
+        if ($effectiveCompanyCurrency && ! $effectiveCompanyCurrency->isZero($remainingAmount)) {
+            $availableResidualPerCurrency[$effectiveCompanyCurrency->id] = [
                 'residual' => $remainingAmount,
                 'rate'     => 1.0,
             ];
         }
 
         if (
-            $line->currency->id != $line->company->currency->id
-            && ! $line->currency->isZero($remainingAmountCurrency)
+            $line->currency?->id != $effectiveCompanyCurrency?->id
+            && $line->currency && ! $line->currency->isZero($remainingAmountCurrency)
         ) {
             $rate = abs($remainingAmountCurrency / $remainingAmount);
 
@@ -1605,9 +1819,9 @@ class AccountManager
         }
 
         if (
-            $counterpartCurrency->id != $line->company->currency->id
-            && $line->currency->id == $line->company->currency->id
-            && ! $line->company->currency->isZero($remainingAmount)
+            $counterpartCurrency && $counterpartCurrency->id != $effectiveCompanyCurrency?->id
+            && $line->currency?->id == $effectiveCompanyCurrency?->id
+            && $effectiveCompanyCurrency && ! $effectiveCompanyCurrency->isZero($remainingAmount)
         ) {
             $rate = $getConversionRate($counterpartCurrency, $line);
 
@@ -1629,9 +1843,9 @@ class AccountManager
         $linesToFix = [];
 
         if ($debitFullyMatched && $debitValues) {
-            $companyCurrency = $debitValues['line']->company->currency;
+            $companyCurrency = $debitValues['line']->company?->currency ?? $debitValues['line']->currency;
 
-            if (! $companyCurrency->isZero($debitValues['amount_residual'])) {
+            if ($companyCurrency && ! $companyCurrency->isZero($debitValues['amount_residual'])) {
                 $linesToFix[] = [
                     'line'            => $debitValues['line'],
                     'amount_residual' => $debitValues['amount_residual'],
@@ -1640,9 +1854,9 @@ class AccountManager
         }
 
         if ($creditFullyMatched && $creditValues) {
-            $companyCurrency = $creditValues['line']->company->currency;
+            $companyCurrency = $creditValues['line']->company?->currency ?? $creditValues['line']->currency;
 
-            if (! $companyCurrency->isZero($creditValues['amount_residual'])) {
+            if ($companyCurrency && ! $companyCurrency->isZero($creditValues['amount_residual'])) {
                 $linesToFix[] = [
                     'line'            => $creditValues['line'],
                     'amount_residual' => $creditValues['amount_residual'],
@@ -1689,7 +1903,7 @@ class AccountManager
 
             $amountResidual = $item['amount_residual'];
 
-            if ($line->company->currency->isZero($amountResidual)) {
+            if ($line->company?->currency && $line->company->currency->isZero($amountResidual)) {
                 continue;
             }
 
@@ -1746,8 +1960,8 @@ class AccountManager
 
         foreach ($groups as $groupKey => $groupLines) {
             $groupFullyReconciled = $groupLines->every(
-                fn ($line) => $line->company->currency->isZero($line->amount_residual)
-                    && $line->currency->isZero($line->amount_residual_currency)
+                fn ($line) => ($line->company?->currency && $line->company->currency->isZero($line->amount_residual))
+                    && ($line->currency && $line->currency->isZero($line->amount_residual_currency))
             );
 
             if (! $groupFullyReconciled) {
@@ -2014,7 +2228,7 @@ class AccountManager
             throw new Exception(__('accounts::account-manager.post-action-validate.bank-archived'));
         }
 
-        if (float_compare($record->amount_total, 0, precisionRounding: $record->currency->rounding) < 0) {
+        if (float_compare($record->amount_total, 0, precisionRounding: $record->currency?->rounding ?? 2) < 0) {
             throw new Exception(__('accounts::account-manager.post-action-validate.negative-amount'));
         }
 
@@ -2087,10 +2301,15 @@ class AccountManager
             ! $account->reconcile
             && ! in_array($account->account_type, [AccountType::ASSET_CASH, AccountType::LIABILITY_CREDIT_CARD])
         ) {
-            throw new Exception(__(
-                'Account :account does not allow reconciliation. First change the configuration of this account to allow it.',
-                ['account' => $account->display_name]
-            ));
+            // Auto-enable reconciliation for receivable/payable accounts — they always require it
+            if (in_array($account->account_type, [AccountType::ASSET_RECEIVABLE, AccountType::LIABILITY_PAYABLE])) {
+                $account->update(['reconcile' => true]);
+            } else {
+                throw new Exception(__(
+                    'Account :account does not allow reconciliation. First change the configuration of this account to allow it.',
+                    ['account' => $account->display_name]
+                ));
+            }
         }
     }
 }

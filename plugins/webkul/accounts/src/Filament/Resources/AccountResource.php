@@ -113,7 +113,7 @@ class AccountResource extends Resource
                                     ->searchable(),
                                 Select::make('companies')
                                     ->label(__('accounts::filament/resources/account.form.sections.fields.companies'))
-                                    ->relationship('companies', 'name')
+                                    ->relationship('companies', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser())
                                     ->multiple()
                                     ->preload()
                                     ->searchable()

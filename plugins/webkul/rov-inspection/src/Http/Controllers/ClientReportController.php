@@ -24,9 +24,40 @@ class ClientReportController extends Controller
             'ip_address'  => $request->ip(),
         ]);
 
-        $project = $report->project()->withoutGlobalScopes()->first();
-        $points  = $project?->inspectionPoints()->with('media')->get() ?? collect();
+        // Eager-load the full hierarchy: project → structures → views → points (with media)
+        // and structure media (for the Inspection Data gallery)
+        $project = $report->project()->withoutGlobalScopes()
+            ->with([
+                'structures' => function ($q) {
+                    $q->orderBy('sort')->with([
+                        'views.points.media',
+                        'media' => fn ($q) => $q->whereNull('inspection_point_id'),
+                    ]);
+                },
+                'customer',
+            ])
+            ->first();
 
-        return view('rov-inspection::client.report', compact('report', 'project', 'points'));
+        // Build flat severity counts for the Conclusions tab
+        $severityCounts = ['major' => 0, 'moderate' => 0, 'minor' => 0];
+
+        if ($project) {
+            foreach ($project->structures as $structure) {
+                foreach ($structure->views as $view) {
+                    foreach ($view->points as $point) {
+                        $key = strtolower($point->severity ?? '');
+                        if (isset($severityCounts[$key])) {
+                            $severityCounts[$key]++;
+                        }
+                    }
+                }
+            }
+        }
+
+        return view('rov-inspection::client.report', [
+            'report'         => $report,
+            'project'        => $project,
+            'severityCounts' => $severityCounts,
+        ]);
     }
 }

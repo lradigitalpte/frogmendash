@@ -48,5 +48,13 @@ class BankStatement extends Model
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($bankStatement) {
+            $bankStatement->created_by = filament()->auth()->id();
+
+            if (empty($bankStatement->company_id)) {
+                $bankStatement->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 }

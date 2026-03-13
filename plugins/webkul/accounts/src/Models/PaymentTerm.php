@@ -169,6 +169,14 @@ class PaymentTerm extends Model implements Sortable
 
         static::addGlobalScope(new CompanyScope);
 
+        static::creating(function ($paymentTerm) {
+            $paymentTerm->creator_id = filament()->auth()->id();
+
+            if (empty($paymentTerm->company_id)) {
+                $paymentTerm->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
+
         static::created(function ($paymentTerm) {
             $paymentTerm->dueTerms()->create([
                 'value'           => DueTermValue::PERCENT->value,

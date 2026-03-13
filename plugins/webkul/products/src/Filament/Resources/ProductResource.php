@@ -199,6 +199,19 @@ class ProductResource extends Resource
                                 Hidden::make('uom_po_id')
                                     ->default(UOM::first()->id),
                             ]),
+
+                        Section::make('Warranty')
+                            ->schema([
+                                Select::make('warranty_policy_id')
+                                    ->label('Default warranty policy')
+                                    ->relationship('warrantyPolicy', 'name', fn ($query) => $query->where('is_active', true))
+                                    ->searchable()
+                                    ->preload()
+                                    ->nullable()
+                                    ->placeholder('No warranty')
+                                    ->helperText('Warranties are created automatically when this product is delivered.'),
+                            ])
+                            ->visible(fn () => class_exists(\Webkul\Warranty\Models\WarrantyPolicy::class)),
                     ])
                     ->columnSpan(['lg' => 1]),
             ])

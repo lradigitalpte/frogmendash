@@ -235,7 +235,7 @@ class QuotationResource extends Resource
                                 Fieldset::make(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.title'))
                                     ->schema([
                                         Select::make('user_id')
-                                            ->relationship('user', 'name')
+                                            ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                                             ->searchable()
                                             ->preload()
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.sales.fields.sales-person')),
@@ -280,7 +280,7 @@ class QuotationResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.additional-information.fields.company'))
-                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
                                             ->getOptionLabelFromRecordUsing(function ($record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                             })

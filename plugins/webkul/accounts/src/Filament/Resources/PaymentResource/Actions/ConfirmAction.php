@@ -34,6 +34,9 @@ class ConfirmAction extends Action
 
                 AccountFacade::confirmMove($record->move);
 
+                // Re-reconcile with linked invoices (handles reset-to-draft + re-confirm case)
+                AccountFacade::reconcilePaymentWithInvoices($record);
+
                 $livewire->refreshFormData(['state']);
             })
             ->hidden(fn (Payment $record) => $record->state != PaymentStatus::DRAFT);

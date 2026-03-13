@@ -660,16 +660,27 @@ class SaleManager
         foreach ($record->lines as $line) {
             $rule = $this->getPullRule($line);
 
+            // Skip lines without pull rules - routes are optional
             if (! $rule) {
-                throw new Exception("No pull rule has been found to replenish \"{$line->name}\".\nVerify the routes configuration on the product.");
+                continue;
             }
 
             $rulesToRun[$line->id] = $rule;
         }
 
+        // Only process if we found any rules
+        if (empty($rulesToRun)) {
+            return;
+        }
+
         $rules = [];
 
         foreach ($record->lines as $line) {
+            // Skip if this line doesn't have a rule
+            if (! isset($rulesToRun[$line->id])) {
+                continue;
+            }
+
             $rule = $rulesToRun[$line->id];
 
             $pulledMove = $this->runPullRule($rule, $line);

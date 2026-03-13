@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->homeUrl('/admin/plugins?tab=apps')
             ->login()
             ->registration(false) // Tenants created by admins: Companies + Users (assign role so they can access panel)
             ->favicon(asset('images/favicon.ico'))
@@ -88,7 +89,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('icon-projects'),
                 NavigationGroup::make()
                     ->label(__('admin.navigation.rov-inspection'))
-                    ->icon('heroicon-o-map'),
+                    ->icon('icon-rov-inspection'),
                 NavigationGroup::make()
                     ->label(__('admin.navigation.employee'))
                     ->icon('icon-employees'),

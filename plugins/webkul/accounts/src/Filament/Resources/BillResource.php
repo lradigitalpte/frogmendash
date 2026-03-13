@@ -300,7 +300,7 @@ class BillResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('accounts::filament/resources/bill.form.tabs.other-information.fieldset.accounting.fields.company'))
-                                            ->relationship('company', 'name')
+                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                             ->searchable()
                                             ->preload()
                                             ->live()
@@ -1189,7 +1189,7 @@ class BillResource extends Resource
 
         $priceUnit = static::calculateUnitPrice($get('uom_id'), $product);
 
-        if ($get('../../currency_id')) {
+        if ($get('../../currency_id') && Auth::user()->defaultCompany->currency) {
             $currency = Currency::find($get('../../currency_id'));
 
             $priceUnit = Auth::user()->defaultCompany->currency->convert(

@@ -52,5 +52,13 @@ class FiscalPositionTax extends Model
         parent::boot();
 
         static::addGlobalScope(new CompanyScope);
+
+        static::creating(function ($fiscalPositionTax) {
+            $fiscalPositionTax->creator_id = filament()->auth()->id();
+
+            if (empty($fiscalPositionTax->company_id)) {
+                $fiscalPositionTax->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
     }
 }

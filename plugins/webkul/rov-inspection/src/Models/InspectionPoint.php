@@ -14,27 +14,49 @@ class InspectionPoint extends Model
     protected $table = 'inspection_points';
 
     protected $fillable = [
+        'inspection_view_id',
+        'observation_id',
         'point_number',
         'label',
         'x_coordinate',
         'y_coordinate',
         'severity',
-        'defect_type',
+        'finding_type',
         'description',
+        'dive_location',
+        'depth_m',
+        'dimension_mm',
         'recommendations',
-        'rov_project_id',
     ];
 
     protected $casts = [
         'x_coordinate' => 'float',
         'y_coordinate' => 'float',
+        'depth_m'      => 'float',
+        'point_number' => 'integer',
     ];
 
-    public function project(): BelongsTo
+    protected static function booted(): void
     {
-        return $this->belongsTo(RovProject::class, 'rov_project_id');
+        static::creating(function (self $point) {
+            if (empty($point->observation_id) && $point->inspection_view_id) {
+                $count = static::where('inspection_view_id', $point->inspection_view_id)->count();
+                $point->observation_id = 'O'.($count + 1);
+            }
+
+            if (empty($point->point_number) && $point->inspection_view_id) {
+                $max = static::where('inspection_view_id', $point->inspection_view_id)->max('point_number');
+                $point->point_number = ($max ?? 0) + 1;
+            }
+        });
     }
 
+    public function inspectionView(): BelongsTo
+    {
+        return $this->belongsTo(InspectionView::class, 'inspection_view_id');
+    }
+
+    /** Media files linked to this specific pin (shown in the pin pop-up / inline player). */
     public function media(): HasMany
     {
         return $this->hasMany(InspectionMedia::class, 'inspection_point_id');

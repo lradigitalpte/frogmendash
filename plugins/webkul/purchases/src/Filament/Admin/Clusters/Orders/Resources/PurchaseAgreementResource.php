@@ -143,7 +143,7 @@ class PurchaseAgreementResource extends Resource
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),
                                 Select::make('user_id')
                                     ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.form.sections.general.fields.buyer'))
-                                    ->relationship('user', 'name')
+                                    ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                                     ->searchable()
                                     ->preload()
                                     ->disabled(fn ($record): bool => $record && $record?->state != RequisitionState::DRAFT),
@@ -203,7 +203,7 @@ class PurchaseAgreementResource extends Resource
                                     ->placeholder(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.form.sections.general.fields.reference-placeholder')),
                                 Select::make('company_id')
                                     ->label(__('purchases::filament/admin/clusters/orders/resources/purchase-agreement.form.sections.general.fields.company'))
-                                    ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                                    ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
                                     ->getOptionLabelFromRecordUsing(function ($record): string {
                                         return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                     })

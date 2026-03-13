@@ -166,21 +166,21 @@ class TaxManager
         foreach ($baseLines as $baseLineIndex => $baseLine) {
             $currency = $baseLine['currency'];
             $taxDetails = $baseLine['tax_details'];
-            $taxDetails['total_excluded_currency'] = $currency->round($taxDetails['raw_total_excluded_currency']);
-            $taxDetails['total_excluded'] = $company->currency->round($taxDetails['raw_total_excluded']);
+            $taxDetails['total_excluded_currency'] = $currency ? $currency->round($taxDetails['raw_total_excluded_currency']) : $taxDetails['raw_total_excluded_currency'];
+            $taxDetails['total_excluded'] = $company?->currency ? $company->currency->round($taxDetails['raw_total_excluded']) : $taxDetails['raw_total_excluded'];
             $taxDetails['delta_total_excluded_currency'] = 0.0;
             $taxDetails['delta_total_excluded'] = 0.0;
-            $taxDetails['total_included_currency'] = $currency->round($taxDetails['raw_total_included_currency']);
-            $taxDetails['total_included'] = $company->currency->round($taxDetails['raw_total_included']);
+            $taxDetails['total_included_currency'] = $currency ? $currency->round($taxDetails['raw_total_included_currency']) : $taxDetails['raw_total_included_currency'];
+            $taxDetails['total_included'] = $company?->currency ? $company->currency->round($taxDetails['raw_total_included']) : $taxDetails['raw_total_included'];
             $taxesData = $taxDetails['taxes_data'];
 
             foreach ($taxesData as $index => $taxData) {
                 $tax = $taxData['tax'];
 
-                $taxData['tax_amount_currency'] = $currency->round($taxData['raw_tax_amount_currency']);
-                $taxData['tax_amount'] = $company->currency->round($taxData['raw_tax_amount']);
-                $taxData['base_amount_currency'] = $currency->round($taxData['raw_base_amount_currency']);
-                $taxData['base_amount'] = $company->currency->round($taxData['raw_base_amount']);
+                $taxData['tax_amount_currency'] = $currency ? $currency->round($taxData['raw_tax_amount_currency']) : $taxData['raw_tax_amount_currency'];
+                $taxData['tax_amount'] = $company?->currency ? $company->currency->round($taxData['raw_tax_amount']) : $taxData['raw_tax_amount'];
+                $taxData['base_amount_currency'] = $currency ? $currency->round($taxData['raw_base_amount_currency']) : $taxData['raw_base_amount_currency'];
+                $taxData['base_amount'] = $company?->currency ? $company->currency->round($taxData['raw_base_amount']) : $taxData['raw_base_amount'];
 
                 $taxRoundingKey = json_encode([$tax->id ?? null, $currency->id, $baseLine['is_refund'], $taxData['is_reverse_charge']]);
                 $taxLineKey = json_encode([$tax->id ?? null, $currency->id, $baseLine['is_refund']]);
@@ -302,10 +302,10 @@ class TaxManager
 
             $currency = Currency::find($decoded[1]);
 
-            $taxAmounts['raw_tax_amount_currency'] = $currency->round($taxAmounts['raw_tax_amount_currency']);
-            $taxAmounts['raw_tax_amount'] = $company->currency->round($taxAmounts['raw_tax_amount']);
-            $taxAmounts['raw_base_amount_currency'] = $currency->round($taxAmounts['raw_base_amount_currency']);
-            $taxAmounts['raw_base_amount'] = $company->currency->round($taxAmounts['raw_base_amount']);
+            $taxAmounts['raw_tax_amount_currency'] = $currency ? $currency->round($taxAmounts['raw_tax_amount_currency']) : $taxAmounts['raw_tax_amount_currency'];
+            $taxAmounts['raw_tax_amount'] = $company?->currency ? $company->currency->round($taxAmounts['raw_tax_amount']) : $taxAmounts['raw_tax_amount'];
+            $taxAmounts['raw_base_amount_currency'] = $currency ? $currency->round($taxAmounts['raw_base_amount_currency']) : $taxAmounts['raw_base_amount_currency'];
+            $taxAmounts['raw_base_amount'] = $company?->currency ? $company->currency->round($taxAmounts['raw_base_amount']) : $taxAmounts['raw_base_amount'];
 
             $totalPerTax[$key] = $taxAmounts;
         }
@@ -315,8 +315,8 @@ class TaxManager
 
             $currency = Currency::find($decoded[0]);
 
-            $baseAmounts['raw_base_amount_currency'] = $currency->round($baseAmounts['raw_base_amount_currency']);
-            $baseAmounts['raw_base_amount'] = $company->currency->round($baseAmounts['raw_base_amount']);
+            $baseAmounts['raw_base_amount_currency'] = $currency ? $currency->round($baseAmounts['raw_base_amount_currency']) : $baseAmounts['raw_base_amount_currency'];
+            $baseAmounts['raw_base_amount'] = $company?->currency ? $company->currency->round($baseAmounts['raw_base_amount']) : $baseAmounts['raw_base_amount'];
 
             $totalPerBase[$key] = $baseAmounts;
         }
@@ -432,7 +432,7 @@ class TaxManager
             $deltaBaseAmountCurrency = $taxAmounts['raw_base_amount_currency'] - $taxAmounts['base_amount_currency'];
             $deltaBaseAmount = $taxAmounts['raw_base_amount'] - $taxAmounts['base_amount'];
 
-            if ($currency->isZero($deltaBaseAmountCurrency) && $company->currency->isZero($deltaBaseAmount)) {
+            if (($currency && $currency->isZero($deltaBaseAmountCurrency)) && ($company?->currency && $company->currency->isZero($deltaBaseAmount))) {
                 continue;
             }
 
@@ -444,7 +444,7 @@ class TaxManager
                 $baseLines[$baseLineIndex]['tax_details']['delta_total_excluded_currency'] += $deltaBaseAmountCurrency;
                 $baseLines[$baseLineIndex]['tax_details']['delta_total_excluded'] += $deltaBaseAmount;
 
-                $baseRoundingKey = json_encode([$currency->id, $baseLines[$baseLineIndex]['is_refund']]);
+                $baseRoundingKey = json_encode([$currency?->id, $baseLines[$baseLineIndex]['is_refund']]);
 
                 if (isset($totalPerBase[$baseRoundingKey])) {
                     $totalPerBase[$baseRoundingKey]['base_amount_currency'] += $deltaBaseAmountCurrency;
@@ -474,7 +474,7 @@ class TaxManager
             $deltaBaseAmountCurrency = $baseAmounts['raw_base_amount_currency'] - $baseAmounts['base_amount_currency'];
             $deltaBaseAmount = $baseAmounts['raw_base_amount'] - $baseAmounts['base_amount'];
 
-            if ($currency->isZero($deltaBaseAmountCurrency) && $company->currency->isZero($deltaBaseAmount)) {
+            if (($currency && $currency->isZero($deltaBaseAmountCurrency)) && ($company?->currency && $company->currency->isZero($deltaBaseAmount))) {
                 continue;
             }
 
@@ -551,7 +551,7 @@ class TaxManager
             'taxes_data'                  => [],
         ];
 
-        if ($defaultRoundingMethod === 'round_per_line') {
+        if ($defaultRoundingMethod === 'round_per_line' && $company->currency) {
             $taxDetails['raw_total_excluded'] = $company->currency->round($taxDetails['raw_total_excluded']);
             $taxDetails['raw_total_included'] = $company->currency->round($taxDetails['raw_total_included']);
         }
@@ -560,7 +560,7 @@ class TaxManager
             $taxAmount = $rate ? $taxData['tax_amount'] / $rate : 0.0;
             $baseAmount = $rate ? $taxData['base_amount'] / $rate : 0.0;
 
-            if ($defaultRoundingMethod === 'round_per_line') {
+            if ($defaultRoundingMethod === 'round_per_line' && $company->currency) {
                 $taxAmount = $company->currency->round($taxAmount);
                 $baseAmount = $company->currency->round($baseAmount);
             }
@@ -621,8 +621,8 @@ class TaxManager
 
                 $taxRepartitionData = [
                     'tax_rep'             => $taxRepartition,
-                    'tax_amount_currency' => $currency->round($taxAmountCurrency * $taxRepartition->factor * $taxRepartitionSign),
-                    'tax_amount'          => $currency->round($taxData['tax_amount'] * $taxRepartition->factor * $taxRepartitionSign),
+                    'tax_amount_currency' => $currency ? $currency->round($taxAmountCurrency * $taxRepartition->factor * $taxRepartitionSign) : ($taxAmountCurrency * $taxRepartition->factor * $taxRepartitionSign),
+                    'tax_amount'          => $currency ? $currency->round($taxData['tax_amount'] * $taxRepartition->factor * $taxRepartitionSign) : ($taxData['tax_amount'] * $taxRepartition->factor * $taxRepartitionSign),
                     'account'             => $taxRepartition->account ?? $baseLine['account'],
                 ];
 
@@ -652,7 +652,7 @@ class TaxManager
                     : ($taxData[$field] ?? 0.0);
 
                 $totalError = $taxAmount - $totalTaxRepAmounts[$field];
-                $numberOfErrors = round(abs($totalError / $fieldCurrency->rounding));
+                $numberOfErrors = $fieldCurrency ? round(abs($totalError / $fieldCurrency->rounding)) : 0;
 
                 if ($numberOfErrors == 0 || count($taxRepartitionsData) == 0) {
                     continue;
@@ -763,12 +763,12 @@ class TaxManager
             if ($currencyId) {
                 $currency = Currency::find($currencyId);
 
-                if (! $currency->isZero($v['amount_currency'])) {
+                if ($currency && ! $currency->isZero($v['amount_currency'])) {
                     return true;
                 }
             }
 
-            return ! $company->currency_id->isZero($v['balance']);
+            return $company?->currency && ! $company->currency->isZero($v['balance']);
         });
 
         $taxLinesToUpdate = [];
@@ -870,7 +870,7 @@ class TaxManager
         if ($roundingMethod === 'round_per_line') {
             $rawBase = float_round(
                 $rawBase,
-                precisionRounding: $precisionRounding ?: filament()->auth()->user()->company->currency->rounding
+                precisionRounding: $precisionRounding ?: filament()->auth()->user()?->company?->currency?->rounding ?? 2
             );
         }
 
@@ -1172,7 +1172,7 @@ class TaxManager
             if ($roundingMethod === 'round_per_line') {
                 $taxesData[$tax->id]['tax_amount'] = float_round(
                     $taxesData[$tax->id]['tax_amount'],
-                    precisionRounding: $precisionRounding ?? $tax->company->currency->rounding
+                    precisionRounding: $precisionRounding ?? $tax->company?->currency?->rounding ?? 2
                 );
             }
 

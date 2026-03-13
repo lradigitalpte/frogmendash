@@ -146,7 +146,7 @@ class MilestoneResource extends Resource
                     ->preload(),
                 SelectFilter::make('creator_id')
                     ->label(__('projects::filament/clusters/configurations/resources/milestone.table.filters.creator'))
-                    ->relationship('creator', 'name')
+                    ->relationship('creator', 'name', fn ($query) => $query->forCurrentTenant())
                     ->searchable()
                     ->preload(),
             ])

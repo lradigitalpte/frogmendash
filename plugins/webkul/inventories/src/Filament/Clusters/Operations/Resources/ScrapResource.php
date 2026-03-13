@@ -254,7 +254,7 @@ class ScrapResource extends Resource
                                             ->maxLength(255),
                                         Select::make('company_id')
                                             ->label(__('inventories::filament/clusters/operations/resources/scrap.form.sections.general.fields.company'))
-                                            ->relationship('company', 'name')
+                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                             ->required()
                                             ->searchable()
                                             ->preload()

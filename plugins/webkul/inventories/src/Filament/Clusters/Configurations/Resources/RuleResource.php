@@ -222,7 +222,7 @@ class RuleResource extends Resource
                                             ->hiddenOn([ManageRules::class, RulesRelationManager::class]),
                                         Select::make('company_id')
                                             ->label(__('inventories::filament/clusters/configurations/resources/rule.form.sections.settings.fieldsets.applicability.fields.company'))
-                                            ->relationship('company', 'name')
+                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                             ->searchable()
                                             ->preload(),
                                     ])

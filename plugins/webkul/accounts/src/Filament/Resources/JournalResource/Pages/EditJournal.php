@@ -9,11 +9,12 @@ use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Enums\CommunicationStandard;
 use Webkul\Account\Enums\CommunicationType;
 use Webkul\Account\Filament\Resources\JournalResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class EditJournal extends EditRecord
 {
-    use HasRecordNavigationTabs;
+    use HasRepeaterColumnManager, HasRecordNavigationTabs;
 
     protected static string $resource = JournalResource::class;
 

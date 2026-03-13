@@ -39,6 +39,16 @@ class InspectionReportResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
+    public static function getModelLabel(): string
+    {
+        return 'Inspection Report';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Inspection Reports';
+    }
+
     public static function getNavigationLabel(): string
     {
         return 'Reports';

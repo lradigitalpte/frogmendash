@@ -173,6 +173,10 @@ class Partner extends Authenticatable implements FilamentUser
 
         static::creating(function ($partner) {
             $partner->creator_id = filament()->auth()->id();
+
+            if (empty($partner->company_id)) {
+                $partner->company_id = filament()->auth()->user()?->default_company_id;
+            }
         });
     }
 

@@ -223,7 +223,7 @@ class JobPositionResource extends Resource
                     ->relationship('employmentType', 'name')
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.employment-type')),
                 SelectFilter::make('company')
-                    ->relationship('company', 'name')
+                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.company')),
                 TernaryFilter::make('is_active')
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.status')),

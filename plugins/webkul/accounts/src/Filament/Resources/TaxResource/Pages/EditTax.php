@@ -10,11 +10,12 @@ use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\QueryException;
 use Webkul\Account\Filament\Resources\TaxResource;
 use Webkul\Account\Models\Tax;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class EditTax extends EditRecord
 {
-    use HasRecordNavigationTabs;
+    use HasRepeaterColumnManager, HasRecordNavigationTabs;
 
     protected static string $resource = TaxResource::class;
 

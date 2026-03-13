@@ -317,7 +317,7 @@ class InvoiceResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.accounting.fields.company'))
-                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
                                             ->getOptionLabelFromRecordUsing(function ($record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                             })
@@ -1235,7 +1235,7 @@ class InvoiceResource extends Resource
 
         $priceUnit = static::calculateUnitPrice($get('uom_id'), $product);
 
-        if ($get('../../currency_id')) {
+        if ($get('../../currency_id') && Auth::user()->defaultCompany->currency) {
             $currency = Currency::find($get('../../currency_id'));
 
             $priceUnit = Auth::user()->defaultCompany->currency->convert(

@@ -7,9 +7,11 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Filament\Resources\TaxResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
 class CreateTax extends CreateRecord
 {
+    use HasRepeaterColumnManager;
     protected static string $resource = TaxResource::class;
 
     public function getSubNavigation(): array

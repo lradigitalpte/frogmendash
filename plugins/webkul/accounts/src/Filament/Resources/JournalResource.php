@@ -337,7 +337,7 @@ class JournalResource extends Resource
                                                 Select::make('company_id')
                                                     ->label(__('accounts::filament/resources/journal.form.general.fields.company'))
                                                     ->disabled()
-                                                    ->relationship('company', 'name')
+                                                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
                                                     ->default(Auth::user()->default_company_id)
                                                     ->required(),
                                             ]),

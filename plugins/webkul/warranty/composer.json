@@ -1,0 +1,30 @@
+{
+    "name": "webkul/warranty",
+    "description": "After-sales warranty tracking for products and ROV units",
+    "authors": [
+        {
+            "name": "Frogmen Technologies",
+            "email": "support@frogmen.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Webkul\\Warranty\\WarrantyServiceProvider"
+            ],
+            "aliases": {}
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Webkul\\Warranty\\": "src/",
+            "Webkul\\Warranty\\Database\\Factories\\": "database/factories/",
+            "Webkul\\Warranty\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Webkul\\Warranty\\Tests\\": "tests/"
+        }
+    }
+}

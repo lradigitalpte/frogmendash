@@ -22,6 +22,7 @@ class ViewPayment extends ViewRecord
             ChatterAction::make()
                 ->resource(static::$resource),
             BaseActions\ConfirmAction::make(),
+            BaseActions\MarkAsPaidAction::make(),
             BaseActions\ResetToDraftAction::make(),
             BaseActions\MarkAsSendAdnUnsentAction::make(),
             BaseActions\CancelAction::make(),

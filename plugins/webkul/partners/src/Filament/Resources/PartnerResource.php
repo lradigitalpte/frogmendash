@@ -182,7 +182,20 @@ class PartnerResource extends Resource
                                     ->label(__('partners::filament/resources/partner.form.sections.general.fields.email'))
                                     ->email()
                                     ->maxLength(255)
-                                    ->unique(ignoreRecord: true),
+                                    ->unique(
+                                        table: 'partners_partners',
+                                        column: 'email',
+                                        ignoreRecord: true,
+                                        modifyRuleUsing: function ($rule) {
+                                            $companyId = filament()->auth()->user()?->default_company_id;
+
+                                            if ($companyId) {
+                                                $rule->where('company_id', $companyId);
+                                            }
+
+                                            return $rule;
+                                        },
+                                    ),
                                 TextInput::make('website')
                                     ->label(__('partners::filament/resources/partner.form.sections.general.fields.website'))
                                     ->maxLength(255)
@@ -296,7 +309,7 @@ class PartnerResource extends Resource
                                     ->schema([
                                         Select::make('user_id')
                                             ->label(__('partners::filament/resources/partner.form.tabs.sales-purchase.fields.responsible'))
-                                            ->relationship('user', 'name')
+                                            ->relationship('user', 'name', fn ($query) => $query->forCurrentTenant())
                                             ->searchable()
                                             ->preload()
                                             ->hintIcon('heroicon-m-question-mark-circle', tooltip: __('partners::filament/resources/partner.form.tabs.sales-purchase.fields.responsible-hint-text')),

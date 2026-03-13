@@ -161,6 +161,14 @@ class Tax extends Model implements Sortable
 
         static::addGlobalScope(new CompanyScope);
 
+        static::creating(function ($tax) {
+            $tax->creator_id = filament()->auth()->id();
+
+            if (empty($tax->company_id)) {
+                $tax->company_id = filament()->auth()->user()?->default_company_id;
+            }
+        });
+
         static::saved(function (self $tax) {
             try {
                 if ($tax->invoiceRepartitionLines()->exists() && $tax->refundRepartitionLines()->exists()) {

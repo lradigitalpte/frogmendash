@@ -8,9 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Enums\CommunicationStandard;
 use Webkul\Account\Enums\CommunicationType;
 use Webkul\Account\Filament\Resources\JournalResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
 class CreateJournal extends CreateRecord
 {
+    use HasRepeaterColumnManager;
     protected static string $resource = JournalResource::class;
 
     protected function getRedirectUrl(): string

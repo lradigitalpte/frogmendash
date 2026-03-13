@@ -5,9 +5,11 @@ namespace Webkul\Support\Filament\Resources\CurrencyResource\Pages;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Webkul\Support\Filament\Resources\CurrencyResource;
+use Webkul\Support\Filament\Concerns\HasRepeaterColumnManager;
 
 class CreateCurrency extends CreateRecord
 {
+    use HasRepeaterColumnManager;
     protected static string $resource = CurrencyResource::class;
 
     public function getSubNavigation(): array

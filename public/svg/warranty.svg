@@ -1,0 +1,12 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" fill="white"/>
+<rect x="0.5" y="0.5" width="63" height="63" rx="12.5" stroke="#DCE0E5"/>
+<!-- Shield background (same blue as other modules) -->
+<path d="M32 12L21 16V30.5C21 38.5 25.8 45.8 32 48C38.2 45.8 43 38.5 43 30.5V16L32 12Z" fill="#0070F2"/>
+<!-- Check mark for valid warranty -->
+<path d="M28.25 32.75L25 29.5L23.25 31.25L28.25 36.25L40.75 23.75L39 22L28.25 32.75Z" fill="white"/>
+<!-- Circular badge indicating time / countdown -->
+<circle cx="44" cy="44" r="9" fill="#FDB421" stroke="white"/>
+<!-- Simple clock glyph inside badge -->
+<path d="M44 38.75C40.97 38.75 38.5 41.22 38.5 44.25C38.5 47.28 40.97 49.75 44 49.75C47.03 49.75 49.5 47.28 49.5 44.25C49.5 41.22 47.03 38.75 44 38.75ZM44.75 44.12C44.75 44.53 44.53 44.81 44.22 44.95L42.47 45.86C42.12 46.04 41.72 45.9 41.54 45.55C41.36 45.2 41.5 44.8 41.85 44.62L43.25 43.9V41.5C43.25 41.09 43.57 40.75 44 40.75C44.43 40.75 44.75 41.09 44.75 41.5V44.12Z" fill="white"/>
+</svg>
