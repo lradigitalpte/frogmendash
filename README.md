@@ -21,6 +21,7 @@
 3. [Installation & Configuration](#installation-and-configuration)
 4. [License](#license)
 5. [Security Vulnerabilities](#security-vulnerabilities)
+6. [Railway Deployment](#railway-deployment)
 
 ### Introduction
 
@@ -84,6 +85,65 @@ Installing and setting up Aureus ERP is quick and straightforward. Follow the st
    Once the above steps are finished, the installation process is complete, and you can start using Aureus ERP.
 
 That’s it! With just one command, your Aureus ERP environment is ready to use.
+
+## Railway Deployment
+
+This repository includes an idempotent Railway startup flow:
+
+- `scripts/railway-bootstrap.php`: runs migrations on every deploy, then runs `erp:install` only when no users exist.
+- `railway.json` and `Procfile`: start command runs bootstrap before serving Laravel.
+
+### 1. Create Services on Railway
+
+1. Create a **MySQL** service in Railway.
+2. Create your **App** service from GitHub and connect this repository.
+3. Ensure the app service has persistent deployments enabled (default in Railway).
+
+### 2. Configure App Environment Variables
+
+In the app service variables, set these:
+
+- `APP_ENV=production`
+- `APP_DEBUG=false`
+- `APP_URL=https://<your-app-domain>`
+- `APP_KEY=<generated-laravel-app-key>`
+- `DB_CONNECTION=mysql`
+- `DB_HOST=<MySQL private host from Railway>`
+- `DB_PORT=<MySQL port from Railway>`
+- `DB_DATABASE=<MySQL database name>`
+- `DB_USERNAME=<MySQL username>`
+- `DB_PASSWORD=<MySQL password>`
+- `APP_ADMIN_NAME=<first admin name>` (optional, defaults to `Admin`)
+- `APP_ADMIN_EMAIL=<first admin email>`
+- `APP_ADMIN_PASSWORD=<first admin password>`
+
+Notes:
+
+- Use the **private/internal** MySQL connection values from Railway (same project network).
+- If `APP_ADMIN_EMAIL` and `APP_ADMIN_PASSWORD` are missing on first deploy, bootstrap will fail intentionally.
+
+### 3. First Deploy vs Later Deploys
+
+- **First deploy (empty DB)**:
+  - runs `php artisan migrate --force`
+  - detects `users` table count = 0
+  - runs `php artisan erp:install --admin-*`
+- **Later deploys (existing DB)**:
+  - runs migrations only
+  - skips installer automatically
+
+This avoids accidental re-installation or data reset on normal redeployments.
+
+### 4. Database Questions (Quick Answers)
+
+- **Will deploy wipe my DB?**
+  - No, not with the current bootstrap. Installer runs only when user count is zero.
+- **Can I change DB credentials later?**
+  - Yes. Update Railway variables and redeploy.
+- **Do migrations still run each deploy?**
+  - Yes, safely, via `migrate --force`.
+- **Should I use SQLite on Railway?**
+  - No. Use Railway MySQL for production persistence.
 
 ## Plugins
 

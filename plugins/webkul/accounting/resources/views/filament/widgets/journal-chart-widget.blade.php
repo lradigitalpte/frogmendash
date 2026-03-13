@@ -21,29 +21,46 @@
         </x-filament::button>
     </x-slot>
 
-    <div class="flex flex-col gap-3 mb-4 items-end">
-        @foreach ($dashboard['stats'] as $key => $stat)
-            @if (($stat['value'] ?? 0) > 0 || ($stat['amount'] ?? null))
-                <div class="flex gap-6 items-center">
-                    <x-filament::link
-                        tag="a"
-                        href="{{ $stat['url'] ?? '#' }}"
-                        class="inline-flex items-center"
-                    >
-                        @if (($stat['value'] ?? 0) > 0)
-                            {{ $stat['value'] }}
-                        @endif
+    @php
+        $visibleStats = collect($dashboard['stats'])->filter(function ($stat) {
+            $value = (float) ($stat['value'] ?? 0);
+            $amount = (float) ($stat['amount'] ?? 0);
 
+            return $value > 0 || abs($amount) > 0;
+        });
+    @endphp
+
+    @if ($visibleStats->isNotEmpty())
+        <div class="mb-4 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            @foreach ($visibleStats as $stat)
+                <x-filament::link
+                    tag="a"
+                    href="{{ $stat['url'] ?? '#' }}"
+                    class="rounded-lg border border-gray-200/30 bg-gray-50/40 p-3 dark:border-gray-700/40 dark:bg-gray-900/30"
+                >
+                    <div class="text-xs text-gray-500 dark:text-gray-400">
                         {{ $stat['label'] ?? '' }}
-                    </x-filament::link>
+                    </div>
 
-                    <span>
-                        {{ $stat['formatted_amount'] }}
-                    </span>
-                </div>
-            @endif
-        @endforeach
-    </div>
+                    <div class="mt-1 flex items-baseline justify-between gap-2">
+                        <div class="text-lg font-semibold leading-none text-gray-900 dark:text-gray-100">
+                            {{ $stat['value'] ?? 0 }}
+                        </div>
+
+                        @if (isset($stat['formatted_amount']))
+                            <div class="text-sm text-gray-600 dark:text-gray-300">
+                                {{ $stat['formatted_amount'] }}
+                            </div>
+                        @endif
+                    </div>
+                </x-filament::link>
+            @endforeach
+        </div>
+    @else
+        <div class="mb-4 rounded-lg border border-dashed border-gray-300/40 p-3 text-xs text-gray-500 dark:border-gray-700/50 dark:text-gray-400">
+            No summary metrics yet for this journal.
+        </div>
+    @endif
 
     {{-- Chart --}}
     <div class="mt-4" style="height: 300px; position: relative;">
@@ -62,7 +79,7 @@
 <script>
     setTimeout(() => {
         const ctx = document.getElementById('journal-chart-{{ $journal->id }}');
-        if (ctx && !ctx.chart) {
+        if (ctx && !ctx.chart && window.Chart) {
             const chartData = @js($this->getChartData());
             
             ctx.chart = new Chart(ctx, {
@@ -70,18 +87,28 @@
                 data: chartData,
                 options: {
                     responsive: true,
-                    maintainAspectRatio: true,
-                    aspectRatio: 2,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false
+                            display: true,
+                            position: 'bottom'
                         }
                     },
                     scales: {
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                precision: 0
+                                precision: 0,
+                                callback: function(value) {
+                                    if (chartData.valueMode === 'count') {
+                                        return value;
+                                    }
+
+                                    return new Intl.NumberFormat(undefined, {
+                                        notation: 'compact',
+                                        maximumFractionDigits: 1,
+                                    }).format(value);
+                                }
                             }
                         }
                     }

@@ -256,6 +256,8 @@ class JournalChartWidget extends Component
 
         $late = array_fill(0, 6, 0);
         $onTime = array_fill(0, 6, 0);
+        $lateCount = array_fill(0, 6, 0);
+        $onTimeCount = array_fill(0, 6, 0);
 
         $moves = Move::query()
             ->where('journal_id', $this->journal->id)
@@ -271,30 +273,60 @@ class JournalChartWidget extends Component
 
             if ($due->lt(today())) {
                 $late[0] += $residual;
+                $lateCount[0]++;
             } elseif ($due->between($prevWeekStart, $prevWeekEnd)) {
-                $isLate ? $late[1] += $residual : $onTime[1] += $residual;
+                if ($isLate) {
+                    $late[1] += $residual;
+                    $lateCount[1]++;
+                } else {
+                    $onTime[1] += $residual;
+                    $onTimeCount[1]++;
+                }
             } elseif ($due->between($thisWeekStart, $thisWeekEnd)) {
-                $isLate ? $late[2] += $residual : $onTime[2] += $residual;
+                if ($isLate) {
+                    $late[2] += $residual;
+                    $lateCount[2]++;
+                } else {
+                    $onTime[2] += $residual;
+                    $onTimeCount[2]++;
+                }
             } elseif ($due->between($nextWeekStart, $nextWeekEnd)) {
-                $isLate ? $late[3] += $residual : $onTime[3] += $residual;
+                if ($isLate) {
+                    $late[3] += $residual;
+                    $lateCount[3]++;
+                } else {
+                    $onTime[3] += $residual;
+                    $onTimeCount[3]++;
+                }
             } elseif ($due->between($futureWeekStart, $futureWeekEnd)) {
-                $isLate ? $late[4] += $residual : $onTime[4] += $residual;
+                if ($isLate) {
+                    $late[4] += $residual;
+                    $lateCount[4]++;
+                } else {
+                    $onTime[4] += $residual;
+                    $onTimeCount[4]++;
+                }
             } else {
                 $onTime[5] += $residual;
+                $onTimeCount[5]++;
             }
         }
+
+        $amountTotal = array_sum($late) + array_sum($onTime);
+        $showCountFallback = $amountTotal <= 0;
 
         return [
             'type'     => 'bar',
             'labels'   => $labels,
+            'valueMode' => $showCountFallback ? 'count' : 'amount',
             'datasets' => [
                 [
-                    'label'           => 'Overdue',
-                    'data'            => $late,
+                    'label'           => $showCountFallback ? 'Overdue (count)' : 'Overdue',
+                    'data'            => $showCountFallback ? $lateCount : $late,
                     'backgroundColor' => '#ef4444',
                 ], [
-                    'label'           => 'On Time',
-                    'data'            => $onTime,
+                    'label'           => $showCountFallback ? 'On Time (count)' : 'On Time',
+                    'data'            => $showCountFallback ? $onTimeCount : $onTime,
                     'backgroundColor' => '#22c55e',
                 ],
             ],

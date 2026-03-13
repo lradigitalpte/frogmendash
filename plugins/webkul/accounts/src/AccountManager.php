@@ -164,6 +164,16 @@ class AccountManager
             return;
         }
 
+        // Idempotency guard: skip if we already posted COGS for this invoice
+        $alreadyPosted = AccountMove::withoutGlobalScopes()
+            ->where('move_type', MoveType::ENTRY)
+            ->where('invoice_origin', $invoice->name)
+            ->exists();
+
+        if ($alreadyPosted) {
+            return;
+        }
+
         $productLines = $invoice->lines->filter(
             fn ($line) => $line->display_type->value === 'product'
                 && $line->product_id

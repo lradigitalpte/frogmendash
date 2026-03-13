@@ -22,8 +22,9 @@ class WarrantyServiceProvider extends PackageServiceProvider
                 '2026_03_08_100003_add_warranty_policy_id_to_products_table',
             ])
             ->runsMigrations()
+            ->hasSeeder('Webkul\\Warranty\\Database\\Seeders\\DatabaseSeeder')
             ->hasInstallCommand(function (InstallCommand $command) {
-                $command->runsMigrations();
+                $command->runsMigrations()->runsSeeders();
             })
             ->hasUninstallCommand(function (UninstallCommand $command) {})
             ->icon('warranty');

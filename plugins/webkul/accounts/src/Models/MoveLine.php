@@ -408,6 +408,8 @@ class MoveLine extends Model implements Sortable
                 if ($this->product) {
                     $accounts = $this->product->getAccountsFromFiscalPosition($this->move->fiscalPosition);
 
+                    $account = null;
+
                     if ($this->move->isSaleDocument(true)) {
                         $account = $accounts['income'] ?? $this->account;
                     } elseif ($this->move->isPurchaseDocument(true)) {

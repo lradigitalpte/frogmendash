@@ -37,19 +37,25 @@
             </x-filament::tabs.item>
 
             <x-filament::tabs.item
-                :active="$activeTab === 'miscellaneous'"
-                wire:click="$set('activeTab', 'miscellaneous')"
+                :active="$activeTab === 'general'"
+                wire:click="$set('activeTab', 'general')"
             >
                 {{ __('accounting::filament/widgets/journal-charts-widget.tabs.miscellaneous') }}
             </x-filament::tabs.item>
         </x-filament::tabs>
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            @foreach ($this->getJournals() as $journal)
+            @forelse ($this->getJournals() as $journal)
                 @livewire('accounting::journal-chart', [
                     'journal' => $journal,
                 ], key('journal-chart-'.$journal->id))
-            @endforeach
+            @empty
+                <x-filament::section class="md:col-span-2 xl:col-span-3">
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        No journals are available for this filter.
+                    </div>
+                </x-filament::section>
+            @endforelse
         </div>
     </div>
 </x-filament-widgets::widget>

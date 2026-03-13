@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
+use Webkul\Account\TenantProvisioner;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Filament\Resources\CompanyResource;
 use Webkul\Security\Models\Scopes\CompanyScope;
@@ -126,6 +127,8 @@ class ListCompanies extends ListRecords
                     // Set partner's company_id now that we have the company id; then create user's partner
                     $companyPartner->updateQuietly(['company_id' => $company->id]);
                     $user->save();
+
+                    TenantProvisioner::provisionAll($company->fresh());
 
                     Notification::make()
                         ->success()

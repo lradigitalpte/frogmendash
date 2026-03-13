@@ -40,6 +40,10 @@ trait HasLogActivity
     {
         $user = filament()->auth()->user();
 
+        if (! $user) {
+            return null;
+        }
+
         try {
             $changes = $this->determineChanges($event);
 

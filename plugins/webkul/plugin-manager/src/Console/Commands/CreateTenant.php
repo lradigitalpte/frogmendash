@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Webkul\Account\TenantProvisioner;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Support\Models\Company;
@@ -110,6 +111,8 @@ class CreateTenant extends Command
 
         $companyPartner->updateQuietly(['company_id' => $company->id]);
         $user->save();
+
+        TenantProvisioner::provisionAll($company->fresh());
 
         $this->info('Tenant created successfully.');
         $this->line("  Company: {$companyName}");
