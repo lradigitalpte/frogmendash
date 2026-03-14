@@ -91,7 +91,7 @@ That’s it! With just one command, your Aureus ERP environment is ready to use.
 This repository includes an idempotent Railway startup flow:
 
 - `scripts/railway-bootstrap.php`: runs migrations on every deploy, then runs `erp:install` only when no users exist.
-- `railway.json` and `Procfile`: start command runs bootstrap before serving Laravel.
+- `railway.json`: uses Dockerfile build (Nginx + PHP-FPM) for production performance.
 
 ### 1. Create Services on Railway
 
@@ -106,6 +106,7 @@ In the app service variables, set these:
 - `APP_ENV=production`
 - `APP_DEBUG=false`
 - `APP_URL=https://<your-app-domain>`
+- `ASSET_URL=https://<your-app-domain>`
 - `APP_KEY=<generated-laravel-app-key>`
 - `DB_CONNECTION=mysql`
 - `DB_HOST=<MySQL private host from Railway>`
@@ -113,6 +114,9 @@ In the app service variables, set these:
 - `DB_DATABASE=<MySQL database name>`
 - `DB_USERNAME=<MySQL username>`
 - `DB_PASSWORD=<MySQL password>`
+- `SESSION_DRIVER=database`
+- `CACHE_STORE=database`
+- `SESSION_SECURE_COOKIE=true`
 - `APP_ADMIN_NAME=<first admin name>` (optional, defaults to `Admin`)
 - `APP_ADMIN_EMAIL=<first admin email>`
 - `APP_ADMIN_PASSWORD=<first admin password>`
@@ -144,6 +148,19 @@ This avoids accidental re-installation or data reset on normal redeployments.
   - Yes, safely, via `migrate --force`.
 - **Should I use SQLite on Railway?**
   - No. Use Railway MySQL for production persistence.
+
+### 5. Slow UI Clicks (Modals/View Actions) but Fast Requests
+
+If requests are fast in logs but UI actions still feel slow, the bottleneck is usually browser-side hydration or stale frontend/session state.
+
+Checklist:
+
+- Ensure `APP_DEBUG=false` in production.
+- Ensure `SESSION_DRIVER=database` and `CACHE_STORE=database`.
+- Hard refresh browser (`Ctrl+F5`) after deploy.
+- Clear site cookies once after switching runtime/session strategy.
+- Re-login to refresh CSRF/session state for Livewire actions.
+- Run `php artisan optimize:clear` once after major runtime changes, then redeploy.
 
 ## Plugins
 

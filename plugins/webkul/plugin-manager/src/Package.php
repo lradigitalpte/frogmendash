@@ -145,10 +145,15 @@ class Package extends BasePackage
         $composerPath = $this->basePath('../composer.json');
         $composerData = json_decode(file_get_contents($composerPath), true);
 
+        $author = $composerData['authors'][0]['name'] ?? null;
+        if ($author === 'Aureus ERP') {
+            $author = 'Frogmen';
+        }
+
         $this->plugin = Plugin::updateOrCreate([
             'name' => $this->name,
         ], [
-            'author'         => $composerData['authors'][0]['name'] ?? null,
+            'author'         => $author,
             'summary'        => $composerData['description'] ?? null,
             'description'    => $composerData['description'] ?? null,
             'latest_version' => $this->version ?? null,

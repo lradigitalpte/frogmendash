@@ -5,6 +5,7 @@ namespace Webkul\RovInspection;
 use Filament\Contracts\Plugin;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Webkul\PluginManager\Package;
 use Webkul\RovInspection\Filament\Pages\MapAnnotationPage;
 use Webkul\RovInspection\Filament\Pages\RovInspectionPage;
 use Webkul\RovInspection\Filament\Resources\InspectionReportResource;
@@ -24,6 +25,10 @@ class RovInspectionPlugin implements Plugin
 
     public function register(Panel $panel): void
     {
+        if (! Package::isPluginInstalled($this->getId())) {
+            return;
+        }
+
         $panel->when($panel->getId() === 'admin', function (Panel $panel): void {
             $panel
                 ->pages([

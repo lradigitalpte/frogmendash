@@ -18,10 +18,15 @@ class PluginSeeder extends Seeder
                 $composerData = json_decode(file_get_contents($composerPath), true);
             }
 
+            $author = $composerData['authors'][0]['name'] ?? 'Frogmen';
+            if ($author === 'Aureus ERP') {
+                $author = 'Frogmen';
+            }
+
             Plugin::updateOrCreate(
                 ['name' => $pluginName],
                 [
-                    'author'         => $composerData['authors'][0]['name'] ?? 'Webkul',
+                    'author'         => $author,
                     'summary'        => $composerData['description'] ?? $package->description ?? '',
                     'description'    => $composerData['description'] ?? $package->description ?? '',
                     'latest_version' => $composerData['version'] ?? '1.0.0',

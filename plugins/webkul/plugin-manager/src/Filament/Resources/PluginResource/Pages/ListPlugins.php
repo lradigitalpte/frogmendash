@@ -92,10 +92,15 @@ class ListPlugins extends ListRecords
                         ? json_decode(file_get_contents($composerPath), true) ?? []
                         : [];
 
+                    $author = data_get($composer, 'authors.0.name', 'Frogmen');
+                    if ($author === 'Aureus ERP') {
+                        $author = 'Frogmen';
+                    }
+
                     $plugin = Plugin::updateOrCreate(
                         ['name' => $name],
                         [
-                            'author'         => data_get($composer, 'authors.0.name', 'Webkul'),
+                            'author'         => $author,
                             'summary'        => data_get($composer, 'description', $package->description ?? ''),
                             'description'    => data_get($composer, 'description', $package->description ?? ''),
                             'latest_version' => data_get($composer, 'version', '1.0.0'),

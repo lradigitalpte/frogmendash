@@ -25,10 +25,10 @@ class CustomerPanelProvider extends PanelProvider
             ->homeUrl(url('/'))
             ->authPasswordBroker('customers')
             ->profile(isSimple: false)
-            ->favicon(asset('images/favicon.ico'))
+            ->favicon(asset('images/logo.png'))
             ->brandLogo(asset('images/logo.png'))
             ->darkMode(false)
-            ->brandLogoHeight('2rem')
+            ->brandLogoHeight('3.5rem')
             ->colors([
                 'primary' => Color::Blue,
             ])
