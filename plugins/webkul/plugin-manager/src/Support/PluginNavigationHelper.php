@@ -3,6 +3,7 @@
 namespace Webkul\PluginManager\Support;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Webkul\PluginManager\Models\CompanyPlugin;
 
 class PluginNavigationHelper
@@ -12,6 +13,14 @@ class PluginNavigationHelper
         'webkul.support',
         'webkul.plugin-manager',
         'webkul.security',
+    ];
+
+    /** Navigation labels/keys that should never be hidden by plugin filtering. */
+    protected static array $alwaysShowGroups = [
+        'dashboard',
+        'admin.navigation.dashboard',
+        'home',
+        'admin.navigation.home',
     ];
 
     /**
@@ -30,6 +39,10 @@ class PluginNavigationHelper
 
         return $navigation->filter(function ($group) {
             $label = $group->getLabel();
+            if (self::isAlwaysShowGroup($label)) {
+                return true;
+            }
+
             $pluginName = self::pluginNameForNavigationGroup($label);
             if ($pluginName === null) {
                 return true;
@@ -68,14 +81,52 @@ class PluginNavigationHelper
         if (! $group) {
             return null;
         }
+
+        $normalizedGroup = self::normalizeGroupLabel($group);
         $config = config('plugin-navigation-groups', []);
+
         foreach ($config as $pluginName => $groups) {
-            if (in_array($group, (array) $groups, true)) {
-                return $pluginName;
+            foreach ((array) $groups as $mappedGroup) {
+                if (! is_string($mappedGroup) || $mappedGroup === '') {
+                    continue;
+                }
+
+                if (
+                    strcasecmp($group, $mappedGroup) === 0
+                    || self::normalizeGroupLabel($mappedGroup) === $normalizedGroup
+                ) {
+                    return $pluginName;
+                }
             }
         }
 
         return null;
+    }
+
+    protected static function isAlwaysShowGroup(?string $group): bool
+    {
+        if (! $group) {
+            return true;
+        }
+
+        $normalized = self::normalizeGroupLabel($group);
+
+        foreach (self::$alwaysShowGroups as $allowedGroup) {
+            if ($normalized === self::normalizeGroupLabel($allowedGroup)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected static function normalizeGroupLabel(string $value): string
+    {
+        return Str::of($value)
+            ->lower()
+            ->replace(['_', '-', '.'], ' ')
+            ->squish()
+            ->value();
     }
 
     /**

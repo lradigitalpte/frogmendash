@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 use Throwable;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\CompanyPlugin;
@@ -177,6 +178,15 @@ class PluginResource extends Resource
                             ]);
 
                             $adminRole->syncPermissions(Permission::all());
+
+                            $user = \Illuminate\Support\Facades\Auth::user();
+                            if ($user) {
+                                foreach ($user->roles as $role) {
+                                    $role->syncPermissions(Permission::all());
+                                }
+                            }
+
+                            app(PermissionRegistrar::class)->forgetCachedPermissions();
                         } catch (Throwable $e) {
                             report($e);
                         }

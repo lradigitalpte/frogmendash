@@ -5,6 +5,7 @@ namespace Webkul\PluginManager\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Webkul\Support\Models\Company;
 
 class CompanyPlugin extends Model
@@ -35,14 +36,46 @@ class CompanyPlugin extends Model
             return false;
         }
 
-        $names = [$pluginName];
-        if (str_contains($pluginName, '.')) {
-            $names[] = \Illuminate\Support\Str::afterLast($pluginName, '.');
-        }
+        $normalized = static::normalizePluginNameVariants($pluginName);
+        $names = array_values(array_unique(array_filter($normalized)));
 
         return self::where('company_id', $companyId)
             ->whereIn('plugin_name', $names)
             ->exists();
+    }
+
+    /**
+     * Build accepted plugin-name variants to support legacy or mixed naming formats.
+     *
+     * @return array<int, string>
+     */
+    protected static function normalizePluginNameVariants(string $pluginName): array
+    {
+        $name = trim($pluginName);
+
+        $variants = [
+            $name,
+            Str::lower($name),
+            Str::replace('/', '.', Str::lower($name)),
+            Str::replace('-', '.', Str::lower($name)),
+        ];
+
+        $dotTail = Str::afterLast($name, '.');
+        $slashTail = Str::afterLast($name, '/');
+
+        foreach ([$dotTail, $slashTail] as $tail) {
+            if ($tail === $name || $tail === '') {
+                continue;
+            }
+
+            $variants[] = $tail;
+            $variants[] = Str::lower($tail);
+            $variants[] = Str::kebab($tail);
+            $variants[] = Str::snake($tail, '-');
+            $variants[] = Str::singular(Str::kebab($tail));
+        }
+
+        return $variants;
     }
 
     /**
