@@ -233,14 +233,20 @@ class InstallERP extends Command
         if (! $defaultCompany) {
             $this->info('🏢 Creating default company...');
 
-            // Get or create default currency (USD)
-            $currency = Currency::firstOrCreate(
-                ['code' => 'USD'],
-                [
+            // Get an existing currency from seeded data, or create a minimal fallback.
+            $currency = Currency::query()->first();
+
+            if (! $currency) {
+                $currency = Currency::create([
                     'name' => 'US Dollar',
                     'symbol' => '$',
-                ]
-            );
+                    'iso_numeric' => 840,
+                    'decimal_places' => 2,
+                    'full_name' => 'US Dollar',
+                    'rounding' => 0.01,
+                    'active' => true,
+                ]);
+            }
 
             $defaultCompany = Company::create([
                 'name'                => 'Default Company',
