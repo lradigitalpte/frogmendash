@@ -32,9 +32,13 @@ return new class extends Migration
                 ->constrained('inventories_operations')
                 ->nullOnDelete();
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
             $table->foreignId('uom_id')
                 ->constrained('unit_of_measures')

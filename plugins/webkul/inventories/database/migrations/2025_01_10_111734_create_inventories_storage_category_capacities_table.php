@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->decimal('qty', 15, 4)->default(0);
 
-            $table->foreignId('product_id')
-                ->nullable()
-                ->constrained('products_products')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->nullable()
+                    ->constrained('products_products')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id')->nullable();
+            }
 
             $table->unsignedBigInteger('storage_category_id');
             $table->foreign('storage_category_id', 'fk_storage_category')

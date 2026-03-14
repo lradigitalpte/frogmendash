@@ -39,9 +39,13 @@ return new class extends Migration
                 ->constrained('inventories_operations')
                 ->nullOnDelete();
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->restrictOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
             $table->foreignId('uom_id')
                 ->constrained('unit_of_measures')
@@ -104,10 +108,14 @@ return new class extends Migration
             //     ->constrained('inventories_warehouse_order_points')
             //     ->restrictOnDelete();
 
-            $table->foreignId('product_packaging_id')
-                ->nullable()
-                ->constrained('products_packagings')
-                ->nullOnDelete();
+            if (Schema::hasTable('products_packagings')) {
+                $table->foreignId('product_packaging_id')
+                    ->nullable()
+                    ->constrained('products_packagings')
+                    ->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_packaging_id')->nullable();
+            }
 
             $table->foreignId('company_id')
                 ->constrained('companies')

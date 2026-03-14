@@ -20,9 +20,13 @@ return new class extends Migration
             $table->boolean('should_replenish')->default(0);
             $table->date('closed_at')->nullable();
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->restrictOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
             $table->foreignId('uom_id')
                 ->constrained('unit_of_measures')

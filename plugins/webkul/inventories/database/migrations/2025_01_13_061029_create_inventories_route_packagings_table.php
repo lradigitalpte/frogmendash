@@ -16,9 +16,13 @@ return new class extends Migration
                 ->constrained('inventories_routes')
                 ->cascadeOnDelete();
 
-            $table->foreignId('packaging_id')
-                ->constrained('products_packagings')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('products_packagings')) {
+                $table->foreignId('packaging_id')
+                    ->constrained('products_packagings')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('packaging_id');
+            }
         });
     }
 

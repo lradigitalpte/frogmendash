@@ -22,9 +22,13 @@ return new class extends Migration
             $table->date('scheduled_at')->nullable();
             $table->datetime('incoming_at');
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->restrictOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
             $table->foreignId('location_id')
                 ->constrained('inventories_locations')

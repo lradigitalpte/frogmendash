@@ -12,9 +12,13 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('inventories_category_routes', function (Blueprint $table) {
-            $table->foreignId('category_id')
-                ->constrained('products_categories')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('products_categories')) {
+                $table->foreignId('category_id')
+                    ->constrained('products_categories')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('category_id');
+            }
 
             $table->foreignId('route_id')
                 ->constrained('inventories_routes')

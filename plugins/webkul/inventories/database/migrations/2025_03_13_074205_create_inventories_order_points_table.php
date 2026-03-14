@@ -21,14 +21,22 @@ return new class extends Migration
             $table->decimal('qty_multiple', 15, 4)->default(0);
             $table->decimal('qty_to_order_manual', 15, 4)->nullable()->default(0);
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
-            $table->foreignId('product_category_id')
-                ->nullable()
-                ->constrained('products_categories')
-                ->nullOnDelete();
+            if (Schema::hasTable('products_categories')) {
+                $table->foreignId('product_category_id')
+                    ->nullable()
+                    ->constrained('products_categories')
+                    ->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_category_id')->nullable();
+            }
 
             $table->foreignId('warehouse_id')
                 ->constrained('inventories_warehouses')

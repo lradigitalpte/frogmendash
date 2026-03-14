@@ -23,9 +23,13 @@ return new class extends Migration
             $table->datetime('removal_date')->nullable();
             $table->datetime('alert_date')->nullable();
 
-            $table->foreignId('product_id')
-                ->constrained('products_products')
-                ->restrictOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')
+                    ->constrained('products_products')
+                    ->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id');
+            }
 
             $table->foreignId('uom_id')
                 ->nullable()
