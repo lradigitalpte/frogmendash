@@ -70,7 +70,42 @@ class PluginNavigationHelper
         // CamelCase to kebab-case so RovInspection => rov-inspection (matches plugin id in DB)
         $kebab = strtolower((string) preg_replace('/([a-z])([A-Z])/', '$1-$2', $segment));
 
-        return 'webkul.'.$kebab;
+        $base = 'webkul.'.$kebab;
+
+        return self::resolveConfiguredPluginName($base);
+    }
+
+    /**
+     * Resolve a plugin name to a canonical configured key when possible.
+     */
+    protected static function resolveConfiguredPluginName(string $pluginName): string
+    {
+        $configured = array_keys(config('plugin-navigation-groups', []));
+        if (in_array($pluginName, $configured, true)) {
+            return $pluginName;
+        }
+
+        $tail = Str::afterLast($pluginName, '.');
+        $prefix = Str::beforeLast($pluginName, '.');
+
+        if ($tail === $pluginName || $tail === '') {
+            return $pluginName;
+        }
+
+        $candidates = [
+            $prefix.'.'.Str::plural($tail),
+            $prefix.'.'.Str::singular($tail),
+            $prefix.'.'.Str::kebab(Str::plural(Str::replace('-', ' ', $tail))),
+            $prefix.'.'.Str::kebab(Str::singular(Str::replace('-', ' ', $tail))),
+        ];
+
+        foreach ($candidates as $candidate) {
+            if (in_array($candidate, $configured, true)) {
+                return $candidate;
+            }
+        }
+
+        return $pluginName;
     }
 
     /**

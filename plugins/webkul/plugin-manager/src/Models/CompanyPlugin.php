@@ -73,6 +73,13 @@ class CompanyPlugin extends Model
             $variants[] = Str::kebab($tail);
             $variants[] = Str::snake($tail, '-');
             $variants[] = Str::singular(Str::kebab($tail));
+            $variants[] = Str::plural(Str::kebab($tail));
+
+            if (str_contains($name, '.')) {
+                $prefix = Str::beforeLast($name, '.');
+                $variants[] = $prefix.'.'.Str::singular(Str::kebab($tail));
+                $variants[] = $prefix.'.'.Str::plural(Str::kebab($tail));
+            }
         }
 
         return $variants;

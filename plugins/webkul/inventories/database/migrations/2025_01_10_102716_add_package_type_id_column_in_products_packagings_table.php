@@ -11,11 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('products_packagings')) {
+            return;
+        }
+
         Schema::table('products_packagings', function (Blueprint $table) {
-            $table->foreignId('package_type_id')
-                ->nullable()
-                ->constrained('inventories_package_types')
-                ->nullOnDelete();
+            if (! Schema::hasColumn('products_packagings', 'package_type_id')) {
+                $table->foreignId('package_type_id')
+                    ->nullable()
+                    ->constrained('inventories_package_types')
+                    ->nullOnDelete();
+            }
         });
     }
 
@@ -24,6 +30,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('products_packagings')) {
+            return;
+        }
+
         Schema::table('products_packagings', function (Blueprint $table) {
             if (Schema::hasColumn('products_packagings', 'package_type_id')) {
                 $table->dropForeign(['package_type_id']);

@@ -12,23 +12,61 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('products_products', function (Blueprint $table) {
-            $table->integer('sale_delay')->nullable();
-            $table->string('tracking')->nullable()->default(ProductTracking::QTY);
-            $table->text('description_picking')->nullable();
-            $table->text('description_pickingout')->nullable();
-            $table->text('description_pickingin')->nullable();
-            $table->boolean('is_storable')->nullable()->default(0);
-            $table->integer('expiration_time')->nullable()->default(0);
-            $table->integer('use_time')->nullable()->default(0);
-            $table->integer('removal_time')->nullable()->default(0);
-            $table->integer('alert_time')->nullable()->default(0);
-            $table->boolean('use_expiration_date')->nullable()->default(0);
+        if (! Schema::hasTable('products_products')) {
+            return;
+        }
 
-            $table->foreignId('responsible_id')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
+        Schema::table('products_products', function (Blueprint $table) {
+            if (! Schema::hasColumn('products_products', 'sale_delay')) {
+                $table->integer('sale_delay')->nullable();
+            }
+
+            if (! Schema::hasColumn('products_products', 'tracking')) {
+                $table->string('tracking')->nullable()->default(ProductTracking::QTY);
+            }
+
+            if (! Schema::hasColumn('products_products', 'description_picking')) {
+                $table->text('description_picking')->nullable();
+            }
+
+            if (! Schema::hasColumn('products_products', 'description_pickingout')) {
+                $table->text('description_pickingout')->nullable();
+            }
+
+            if (! Schema::hasColumn('products_products', 'description_pickingin')) {
+                $table->text('description_pickingin')->nullable();
+            }
+
+            if (! Schema::hasColumn('products_products', 'is_storable')) {
+                $table->boolean('is_storable')->nullable()->default(0);
+            }
+
+            if (! Schema::hasColumn('products_products', 'expiration_time')) {
+                $table->integer('expiration_time')->nullable()->default(0);
+            }
+
+            if (! Schema::hasColumn('products_products', 'use_time')) {
+                $table->integer('use_time')->nullable()->default(0);
+            }
+
+            if (! Schema::hasColumn('products_products', 'removal_time')) {
+                $table->integer('removal_time')->nullable()->default(0);
+            }
+
+            if (! Schema::hasColumn('products_products', 'alert_time')) {
+                $table->integer('alert_time')->nullable()->default(0);
+            }
+
+            if (! Schema::hasColumn('products_products', 'use_expiration_date')) {
+                $table->boolean('use_expiration_date')->nullable()->default(0);
+            }
+
+            if (Schema::hasTable('users') && ! Schema::hasColumn('products_products', 'responsible_id')) {
+                $table->foreignId('responsible_id')
+                    ->nullable()
+                    ->constrained('users')
+                    ->nullOnDelete();
+            }
         });
     }
 
@@ -37,6 +75,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('products_products')) {
+            return;
+        }
+
         Schema::table('products_products', function (Blueprint $table) {
             if (Schema::hasColumn('products_products', 'responsible_id')) {
                 $table->dropForeign(['responsible_id']);
