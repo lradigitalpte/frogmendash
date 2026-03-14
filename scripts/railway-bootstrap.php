@@ -11,6 +11,7 @@ $kernel->bootstrap();
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Spatie\Permission\PermissionRegistrar;
 
 function envOrNull(string $key): ?string
 {
@@ -117,4 +118,50 @@ try {
     echo Artisan::output();
 } catch (Throwable $e) {
     fwrite(STDERR, '[railway-bootstrap] Warning: optimize failed: '.$e->getMessage()."\n");
+}
+
+echo "[railway-bootstrap] Refreshing panel permissions...\n";
+try {
+    if (
+        Schema::hasTable('roles')
+        && Schema::hasTable('permissions')
+        && Schema::hasTable('model_has_roles')
+        && Schema::hasTable('role_has_permissions')
+    ) {
+        $forceRefresh = filter_var((string) (envOrNull('FORCE_PERMISSION_REFRESH_ON_BOOT') ?? 'false'), FILTER_VALIDATE_BOOLEAN);
+        $hasRoleAssignments = DB::table('model_has_roles')->exists();
+        $permissionCount = (int) DB::table('permissions')->count();
+        $rolePermissionCount = (int) DB::table('role_has_permissions')->count();
+
+        // Refresh if explicitly forced, if role assignments exist but no role permissions,
+        // or when permission coverage looks incomplete.
+        $needsRefresh = $forceRefresh
+            || ($hasRoleAssignments && $rolePermissionCount === 0)
+            || ($permissionCount > 0 && $rolePermissionCount < $permissionCount);
+
+        if ($needsRefresh) {
+            Artisan::call('shield:generate', [
+                '--all' => true,
+                '--option' => 'permissions',
+                '--panel' => 'admin',
+            ]);
+
+            $roleModel = config('permission.models.role', \Spatie\Permission\Models\Role::class);
+            $permissionModel = config('permission.models.permission', \Spatie\Permission\Models\Permission::class);
+
+            if (class_exists($roleModel) && class_exists($permissionModel)) {
+                $allPermissions = $permissionModel::query()->get();
+                $roleModel::query()->get()->each(function ($role) use ($allPermissions): void {
+                    $role->syncPermissions($allPermissions);
+                });
+            }
+
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
+            echo "[railway-bootstrap] Permission refresh completed.\n";
+        } else {
+            echo "[railway-bootstrap] Permission refresh not required.\n";
+        }
+    }
+} catch (Throwable $e) {
+    fwrite(STDERR, '[railway-bootstrap] Warning: permission refresh failed: '.$e->getMessage()."\n");
 }
