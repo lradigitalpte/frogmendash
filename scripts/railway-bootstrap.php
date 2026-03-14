@@ -110,3 +110,11 @@ if ($userCount === 0) {
 } else {
     echo "[railway-bootstrap] Existing database detected ({$userCount} users), skipping installer.\n";
 }
+
+echo "[railway-bootstrap] Optimizing framework caches...\n";
+try {
+    Artisan::call('optimize');
+    echo Artisan::output();
+} catch (Throwable $e) {
+    fwrite(STDERR, '[railway-bootstrap] Warning: optimize failed: '.$e->getMessage()."\n");
+}

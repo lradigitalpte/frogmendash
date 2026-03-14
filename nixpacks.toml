@@ -1,6 +1,7 @@
 [phases.install]
 cmds = [
   "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
+  "printf 'opcache.enable=1\nopcache.enable_cli=1\nopcache.validate_timestamps=0\nopcache.memory_consumption=192\nopcache.max_accelerated_files=20000\n' > /usr/local/etc/php/conf.d/99-opcache.ini",
   "COMPOSER_ALLOW_SUPERUSER=1 composer install --ignore-platform-reqs --no-interaction",
   "npm ci"
 ]
