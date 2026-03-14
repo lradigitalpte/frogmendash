@@ -43,7 +43,10 @@
             "Database\\Seeders\\": "database/seeders/",
             "Webkul\\RovInspection\\": "plugins/webkul/rov-inspection/src/",
             "Webkul\\Warranty\\": "plugins/webkul/warranty/src/"
-        }
+        },
+        "files": [
+            "app/Support/plugin-manager-fallback.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
