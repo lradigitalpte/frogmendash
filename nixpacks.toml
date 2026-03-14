@@ -1,0 +1,12 @@
+[phases.install]
+cmds = [
+  "mkdir -p /var/log/nginx && mkdir -p /var/cache/nginx",
+  "COMPOSER_ALLOW_SUPERUSER=1 composer install --ignore-platform-reqs --no-interaction",
+  "npm ci"
+]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "php scripts/railway-bootstrap.php && php artisan serve --host=0.0.0.0 --port=$PORT"
