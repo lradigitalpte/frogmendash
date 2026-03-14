@@ -7,6 +7,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Security\Models\User;
 
@@ -25,6 +26,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+
+            $appUrl = config('app.url');
+
+            if (is_string($appUrl) && $appUrl !== '') {
+                URL::forceRootUrl($appUrl);
+            }
+        }
+
         Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset
             ->columnSpanFull());
 

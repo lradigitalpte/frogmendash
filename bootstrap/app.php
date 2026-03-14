@@ -11,13 +11,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Trust proxy headers for HTTPS detection when behind a reverse proxy (e.g., Railway)
-        $middleware->trustProxies(at: [
-            '10.0.0.0/8',      // Docker/Kubernetes internal networks
-            '172.16.0.0/12',   // Docker bridge networks
-            '192.168.0.0/16',  // Private networks
-            '127.0.0.1',       // Localhost
-        ]);
+        // Trust all proxies so Laravel respects X-Forwarded-Proto on Railway.
+        $middleware->trustProxies(at: '*');
 
         $middleware->appendToGroup('web', [
             \Webkul\Security\Http\Middleware\EnsureAdminLoginNoRedirectLoop::class,
