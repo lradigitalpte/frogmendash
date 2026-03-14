@@ -11,13 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_order_options')) {
+            return;
+        }
+
         Schema::create('sales_order_options', function (Blueprint $table) {
             $table->id();
 
             $table->integer('sort')->nullable()->default(0);
 
             $table->foreignId('order_id')->nullable()->comment('Sale Order Reference')->constrained('sales_orders')->cascadeOnDelete();
-            $table->foreignId('product_id')->comment('Product')->constrained('products_products')->restrictOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')->comment('Product')->constrained('products_products')->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id')->comment('Product');
+            }
             $table->foreignId('line_id')->nullable()->comment('Sale Order Line Reference')->constrained('sales_order_lines')->nullOnDelete();
             $table->foreignId('uom_id')->nullable()->constrained('unit_of_measures')->nullOnDelete();
             $table->foreignId('creator_id')->nullable()->constrained('users')->nullOnDelete();

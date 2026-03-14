@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_order_lines')) {
+            return;
+        }
+
         Schema::create('sales_order_lines', function (Blueprint $table) {
             $table->id();
             $table->integer('sort')->nullable()->comment('Sort Order');
@@ -19,10 +23,18 @@ return new class extends Migration
             $table->foreignId('currency_id')->nullable()->comment('Currency Reference')->constrained('currencies')->nullOnDelete();
             $table->foreignId('order_partner_id')->nullable()->comment('Order Partner Reference')->constrained('partners_partners')->nullOnDelete();
             $table->foreignId('salesman_id')->nullable()->comment('Salesman Reference')->constrained('users')->nullOnDelete();
-            $table->foreignId('product_id')->nullable()->comment('Product Reference')->constrained('products_products')->nullOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')->nullable()->comment('Product Reference')->constrained('products_products')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id')->nullable()->comment('Product Reference');
+            }
             $table->foreignId('product_uom_id')->nullable()->comment('Product UOM Reference')->constrained('unit_of_measures')->nullOnDelete();
             $table->foreignId('linked_sale_order_sale_id')->nullable()->comment('Linked Sale Order Sale Reference')->constrained('sales_order_lines')->nullOnDelete();
-            $table->foreignId('product_packaging_id')->nullable()->comment('Product Packaging Reference')->constrained('products_packagings')->nullOnDelete();
+            if (Schema::hasTable('products_packagings')) {
+                $table->foreignId('product_packaging_id')->nullable()->comment('Product Packaging Reference')->constrained('products_packagings')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_packaging_id')->nullable()->comment('Product Packaging Reference');
+            }
             $table->foreignId('creator_id')->nullable()->comment('Creator Reference')->constrained('users')->nullOnDelete();
             $table->string('state')->nullable()->comment('Order State');
             $table->string('display_type')->nullable()->comment('Display Type');

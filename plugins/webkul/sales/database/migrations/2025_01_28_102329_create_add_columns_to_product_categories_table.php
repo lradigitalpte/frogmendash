@@ -11,8 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (! Schema::hasTable('products_categories')) {
+            return;
+        }
+
         Schema::table('products_categories', function (Blueprint $table) {
-            $table->json('product_properties_definition')->nullable()->comment('Product Properties Definition');
+            if (! Schema::hasColumn('products_categories', 'product_properties_definition')) {
+                $table->json('product_properties_definition')->nullable()->comment('Product Properties Definition');
+            }
         });
     }
 
@@ -21,8 +27,14 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (! Schema::hasTable('products_categories')) {
+            return;
+        }
+
         Schema::table('products_categories', function (Blueprint $table) {
-            $table->dropColumn('product_properties_definition');
+            if (Schema::hasColumn('products_categories', 'product_properties_definition')) {
+                $table->dropColumn('product_properties_definition');
+            }
         });
     }
 };

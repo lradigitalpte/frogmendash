@@ -11,12 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_order_template_products')) {
+            return;
+        }
+
         Schema::create('sales_order_template_products', function (Blueprint $table) {
             $table->id();
             $table->integer('sort')->nullable()->comment('Sort');
             $table->foreignId('order_template_id')->comment('Order Template')->constrained('sales_order_templates')->cascadeOnDelete();
             $table->foreignId('company_id')->nullable()->comment('Company')->constrained('companies')->nullOnDelete();
-            $table->foreignId('product_id')->nullable()->comment('Product')->constrained('products_products')->nullOnDelete();
+            if (Schema::hasTable('products_products')) {
+                $table->foreignId('product_id')->nullable()->comment('Product')->constrained('products_products')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('product_id')->nullable()->comment('Product');
+            }
             $table->foreignId('product_uom_id')->nullable()->comment('UOM')->constrained('unit_of_measures')->nullOnDelete();
             $table->foreignId('creator_id')->nullable()->comment('Creator')->constrained('users')->nullOnDelete();
             $table->string('display_type')->nullable()->comment('Display Type');
