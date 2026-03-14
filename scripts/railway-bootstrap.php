@@ -54,6 +54,18 @@ requireEnv('DB_DATABASE');
 requireEnv('DB_USERNAME');
 requireEnv('DB_PASSWORD');
 
+// Ensure APP_URL is set with HTTPS for Railway deployment
+if (! getenv('APP_URL')) {
+    $railwayPublicDomain = getenv('RAILWAY_PUBLIC_DOMAIN');
+    if ($railwayPublicDomain) {
+        $appUrl = 'https://' . $railwayPublicDomain;
+        putenv("APP_URL={$appUrl}");
+        echo "[railway-bootstrap] APP_URL not set, configured as: {$appUrl}\n";
+    } else {
+        fwrite(STDERR, "[railway-bootstrap] Warning: APP_URL and RAILWAY_PUBLIC_DOMAIN not set. CSS/JS may not load correctly.\n");
+    }
+}
+
 echo "[railway-bootstrap] Running migrations...\n";
 try {
     Artisan::call('migrate', ['--force' => true]);

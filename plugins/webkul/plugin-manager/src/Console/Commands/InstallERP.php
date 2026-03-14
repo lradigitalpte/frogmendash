@@ -229,6 +229,35 @@ class InstallERP extends Command
 
         $defaultCompany = Company::first();
 
+        // If no company exists, create a default one
+        if (! $defaultCompany) {
+            $this->info('🏢 Creating default company...');
+
+            // Get or create default currency (USD)
+            $currency = Currency::firstOrCreate(
+                ['code' => 'USD'],
+                [
+                    'name' => 'US Dollar',
+                    'symbol' => '$',
+                ]
+            );
+
+            $defaultCompany = Company::create([
+                'name'                => 'Default Company',
+                'tax_id'              => 'DEFAULT001',
+                'registration_number' => 'DEFAULT001',
+                'company_id'          => 'DEFAULT001',
+                'email'               => 'company@example.com',
+                'phone'               => '0000000000',
+                'currency_id'         => $currency->id,
+                'is_active'           => true,
+                'created_at'          => now(),
+                'updated_at'          => now(),
+            ]);
+
+            $this->info('✅ Default company created successfully.');
+        }
+
         $userModel = app(Utils::getAuthProviderFQCN());
 
         $adminData = $this->getAdminCredentials($userModel);
