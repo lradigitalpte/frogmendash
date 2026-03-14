@@ -133,6 +133,14 @@ class WebsitePlugin implements Plugin
     {
         $navigationItems = new Collection;
 
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('website_pages')) {
+                return $navigationItems;
+            }
+        } catch (\Throwable) {
+            return $navigationItems;
+        }
+
         $pages = Page::where([
             'is_header_visible' => true,
             'is_published'      => true,
@@ -163,6 +171,14 @@ class WebsitePlugin implements Plugin
                 ->label(fn () => __('website::filament/app.navigation.footer.home'))
                 ->url('/'),
         ]);
+
+        try {
+            if (! \Illuminate\Support\Facades\Schema::hasTable('website_pages')) {
+                return $navigationItems;
+            }
+        } catch (\Throwable) {
+            return $navigationItems;
+        }
 
         $pages = Page::where([
             'is_footer_visible' => true,

@@ -225,3 +225,52 @@ try {
 } catch (Throwable $e) {
     fwrite(STDERR, '[railway-bootstrap] Warning: permission refresh failed: '.$e->getMessage()."\n");
 }
+
+// Sync plugin is_installed flags based on which tables actually exist.
+// Prevents DB dumps with is_installed=0 from breaking routes on production.
+echo "[railway-bootstrap] Syncing plugin install flags...\n";
+try {
+    if (Schema::hasTable('plugins') && Schema::hasTable('company_plugins') && Schema::hasTable('companies')) {
+        $pluginTableMap = [
+            'rov-inspection'  => 'rov_projects',
+            'inventories'     => 'inventories_products',
+            'sales'           => 'sales_orders',
+            'purchases'       => 'purchases_orders',
+            'invoices'        => 'invoices_invoices',
+            'accounts'        => 'accounts_journals',
+            'accounting'      => 'accounts_journals',
+            'contacts'        => 'contacts_contacts',
+            'employees'       => 'employees_employees',
+            'projects'        => 'projects_projects',
+            'timesheets'      => 'timesheets_timesheets',
+            'time-off'        => 'time_off_leave_types',
+            'recruitments'    => 'recruitments_job_positions',
+            'website'         => 'website_pages',
+            'warranty'        => 'warranty_policies',
+            'payments'        => 'payments_payment_transactions',
+        ];
+
+        $companyIds = DB::table('companies')->pluck('id');
+
+        foreach ($pluginTableMap as $pluginName => $sentinelTable) {
+            if (! Schema::hasTable($sentinelTable)) {
+                continue;
+            }
+
+            DB::table('plugins')
+                ->where('name', $pluginName)
+                ->update(['is_installed' => 1, 'is_active' => 1]);
+
+            foreach ($companyIds as $cid) {
+                DB::table('company_plugins')->insertOrIgnore([
+                    'company_id'  => $cid,
+                    'plugin_name' => $pluginName,
+                ]);
+            }
+        }
+
+        echo "[railway-bootstrap] Plugin flags synced.\n";
+    }
+} catch (Throwable $e) {
+    fwrite(STDERR, '[railway-bootstrap] Warning: plugin sync failed: '.$e->getMessage()."\n");
+}

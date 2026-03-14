@@ -24,6 +24,7 @@ class PluginManagerServiceProvider extends PackageServiceProvider
             ->hasTranslations()
             ->hasMigrations([
                 '2024_11_05_105102_create_plugins_table',
+                '2024_11_05_105112_create_plugin_dependencies_table',
                 '2026_03_08_create_company_plugins_table',
             ])
             ->hasSeeder('Webkul\\PluginManager\\Database\\Seeders\\PluginSeeder')

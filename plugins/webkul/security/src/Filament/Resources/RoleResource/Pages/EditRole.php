@@ -57,42 +57,40 @@ class EditRole extends EditRecord
         $permissionNames = $this->permissions->unique()->values();
 
         if ($permissionNames->isEmpty()) {
-            $this->record->syncPermissions([]);
+            // Use raw DB delete — faster than Spatie's ORM-based syncPermissions.
+            $tableName = config('permission.table_names.role_has_permissions');
+            $roleColumn = app(PermissionRegistrar::class)->pivotRole;
+            DB::table($tableName)->where($roleColumn, $this->record->id)->delete();
+            app(PermissionRegistrar::class)->forgetCachedPermissions();
 
             return;
         }
 
-        $chunkSize = 500;
-        $allPermissionIds = collect();
+        // Single bulk lookup — avoids N chunked round-trips on high-latency connections.
+        $existingPermissions = $permissionModel::whereIn('name', $permissionNames->all())
+            ->where('guard_name', $guard)
+            ->pluck('id', 'name');
 
-        $permissionNames->chunk($chunkSize)->each(function ($chunk) use ($permissionModel, $guard, &$allPermissionIds) {
-            $existingPermissions = $permissionModel::whereIn('name', $chunk)
-                ->where('guard_name', $guard)
-                ->pluck('id', 'name');
+        $missingPermissions = $permissionNames->diff($existingPermissions->keys());
 
-            $missingPermissions = $chunk->diff($existingPermissions->keys());
-
-            if ($missingPermissions->isNotEmpty()) {
-                $insertData = $missingPermissions->map(fn ($name) => [
+        if ($missingPermissions->isNotEmpty()) {
+            $permissionModel::insertOrIgnore(
+                $missingPermissions->map(fn ($name) => [
                     'name'       => $name,
                     'guard_name' => $guard,
                     'created_at' => now(),
                     'updated_at' => now(),
-                ])->toArray();
+                ])->toArray()
+            );
 
-                $permissionModel::insertOrIgnore($insertData);
+            $newPermissions = $permissionModel::whereIn('name', $missingPermissions->all())
+                ->where('guard_name', $guard)
+                ->pluck('id', 'name');
 
-                $newPermissions = $permissionModel::whereIn('name', $missingPermissions)
-                    ->where('guard_name', $guard)
-                    ->pluck('id', 'name');
+            $existingPermissions = $existingPermissions->merge($newPermissions);
+        }
 
-                $existingPermissions = $existingPermissions->merge($newPermissions);
-            }
-
-            $allPermissionIds = $allPermissionIds->merge($existingPermissions->values());
-        });
-
-        $this->syncPermissionsByIds($allPermissionIds->unique()->values()->toArray());
+        $this->syncPermissionsByIds($existingPermissions->values()->unique()->toArray());
     }
 
     private function syncPermissionsByIds(array $permissionIds): void

@@ -118,10 +118,14 @@ class ListPlugins extends ListRecords
                         ]
                     );
 
-                    if ($deps = $plugin->getDependenciesFromConfig()) {
-                        $dependencyIds = Plugin::whereIn('name', $deps)->pluck('id');
-
-                        $plugin->dependencies()->sync($dependencyIds);
+                    try {
+                        if ($deps = $plugin->getDependenciesFromConfig()) {
+                            $dependencyIds = Plugin::whereIn('name', $deps)->pluck('id');
+                            $plugin->dependencies()->sync($dependencyIds);
+                        }
+                    } catch (Throwable $depEx) {
+                        // plugin_dependencies table may not exist yet — skip silently
+                        report($depEx);
                     }
 
                     return $plugin->wasRecentlyCreated;
