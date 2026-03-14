@@ -127,6 +127,7 @@ try {
         && Schema::hasTable('permissions')
         && Schema::hasTable('model_has_roles')
         && Schema::hasTable('role_has_permissions')
+        && Schema::hasTable('users')
     ) {
         $forceRefresh = filter_var((string) (envOrNull('FORCE_PERMISSION_REFRESH_ON_BOOT') ?? 'false'), FILTER_VALIDATE_BOOLEAN);
         $hasRoleAssignments = DB::table('model_has_roles')->exists();
@@ -160,6 +161,65 @@ try {
             echo "[railway-bootstrap] Permission refresh completed.\n";
         } else {
             echo "[railway-bootstrap] Permission refresh not required.\n";
+        }
+
+        // Self-heal common production drift: admin user exists but lost role/company mappings.
+        if (Schema::hasTable('companies')) {
+            $adminUser = DB::table('users')
+                ->where('is_default', 1)
+                ->orWhere('id', 1)
+                ->orderBy('is_default', 'desc')
+                ->orderBy('id')
+                ->first();
+
+            $defaultCompanyId = DB::table('companies')->orderBy('id')->value('id');
+
+            if ($adminUser && $defaultCompanyId) {
+                if (empty($adminUser->default_company_id)) {
+                    DB::table('users')
+                        ->where('id', $adminUser->id)
+                        ->update(['default_company_id' => $defaultCompanyId]);
+                }
+
+                if (Schema::hasTable('user_allowed_companies')) {
+                    $hasAllowed = DB::table('user_allowed_companies')
+                        ->where('user_id', $adminUser->id)
+                        ->where('company_id', $defaultCompanyId)
+                        ->exists();
+
+                    if (! $hasAllowed) {
+                        DB::table('user_allowed_companies')->insert([
+                            'user_id' => $adminUser->id,
+                            'company_id' => $defaultCompanyId,
+                        ]);
+                    }
+                }
+
+                $adminRole = DB::table('roles')
+                    ->where('is_default', 1)
+                    ->orWhere('name', 'super_admin')
+                    ->orWhere('name', 'admin')
+                    ->orderBy('is_default', 'desc')
+                    ->orderBy('id')
+                    ->first();
+
+                if ($adminRole) {
+                    $userModelType = config('auth.providers.users.model', 'Webkul\\Security\\Models\\User');
+                    $hasRole = DB::table('model_has_roles')
+                        ->where('role_id', $adminRole->id)
+                        ->where('model_id', $adminUser->id)
+                        ->where('model_type', $userModelType)
+                        ->exists();
+
+                    if (! $hasRole) {
+                        DB::table('model_has_roles')->insert([
+                            'role_id' => $adminRole->id,
+                            'model_type' => $userModelType,
+                            'model_id' => $adminUser->id,
+                        ]);
+                    }
+                }
+            }
         }
     }
 } catch (Throwable $e) {
