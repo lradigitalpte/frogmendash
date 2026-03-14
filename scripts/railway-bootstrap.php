@@ -55,15 +55,25 @@ requireEnv('DB_USERNAME');
 requireEnv('DB_PASSWORD');
 
 echo "[railway-bootstrap] Running migrations...\n";
-Artisan::call('migrate', ['--force' => true]);
-echo Artisan::output();
-
-if (! Schema::hasTable('users')) {
-    fwrite(STDERR, "[railway-bootstrap] Error: users table does not exist after migrate.\n");
+try {
+    Artisan::call('migrate', ['--force' => true]);
+    echo Artisan::output();
+} catch (Throwable $e) {
+    fwrite(STDERR, '[railway-bootstrap] Migration failed: '.$e->getMessage()."\n");
     exit(1);
 }
 
-$userCount = (int) DB::table('users')->count();
+try {
+    if (! Schema::hasTable('users')) {
+        fwrite(STDERR, "[railway-bootstrap] Error: users table does not exist after migrate.\n");
+        exit(1);
+    }
+
+    $userCount = (int) DB::table('users')->count();
+} catch (Throwable $e) {
+    fwrite(STDERR, '[railway-bootstrap] Post-migrate DB check failed: '.$e->getMessage()."\n");
+    exit(1);
+}
 
 if ($userCount === 0) {
     $adminName = envOrNull('APP_ADMIN_NAME') ?? envOrNull('ADMIN_NAME') ?? 'Admin';
