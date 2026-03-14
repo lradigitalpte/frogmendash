@@ -11,14 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_order_invoices')) {
+            return;
+        }
+
         Schema::create('sales_order_invoices', function (Blueprint $table) {
             $table->foreignId('order_id')
                 ->constrained('sales_orders')
                 ->cascadeOnDelete();
 
-            $table->foreignId('move_id')
-                ->constrained('accounts_account_moves')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('accounts_account_moves')) {
+                $table->foreignId('move_id')
+                    ->constrained('accounts_account_moves')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('move_id');
+            }
         });
     }
 

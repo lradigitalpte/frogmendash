@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('purchases_orders')) {
+            return;
+        }
+
         Schema::create('purchases_orders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
@@ -56,20 +60,32 @@ return new class extends Migration
                 ->constrained('currencies')
                 ->restrictOnDelete();
 
-            $table->foreignId('fiscal_position_id')
-                ->nullable()
-                ->constrained('accounts_fiscal_positions')
-                ->nullOnDelete();
+            if (Schema::hasTable('accounts_fiscal_positions')) {
+                $table->foreignId('fiscal_position_id')
+                    ->nullable()
+                    ->constrained('accounts_fiscal_positions')
+                    ->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('fiscal_position_id')->nullable();
+            }
 
-            $table->foreignId('payment_term_id')
-                ->nullable()
-                ->constrained('accounts_payment_terms')
-                ->nullOnDelete();
+            if (Schema::hasTable('accounts_payment_terms')) {
+                $table->foreignId('payment_term_id')
+                    ->nullable()
+                    ->constrained('accounts_payment_terms')
+                    ->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('payment_term_id')->nullable();
+            }
 
-            $table->foreignId('incoterm_id')
-                ->nullable()
-                ->constrained('accounts_incoterms')
-                ->nullOnDelete();
+            if (Schema::hasTable('accounts_incoterms')) {
+                $table->foreignId('incoterm_id')
+                    ->nullable()
+                    ->constrained('accounts_incoterms')
+                    ->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('incoterm_id')->nullable();
+            }
 
             $table->foreignId('user_id')
                 ->nullable()

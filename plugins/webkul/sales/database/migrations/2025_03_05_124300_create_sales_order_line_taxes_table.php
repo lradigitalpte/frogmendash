@@ -11,14 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_order_line_taxes')) {
+            return;
+        }
+
         Schema::create('sales_order_line_taxes', function (Blueprint $table) {
             $table->foreignId('order_line_id')
                 ->constrained('sales_order_lines')
                 ->cascadeOnDelete();
 
-            $table->foreignId('tax_id')
-                ->constrained('accounts_taxes')
-                ->cascadeOnDelete();
+            if (Schema::hasTable('accounts_taxes')) {
+                $table->foreignId('tax_id')
+                    ->constrained('accounts_taxes')
+                    ->cascadeOnDelete();
+            } else {
+                $table->unsignedBigInteger('tax_id');
+            }
         });
     }
 

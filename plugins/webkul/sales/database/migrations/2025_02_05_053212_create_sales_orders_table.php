@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('sales_orders')) {
+            return;
+        }
+
         Schema::create('sales_orders', function (Blueprint $table) {
             $table->id();
             $table->foreignId('utm_source_id')->nullable()->comment('UTM source')->constrained('utm_sources')->nullOnDelete();
@@ -18,11 +22,24 @@ return new class extends Migration
             $table->foreignId('medium_id')->nullable()->comment('Recruitments utm sources')->constrained('utm_mediums')->nullOnDelete();
             $table->foreignId('company_id')->comment('Company')->constrained('companies')->restrictOnDelete();
             $table->foreignId('partner_id')->comment('Partner')->constrained('partners_partners')->restrictOnDelete();
-            $table->foreignId('journal_id')->nullable()->comment('Invoicing Journal')->constrained('accounts_journals')->nullOnDelete();
+            if (Schema::hasTable('accounts_journals')) {
+                $table->foreignId('journal_id')->nullable()->comment('Invoicing Journal')->constrained('accounts_journals')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('journal_id')->nullable()->comment('Invoicing Journal');
+            }
             $table->foreignId('partner_invoice_id')->comment('Invoice Address')->constrained('partners_partners')->restrictOnDelete();
             $table->foreignId('partner_shipping_id')->comment('Shipping Address')->constrained('partners_partners')->restrictOnDelete();
-            $table->foreignId('fiscal_position_id')->nullable()->comment('Fiscal Position')->constrained('accounts_fiscal_positions')->nullOnDelete();
-            $table->foreignId('payment_term_id')->nullable()->comment('Payment Term')->constrained('accounts_payment_terms')->nullOnDelete();
+            if (Schema::hasTable('accounts_fiscal_positions')) {
+                $table->foreignId('fiscal_position_id')->nullable()->comment('Fiscal Position')->constrained('accounts_fiscal_positions')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('fiscal_position_id')->nullable()->comment('Fiscal Position');
+            }
+
+            if (Schema::hasTable('accounts_payment_terms')) {
+                $table->foreignId('payment_term_id')->nullable()->comment('Payment Term')->constrained('accounts_payment_terms')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('payment_term_id')->nullable()->comment('Payment Term');
+            }
             $table->foreignId('currency_id')->comment('Currency')->constrained('currencies')->restrictOnDelete();
             $table->foreignId('user_id')->nullable()->comment('Salesperson')->constrained('users')->nullOnDelete();
             $table->foreignId('team_id')->nullable()->comment('Sales Team')->constrained('sales_teams')->nullOnDelete();

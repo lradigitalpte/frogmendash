@@ -11,14 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('payments_payment_transactions')) {
+            return;
+        }
+
         Schema::create('payments_payment_transactions', function (Blueprint $table) {
             $table->id();
 
             $table->foreignId('sort')->nullable()->comment('Sort Order');
-            $table->foreignId('move_id')->comment('Journal Entry')->constrained('accounts_account_moves')->restrictOnDelete();
-            $table->foreignId('journal_id')->nullable()->comment('Journal')->constrained('accounts_journals')->nullOnDelete();
+            if (Schema::hasTable('accounts_account_moves')) {
+                $table->foreignId('move_id')->comment('Journal Entry')->constrained('accounts_account_moves')->restrictOnDelete();
+            } else {
+                $table->unsignedBigInteger('move_id')->comment('Journal Entry');
+            }
+
+            if (Schema::hasTable('accounts_journals')) {
+                $table->foreignId('journal_id')->nullable()->comment('Journal')->constrained('accounts_journals')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('journal_id')->nullable()->comment('Journal');
+            }
             $table->foreignId('company_id')->nullable()->comment('Company')->constrained('companies')->nullOnDelete();
-            $table->foreignId('statement_id')->nullable()->comment('Bank Statement')->constrained('accounts_bank_statements')->nullOnDelete();
+
+            if (Schema::hasTable('accounts_bank_statements')) {
+                $table->foreignId('statement_id')->nullable()->comment('Bank Statement')->constrained('accounts_bank_statements')->nullOnDelete();
+            } else {
+                $table->unsignedBigInteger('statement_id')->nullable()->comment('Bank Statement');
+            }
+
             $table->foreignId('partner_id')->nullable()->comment('Partner')->constrained('partners_partners')->nullOnDelete();
             $table->foreignId('currency_id')->nullable()->comment('Currency')->constrained('currencies')->restrictOnDelete();
             $table->foreignId('foreign_currency_id')->nullable()->comment('Foreign Currency')->constrained('currencies')->restrictOnDelete();
