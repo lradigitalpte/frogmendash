@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('inventories_move_lines')) {
+            return;
+        }
+
         Schema::create('inventories_move_lines', function (Blueprint $table) {
             $table->id();
             $table->string('lot_name')->nullable();

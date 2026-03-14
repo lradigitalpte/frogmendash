@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('inventories_category_routes')) {
+            return;
+        }
+
         Schema::create('inventories_category_routes', function (Blueprint $table) {
             if (Schema::hasTable('products_categories')) {
                 $table->foreignId('category_id')

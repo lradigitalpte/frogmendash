@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('inventories_product_quantities')) {
+            return;
+        }
+
         Schema::create('inventories_product_quantities', function (Blueprint $table) {
             $table->id();
             $table->decimal('quantity', 15, 4)->nullable()->default(0);

@@ -11,6 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasTable('inventories_storage_category_capacities')) {
+            return;
+        }
+
         Schema::create('inventories_storage_category_capacities', function (Blueprint $table) {
             $table->id();
             $table->decimal('qty', 15, 4)->default(0);
