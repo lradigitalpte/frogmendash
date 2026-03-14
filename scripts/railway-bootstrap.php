@@ -25,6 +25,35 @@ function envOrNull(string $key): ?string
     return $value === '' ? null : $value;
 }
 
+function isUnresolvedTemplate(?string $value): bool
+{
+    if ($value === null) {
+        return false;
+    }
+
+    return str_contains($value, '${{') || str_contains($value, '}}');
+}
+
+function requireEnv(string $key): string
+{
+    $value = envOrNull($key);
+
+    if (! $value || isUnresolvedTemplate($value)) {
+        fwrite(STDERR, "[railway-bootstrap] Error: {$key} is missing or unresolved. Check Railway Variables references.\n");
+        exit(1);
+    }
+
+    return $value;
+}
+
+// Fail fast with a clear error if DB envs are not wired correctly.
+requireEnv('DB_CONNECTION');
+requireEnv('DB_HOST');
+requireEnv('DB_PORT');
+requireEnv('DB_DATABASE');
+requireEnv('DB_USERNAME');
+requireEnv('DB_PASSWORD');
+
 echo "[railway-bootstrap] Running migrations...\n";
 Artisan::call('migrate', ['--force' => true]);
 echo Artisan::output();
