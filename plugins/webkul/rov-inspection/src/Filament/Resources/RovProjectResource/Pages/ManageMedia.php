@@ -109,7 +109,7 @@ class ManageMedia extends ManageRelatedRecords
                     ->disk('public')
                     ->directory('rov-inspection/media')
                     ->maxSize(512000)
-                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'image/jpeg', 'image/png', 'image/webp'])
+                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/jfif'])
                     ->columnSpanFull()
                     ->helperText('Max 500 MB. Accepted: MP4, WebM, JPEG, PNG, WebP.'),
             ])
