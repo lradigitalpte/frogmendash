@@ -14,6 +14,16 @@ use Spatie\LaravelSettings\SettingsRepositories\DatabaseSettingsRepository;
  */
 class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
 {
+    protected function hasCompanyScopeColumn(): bool
+    {
+        $builder = $this->getBuilder();
+
+        return $builder->getConnection()->getSchemaBuilder()->hasColumn(
+            $builder->getModel()->getTable(),
+            'company_id'
+        );
+    }
+
     protected function currentCompanyId(): ?int
     {
         $user = Auth::user();
@@ -25,17 +35,23 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     {
         $companyId = $this->currentCompanyId();
         $builder = $this->getBuilder();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
 
-        $rows = $builder
-            ->where('group', $group)
-            ->where(function (Builder $q) use ($companyId) {
-                $q->where('company_id', $companyId);
-                if ($companyId !== null) {
-                    $q->orWhereNull('company_id');
-                }
-            })
-            ->orderByRaw('company_id IS NULL ASC') // company-specific first (non-null before null)
-            ->get(['name', 'payload']);
+        $rowsQuery = $builder->where('group', $group);
+
+        if ($hasCompanyScope) {
+            $rowsQuery
+                ->where(function (Builder $q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+
+                    if ($companyId !== null) {
+                        $q->orWhereNull('company_id');
+                    }
+                })
+                ->orderByRaw('company_id IS NULL ASC');
+        }
+
+        $rows = $rowsQuery->get(['name', 'payload']);
 
         return $rows
             ->unique('name') // first occurrence wins (company-specific over global)
@@ -48,10 +64,17 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     public function checkIfPropertyExists(string $group, string $name): bool
     {
         $companyId = $this->currentCompanyId();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
 
-        return $this->getBuilder()
+        $query = $this->getBuilder()
             ->where('group', $group)
-            ->where('name', $name)
+            ->where('name', $name);
+
+        if (! $hasCompanyScope) {
+            return $query->exists();
+        }
+
+        return $query
             ->where(function (Builder $q) use ($companyId) {
                 $q->where('company_id', $companyId);
                 if ($companyId !== null) {
@@ -64,17 +87,25 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     public function getPropertyPayload(string $group, string $name)
     {
         $companyId = $this->currentCompanyId();
-        $row = $this->getBuilder()
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
+
+        $rowQuery = $this->getBuilder()
             ->where('group', $group)
-            ->where('name', $name)
-            ->where(function (Builder $q) use ($companyId) {
-                $q->where('company_id', $companyId);
-                if ($companyId !== null) {
-                    $q->orWhereNull('company_id');
-                }
-            })
-            ->orderByRaw('company_id IS NULL ASC')
-            ->first(['payload']);
+            ->where('name', $name);
+
+        if ($hasCompanyScope) {
+            $rowQuery
+                ->where(function (Builder $q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+
+                    if ($companyId !== null) {
+                        $q->orWhereNull('company_id');
+                    }
+                })
+                ->orderByRaw('company_id IS NULL ASC');
+        }
+
+        $row = $rowQuery->first(['payload']);
 
         if (! $row) {
             return null;
@@ -87,16 +118,22 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     {
         $table = $this->getBuilder()->getModel()->getTable();
         $connection = $this->getBuilder()->getConnection()->getName();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
 
-        DB::connection($connection)->table($table)->insert([
+        $data = [
             'group'      => $group,
             'name'      => $name,
-            'company_id' => $this->currentCompanyId(),
             'payload'   => $this->encode($payload),
             'locked'    => false,
             'created_at' => now(),
             'updated_at' => now(),
-        ]);
+        ];
+
+        if ($hasCompanyScope) {
+            $data['company_id'] = $this->currentCompanyId();
+        }
+
+        DB::connection($connection)->table($table)->insert($data);
     }
 
     public function updatePropertiesPayload(string $group, array $properties): void
@@ -104,22 +141,32 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
         $companyId = $this->currentCompanyId();
         $table = $this->getBuilder()->getModel()->getTable();
         $connection = $this->getBuilder()->getConnection()->getName();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
 
         $now = now();
-        $propertiesInBatch = collect($properties)->map(function ($payload, $name) use ($group, $companyId, $now) {
-            return [
+        $propertiesInBatch = collect($properties)->map(function ($payload, $name) use ($group, $companyId, $now, $hasCompanyScope) {
+            $row = [
                 'group'      => $group,
                 'name'      => $name,
-                'company_id' => $companyId,
                 'payload'   => $this->encode($payload),
                 'created_at' => $now,
                 'updated_at' => $now,
             ];
+
+            if ($hasCompanyScope) {
+                $row['company_id'] = $companyId;
+            }
+
+            return $row;
         })->values()->toArray();
+
+        $uniqueBy = $hasCompanyScope
+            ? ['group', 'name', 'company_id']
+            : ['group', 'name'];
 
         DB::connection($connection)->table($table)->upsert(
             $propertiesInBatch,
-            ['group', 'name', 'company_id'],
+            $uniqueBy,
             ['payload', 'updated_at']
         );
     }
@@ -127,12 +174,17 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     public function deleteProperty(string $group, string $name): void
     {
         $companyId = $this->currentCompanyId();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
         $builder = $this->getBuilder()->where('group', $group)->where('name', $name);
-        if ($companyId !== null) {
-            $builder->where('company_id', $companyId);
-        } else {
-            $builder->whereNull('company_id');
+
+        if ($hasCompanyScope) {
+            if ($companyId !== null) {
+                $builder->where('company_id', $companyId);
+            } else {
+                $builder->whereNull('company_id');
+            }
         }
+
         $builder->delete();
     }
 
@@ -153,17 +205,24 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     public function getLockedProperties(string $group): array
     {
         $companyId = $this->currentCompanyId();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
 
-        return $this->getBuilder()
+        $query = $this->getBuilder()
             ->where('group', $group)
-            ->where('locked', true)
-            ->where(function (Builder $q) use ($companyId) {
-                $q->where('company_id', $companyId);
-                if ($companyId !== null) {
-                    $q->orWhereNull('company_id');
-                }
-            })
-            ->orderByRaw('company_id IS NULL ASC')
+            ->where('locked', true);
+
+        if ($hasCompanyScope) {
+            $query
+                ->where(function (Builder $q) use ($companyId) {
+                    $q->where('company_id', $companyId);
+                    if ($companyId !== null) {
+                        $q->orWhereNull('company_id');
+                    }
+                })
+                ->orderByRaw('company_id IS NULL ASC');
+        }
+
+        return $query
             ->pluck('name')
             ->unique()
             ->values()
@@ -173,14 +232,19 @@ class CompanyScopedDatabaseSettingsRepository extends DatabaseSettingsRepository
     protected function scopeWriteByCompany(string $group, array $properties, callable $callback): void
     {
         $companyId = $this->currentCompanyId();
+        $hasCompanyScope = $this->hasCompanyScopeColumn();
         $builder = $this->getBuilder()
             ->where('group', $group)
             ->whereIn('name', $properties);
-        if ($companyId !== null) {
-            $builder->where('company_id', $companyId);
-        } else {
-            $builder->whereNull('company_id');
+
+        if ($hasCompanyScope) {
+            if ($companyId !== null) {
+                $builder->where('company_id', $companyId);
+            } else {
+                $builder->whereNull('company_id');
+            }
         }
+
         $callback($builder);
     }
 }
