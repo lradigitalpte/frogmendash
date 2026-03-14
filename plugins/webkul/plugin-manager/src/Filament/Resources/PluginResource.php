@@ -2,6 +2,7 @@
 
 namespace Webkul\PluginManager\Filament\Resources;
 
+use BezhanSalleh\FilamentShield\Support\Utils;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
@@ -24,9 +25,12 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema as DBSchema;
 use RuntimeException;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 use Throwable;
 use Webkul\PluginManager\Filament\Resources\PluginResource\Pages\ListPlugins;
 use Webkul\PluginManager\Models\CompanyPlugin;
@@ -150,9 +154,36 @@ class PluginResource extends Resource
                         CompanyPlugin::firstOrCreate(
                             ['company_id' => $companyId, 'plugin_name' => $record->name]
                         );
+
+                        // Ensure plugin package boot/registration is considered installed.
+                        $record->update([
+                            'is_installed' => true,
+                            'is_active' => true,
+                        ]);
+
+                        // Regenerate Filament Shield permissions so new resources/pages become visible.
+                        try {
+                            Artisan::call('shield:generate', [
+                                '--all' => true,
+                                '--option' => 'permissions',
+                                '--panel' => 'admin',
+                            ]);
+
+                            $adminRoleName = Utils::getPanelUserRoleName();
+                            $adminRole = Role::firstOrCreate([
+                                'name' => $adminRoleName,
+                            ], [
+                                'is_default' => true,
+                            ]);
+
+                            $adminRole->syncPermissions(Permission::all());
+                        } catch (Throwable $e) {
+                            report($e);
+                        }
+
                         Notification::make()
                             ->title(__('plugin-manager::filament/resources/plugin.notifications.installed.title'))
-                            ->body(__('Enabled for your company. Other companies are not affected.'))
+                            ->body(__('Enabled for your company and permissions refreshed.'))
                             ->success()
                             ->send();
                     })

@@ -8,6 +8,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Components\Tabs\Tab;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 use Throwable;
 use Webkul\PluginManager\Filament\Resources\PluginResource;
 use Webkul\PluginManager\Models\CompanyPlugin;
@@ -84,6 +85,15 @@ class ListPlugins extends ListRecords
     protected function syncPlugins(): void
     {
         try {
+            $globallyEnabledPluginNames = CompanyPlugin::query()
+                ->distinct()
+                ->pluck('plugin_name')
+                ->flatMap(fn (string $name) => [$name, Str::afterLast($name, '.')])
+                ->filter(fn (string $name) => $name !== '')
+                ->unique()
+                ->values()
+                ->toArray();
+
             $synced = collect(Plugin::getAllPluginPackages())
                 ->filter(function ($package, $name) {
                     $composerPath = $package->basePath('composer.json');
@@ -117,6 +127,15 @@ class ListPlugins extends ListRecords
                     return $plugin->wasRecentlyCreated;
                 })
                 ->count();
+
+            if (! empty($globallyEnabledPluginNames)) {
+                Plugin::query()
+                    ->whereIn('name', $globallyEnabledPluginNames)
+                    ->update([
+                        'is_installed' => true,
+                        'is_active'    => true,
+                    ]);
+            }
 
             Notification::make()
                 ->title(__('plugin-manager::filament/resources/plugin/pages/list-plugins.header-actions.sync.notification.success.title'))
