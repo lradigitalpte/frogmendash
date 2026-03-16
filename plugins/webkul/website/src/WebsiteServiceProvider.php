@@ -47,7 +47,7 @@ class WebsiteServiceProvider extends PackageServiceProvider
     {
         $this->registerCustomCss();
 
-        if (! Package::isPluginInstalled(self::$name)) {
+        if (! (bool) config('features.website.enabled') || ! Package::isPluginInstalled(self::$name)) {
             Route::get('/', function () {
                 return redirect()->route('filament.admin.auth.login');
             });
@@ -56,9 +56,11 @@ class WebsiteServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        Panel::configureUsing(function (Panel $panel): void {
-            $panel->plugin(WebsitePlugin::make());
-        });
+        if ((bool) config('features.website.enabled')) {
+            Panel::configureUsing(function (Panel $panel): void {
+                $panel->plugin(WebsitePlugin::make());
+            });
+        }
 
         $this->app->bind(\Filament\Auth\Http\Responses\Contracts\LogoutResponse::class, LogoutResponse::class);
     }

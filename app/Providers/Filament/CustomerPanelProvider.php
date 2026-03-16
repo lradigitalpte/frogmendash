@@ -19,10 +19,12 @@ class CustomerPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $websiteEnabled = (bool) config('features.website.enabled');
+
         return $panel
             ->id('customer')
-            ->path('/')
-            ->homeUrl(url('/'))
+            ->path($websiteEnabled ? '/' : '__customer')
+            ->homeUrl($websiteEnabled ? url('/') : url('/admin/login'))
             ->authPasswordBroker('customers')
             ->profile(isSimple: false)
             ->favicon(asset('images/logo.png'))

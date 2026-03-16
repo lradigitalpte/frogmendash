@@ -33,6 +33,59 @@ class AdminPanelProvider extends PanelProvider
     {
         set_time_limit(0); // Unlimited execution time for panel setup
 
+        $navigationGroups = [
+            NavigationGroup::make()
+                ->label(__('admin.navigation.dashboard'))
+                ->icon('icon-dashboard'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.contact'))
+                ->icon('icon-contacts'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.sale'))
+                ->icon('icon-sales'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.purchase'))
+                ->icon('icon-purchases'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.invoice'))
+                ->icon('icon-invoices'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.accounting'))
+                ->icon('icon-accounting'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.inventory'))
+                ->icon('icon-inventories'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.project'))
+                ->icon('icon-projects'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.rov-inspection'))
+                ->icon('icon-rov-inspection'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.employee'))
+                ->icon('icon-employees'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.time-off'))
+                ->icon('icon-time-offs'),
+            NavigationGroup::make()
+                ->label(__('admin.navigation.recruitment'))
+                ->icon('icon-recruitments'),
+        ];
+
+        if ((bool) config('features.website.enabled')) {
+            $navigationGroups[] = NavigationGroup::make()
+                ->label(__('admin.navigation.website'))
+                ->icon('icon-website');
+        }
+
+        $navigationGroups[] = NavigationGroup::make()
+            ->label(__('admin.navigation.plugin'))
+            ->icon('icon-plugin');
+
+        $navigationGroups[] = NavigationGroup::make()
+            ->label(__('admin.navigation.setting'))
+            ->icon('icon-settings');
+
         return $panel
             ->default()
             ->id('admin')
@@ -62,53 +115,7 @@ class AdminPanelProvider extends PanelProvider
                     ->label(fn () => filament()->auth()->user()?->name)
                     ->url(fn (): string => Profile::getUrl()),
             ])
-            ->navigationGroups([
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.dashboard'))
-                    ->icon('icon-dashboard'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.contact'))
-                    ->icon('icon-contacts'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.sale'))
-                    ->icon('icon-sales'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.purchase'))
-                    ->icon('icon-purchases'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.invoice'))
-                    ->icon('icon-invoices'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.accounting'))
-                    ->icon('icon-accounting'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.inventory'))
-                    ->icon('icon-inventories'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.project'))
-                    ->icon('icon-projects'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.rov-inspection'))
-                    ->icon('icon-rov-inspection'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.employee'))
-                    ->icon('icon-employees'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.time-off'))
-                    ->icon('icon-time-offs'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.recruitment'))
-                    ->icon('icon-recruitments'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.website'))
-                    ->icon('icon-website'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.plugin'))
-                    ->icon('icon-plugin'),
-                NavigationGroup::make()
-                    ->label(__('admin.navigation.setting'))
-                    ->icon('icon-settings'),
-            ])
+            ->navigationGroups($navigationGroups)
             ->plugins([
                 RovInspectionPlugin::make(),
                 FilamentShieldPlugin::make()

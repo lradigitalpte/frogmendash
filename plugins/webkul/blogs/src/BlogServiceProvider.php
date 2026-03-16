@@ -53,8 +53,10 @@ class BlogServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        Panel::configureUsing(function (Panel $panel): void {
-            $panel->plugin(BlogPlugin::make());
-        });
+        if ((bool) config('features.website.enabled') && (bool) config('features.blog.enabled')) {
+            Panel::configureUsing(function (Panel $panel): void {
+                $panel->plugin(BlogPlugin::make());
+            });
+        }
     }
 }

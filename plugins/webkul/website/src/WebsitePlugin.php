@@ -33,6 +33,10 @@ class WebsitePlugin implements Plugin
 
     public function register(Panel $panel): void
     {
+        if (! (bool) config('features.website.enabled')) {
+            return;
+        }
+
         if (! Package::isPluginInstalled($this->getId())) {
             return;
         }

@@ -10,7 +10,7 @@
 					</div>
 
 					<p class="mb-4 text-gray-700">
-						Designed to optimize and streamline business operations, Aureus ERP is suitable for enterprises of all sizes.
+						Designed to optimize and streamline business operations, this platform is suitable for enterprises of all sizes.
 					</p>
 
 					<p class="text-gray-700">
@@ -86,11 +86,7 @@
 			<!-- Copyright Section -->
 			<div class="flex flex-col justify-between pt-8 mt-8 border-t border-gray-200 md:flex-row">
 				<div class="text-sm text-gray-600">
-					Copyright © <a href="https://aureuserp.com/" class="text-primary-500" target="_blank">AureusERP</a>
-				</div>
-
-				<div class="mt-2 text-sm text-gray-600 md:mt-0">
-					Powered by : <a href="https://webkul.com/" class="text-primary-500" target="_blank">Webkul Software</a>
+					Copyright © LRA Digital
 				</div>
 			</div>
 		</div>
