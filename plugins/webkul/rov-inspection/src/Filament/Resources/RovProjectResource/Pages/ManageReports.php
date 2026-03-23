@@ -121,30 +121,22 @@ class ManageReports extends ManageRelatedRecords
                                 ->title('Report Updated'),
                         ),
                     Action::make('share')
-                        ->label('Generate Share Link')
+                        ->label(fn ($record) => $record->shared_link_hash ? 'Share Link' : 'Generate Share Link')
                         ->icon('heroicon-o-share')
                         ->color('info')
-                        ->action(function ($record) {
-                            $record->generateShareLink();
-                            $record->status = ReportStatus::Shared->value;
-                            $record->save();
+                        ->modalHeading(fn ($record) => $record->shared_link_hash ? 'Share Link' : 'Share Link Generated')
+                        ->modalSubmitAction(false)
+                        ->modalContent(function ($record) {
+                            if (! $record->shared_link_hash) {
+                                $record->generateShareLink();
+                                $record->status = ReportStatus::Shared->value;
+                                $record->save();
+                            }
 
-                            Notification::make()
-                                ->success()
-                                ->title('Share Link Generated')
-                                ->body('Report share link: '.url('/report/'.$record->shared_link_hash))
-                                ->send();
-                        })
-                        ->hidden(fn ($record) => $record->shared_link_hash !== null),
-                    Action::make('copy_link')
-                        ->label('Copy Share Link')
-                        ->icon('heroicon-o-clipboard')
-                        ->color('success')
-                        ->extraAttributes(fn ($record) => [
-                            'x-data'  => '',
-                            'x-on:click' => "navigator.clipboard.writeText('".url('/report/'.$record->shared_link_hash)."')",
-                        ])
-                        ->visible(fn ($record) => $record->shared_link_hash !== null),
+                            return view('rov-inspection::filament.actions.share-link-modal', [
+                                'url' => url('/report/' . $record->shared_link_hash),
+                            ]);
+                        }),
                     DeleteAction::make()
                         ->successNotification(
                             Notification::make()

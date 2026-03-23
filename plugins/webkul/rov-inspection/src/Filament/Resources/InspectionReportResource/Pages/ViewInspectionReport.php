@@ -5,7 +5,6 @@ namespace Webkul\RovInspection\Filament\Resources\InspectionReportResource\Pages
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Webkul\RovInspection\Enums\ReportStatus;
 use Webkul\RovInspection\Filament\Resources\InspectionReportResource;
@@ -19,24 +18,25 @@ class ViewInspectionReport extends ViewRecord
         return [
             EditAction::make(),
             Action::make('share')
-                ->label('Generate Share Link')
+                ->label(fn () => $this->getRecord()->shared_link_hash ? 'Share Link' : 'Generate Share Link')
                 ->icon('heroicon-o-share')
                 ->color('info')
-                ->action(function () {
+                ->modalHeading(fn () => $this->getRecord()->shared_link_hash ? 'Share Link' : 'Share Link Generated')
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->modalContent(function () {
                     $record = $this->getRecord();
-                    $record->generateShareLink();
-                    $record->status = ReportStatus::Shared->value;
-                    $record->save();
+                    if (! $record->shared_link_hash) {
+                        $record->generateShareLink();
+                        $record->status = ReportStatus::Shared->value;
+                        $record->save();
+                        $this->refreshFormData(['status', 'shared_link_hash', 'shared_date']);
+                    }
 
-                    Notification::make()
-                        ->success()
-                        ->title('Share Link Generated')
-                        ->body('Share URL: '.url('/report/'.$record->shared_link_hash))
-                        ->send();
-
-                    $this->refreshFormData(['status', 'shared_link_hash', 'shared_date']);
-                })
-                ->hidden(fn () => $this->getRecord()->shared_link_hash !== null),
+                    return view('rov-inspection::filament.actions.share-link-modal', [
+                        'url' => url('/report/' . $record->shared_link_hash),
+                    ]);
+                }),
             Action::make('view_client')
                 ->label('Open Client View')
                 ->icon('heroicon-o-arrow-top-right-on-square')
