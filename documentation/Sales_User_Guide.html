@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Management - User Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafbfc;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #e74c3c;
+        }
+        .page-header h1 {
+            margin: 0;
+            color: #c0392b;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .page-header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #c0392b;
+            font-size: 1.8em;
+            border-left: 4px solid #e74c3c;
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step-list {
+            list-style: decimal;
+            margin-left: 25px;
+            line-height: 2;
+        }
+        .step-list li {
+            margin-bottom: 15px;
+        }
+        .field-group {
+            background: #f9ebea;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #e74c3c;
+            border-radius: 4px;
+        }
+        .field-name {
+            font-weight: 600;
+            color: #c0392b;
+            margin-bottom: 8px;
+        }
+        .field-description {
+            margin: 5px 0;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        .screenshot-placeholder {
+            background: #d5dbdb;
+            border: 2px dashed #95a5a6;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .note {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #d68910;
+        }
+        .use-case {
+            background: #fadeeb;
+            border-left: 4px solid #e74c3c;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .use-case-title {
+            font-weight: 600;
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+        .use-case-content {
+            color: #2c3e50;
+        }
+        .use-case-content li {
+            margin: 8px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        .table th {
+            background: #e74c3c;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .summary {
+            background: #e8f6f3;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-weight: 600;
+            color: #1e8449;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Sales Management</h1>
+        <p>Complete Guide to Managing Sales Processes and Customer Relationships</p>
+    </div>
+
+    <div class="section">
+        <h2>Overview</h2>
+        <p>The Sales Management module provides comprehensive tools for managing the entire sales lifecycle, from lead generation to deal closure. Users can track prospects, manage opportunities, forecast revenue, create quotes and proposals, and maintain detailed customer relationship records.</p>
+        <p>This module integrates seamlessly with customer management, invoicing, and reporting systems to provide a complete sales management solution.</p>
+    </div>
+
+    <div class="section">
+        <h2>Create a New Lead</h2>
+        
+        <h3>Steps to Add a Lead</h3>
+        <ol class="step-list">
+            <li>Navigate to <code>Sales → Leads → New Lead</code> as shown in the below image.
+                <div class="screenshot-placeholder">
+                    ![Create Lead](images/sales/lead_create.png)
+                </div>
+            </li>
+            <li>Fill out the following details in the form that appears:
+                <div class="screenshot-placeholder">
+                    [Screenshot: Lead creation form]
+                </div>
+            </li>
+        </ol>
+        <ol class="step-list" start="3">
+            <li><strong>After Creating the Lead</strong><br>
+            Click <strong>Create</strong>. You will be redirected to the View Lead page. Here, you can:
+                <ul>
+                    <li><strong>Edit Lead:</strong> Modify lead details.</li>
+                    <li><strong>Convert to Opportunity:</strong> Create sales opportunity from qualified lead.</li>
+                    <li><strong>Activities:</strong> Log calls, emails, and meetings.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>📋 General Section</h3>
+        <div class="field-group">
+            <div class="field-name">Contact Name</div>
+            <div class="field-description">Full name of the primary contact person.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Company Name</div>
+            <div class="field-description">Name of the prospect's organization.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Email</div>
+            <div class="field-description">Primary email contact for communication.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Phone</div>
+            <div class="field-description">Primary phone contact number.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Lead General](images/sales/lead_general.png)
+                </div>
+
+        <h3>⚙️ Additional Information</h3>
+
+        <div class="field-group">
+            <div class="field-name">Lead Source</div>
+            <div class="field-description">How the lead was acquired:
+                <ul>
+                    <li>Website</li>
+                    <li>Referral</li>
+                    <li>Trade Show</li>
+                    <li>Cold Outreach</li>
+                    <li>Social Media</li>
+                    <li>Advertising</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Industry</div>
+            <div class="field-description">Prospect's business sector (Healthcare, Manufacturing, Technology, etc.).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Lead Status</div>
+            <div class="field-description">Current stage:
+                <ul>
+                    <li>New</li>
+                    <li>Contacted</li>
+                    <li>Qualified</li>
+                    <li>Unqualified</li>
+                    <li>Converted</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Assigned Sales Rep</div>
+            <div class="field-description">Team member responsible for this lead.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Lead Additional](images/sales/lead_additional.png)
+                </div>
+
+        <div class="note">
+            <div class="note-title">� Note:</div>
+            Complete lead information accurately for effective follow-up and qualification.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Create Sales Opportunity</h2>
+
+        <h3>Steps to Convert Lead to Opportunity</h3>
+        <ol class="step-list">
+            <li>From a qualified lead record, click <strong>Convert to Opportunity</strong>.
+                <div class="screenshot-placeholder">
+                    ![Convert Opportunity](images/sales/opportunity_convert.png)
+                </div>
+            </li>
+            <li>Complete the opportunity details form.
+                <div class="screenshot-placeholder">
+                    ![Opportunity Form](images/sales/opportunity_form.png)
+                </div>
+            </li>
+            <li>Click <strong>Create</strong> to create the sales opportunity.</li>
+        </ol>
+
+        <h3>💼 Opportunity Details</h3>
+        <div class="field-group">
+            <div class="field-name">Opportunity Name</div>
+            <div class="field-description">Descriptive name for the sales opportunity.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Account</div>
+            <div class="field-description">Link to the customer account.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Expected Revenue</div>
+            <div class="field-description">Estimated revenue value of the opportunity.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Probability (%)</div>
+            <div class="field-description">Likelihood of closing the deal (0-100%).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Close Date</div>
+            <div class="field-description">Expected closing date.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Sales Stage</div>
+            <div class="field-description">Current pipeline stage:
+                <ul>
+                    <li>Prospecting</li>
+                    <li>Discovery</li>
+                    <li>Proposal</li>
+                    <li>Negotiation</li>
+                    <li>Closed Won</li>
+                    <li>Closed Lost</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Products/Services</div>
+            <div class="field-description">Specific products or services being proposed. Used for inventory planning and sales analysis.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Competition</div>
+            <div class="field-description">Known competitors involved in this opportunity. Helps with competitive positioning and strategy.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Decision Makers</div>
+            <div class="field-description">Key people involved in the buying decision. Include their roles and influence level.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Sales Activities and Follow-ups</h2>
+
+        <h3>Logging Sales Activities</h3>
+        <ol class="step-list">
+            <li>From a lead or opportunity record, click <strong>+ Add Activity</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Activity logging interface]
+                </div>
+            </li>
+            <li>Select activity type and enter details.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Activity entry form]
+                </div>
+            </li>
+            <li>Click <strong>Save</strong> to record the activity.</li>
+        </ol>
+
+        <h3>Activity Types</h3>
+        <table class="table">
+            <tr>
+                <th>Activity Type</th>
+                <th>Purpose</th>
+                <th>Typical Information</th>
+            </tr>
+            <tr>
+                <td><strong>Phone Call</strong></td>
+                <td>Voice communication with prospect</td>
+                <td>Call duration, discussion topics, next steps</td>
+            </tr>
+            <tr>
+                <td><strong>Email</strong></td>
+                <td>Written correspondence</td>
+                <td>Subject, key points, attachments sent</td>
+            </tr>
+            <tr>
+                <td><strong>Meeting</strong></td>
+                <td>In-person or virtual meetings</td>
+                <td>Meeting duration, attendees, agenda covered, outcomes</td>
+            </tr>
+            <tr>
+                <td><strong>Proposal Sent</strong></td>
+                <td>Formal proposal submission</td>
+                <td>Proposal details, value, submission method</td>
+            </tr>
+            <tr>
+                <td><strong>Demo/Presentation</strong></td>
+                <td>Product demonstration</td>
+                <td>Demo type, features shown, feedback received</td>
+            </tr>
+        </table>
+
+        <h3>Scheduling Follow-ups</h3>
+        <div class="field-group">
+            <div class="field-name">Follow-up Date</div>
+            <div class="field-description">Next scheduled contact date with the prospect. Creates automatic reminders.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Follow-up Type</div>
+            <div class="field-description">Planned activity type (call, email, meeting, proposal review).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Notes</div>
+            <div class="field-description">Context for the follow-up, key topics to discuss, or information to prepare.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Quotes and Proposals</h2>
+
+        <h3>Creating Sales Quotes</h3>
+        <ol class="step-list">
+            <li>From an opportunity record, click <strong>Create Quote</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Quote creation interface]
+                </div>
+            </li>
+            <li>Add products/services and configure pricing.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Quote builder with product selection]
+                </div>
+            </li>
+            <li>Review quote totals and terms.</li>
+            <li>Generate PDF and send to customer.</li>
+        </ol>
+
+        <h3>Quote Components</h3>
+        <div class="field-group">
+            <div class="field-name">Quote Number</div>
+            <div class="field-description">Unique identifier for the quote. Auto-generated but can be customized to match company numbering systems.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Valid Until Date</div>
+            <div class="field-description">Quote expiration date. Creates urgency and protects against price changes.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Line Items</div>
+            <div class="field-description">Individual products or services included in the quote:
+                <ul>
+                    <li>Product/Service name and description</li>
+                    <li>Quantity required</li>
+                    <li>Unit price and total line amount</li>
+                    <li>Discount percentage (if applicable)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Terms and Conditions</div>
+            <div class="field-description">Payment terms, delivery conditions, warranty information, and legal disclaimers.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Quote Status</div>
+            <div class="field-description">Current status:
+                <ul>
+                    <li><strong>Draft:</strong> Quote being prepared, not yet sent</li>
+                    <li><strong>Sent:</strong> Delivered to customer awaiting response</li>
+                    <li><strong>Accepted:</strong> Customer approved the quote</li>
+                    <li><strong>Rejected:</strong> Customer declined the quote</li>
+                    <li><strong>Expired:</strong> Quote passed validity date</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Sales Pipeline Management</h2>
+
+        <h3>Pipeline Overview</h3>
+        <p>The sales pipeline provides a visual representation of all active opportunities in various stages:</p>
+        
+        <table class="table">
+            <tr>
+                <th>Pipeline Stage</th>
+                <th>Typical Actions</th>
+                <th>Expected Outcomes</th>
+            </tr>
+            <tr>
+                <td><strong>Prospecting</strong></td>
+                <td>Research, cold outreach, lead qualification</td>
+                <td>Initial interest confirmed, requirements identified</td>
+            </tr>
+            <tr>
+                <td><strong>Discovery</strong></td>
+                <td>Needs analysis, stakeholder identification, budget discussion</td>
+                <td>Clear understanding of customer needs and decision process</td>
+            </tr>
+            <tr>
+                <td><strong>Proposal</strong></td>
+                <td>Solution design, pricing, formal proposal presentation</td>
+                <td>Customer feedback on proposed solution and pricing</td>
+            </tr>
+            <tr>
+                <td><strong>Negotiation</strong></td>
+                <td>Contract terms, pricing adjustments, implementation planning</td>
+                <td>Agreement on all terms and conditions</td>
+            </tr>
+            <tr>
+                <td><strong>Closed Won</strong></td>
+                <td>Contract signing, implementation handoff</td>
+                <td>Revenue recognized, customer onboarding initiated</td>
+            </tr>
+        </table>
+
+        <h3>Moving Opportunities Through Stages</h3>
+        <ol class="step-list">
+            <li>Review opportunity progress and customer feedback.</li>
+            <li>Update opportunity stage when criteria for next stage are met.</li>
+            <li>Adjust probability percentage based on stage and customer engagement.</li>
+            <li>Update expected close date if timeline changes.</li>
+            <li>Log activities and next steps for continued progression.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Sales Reporting and Analytics</h2>
+
+        <h3>Key Sales Reports</h3>
+        <table class="table">
+            <tr>
+                <th>Report Type</th>
+                <th>Purpose</th>
+                <th>Key Metrics</th>
+            </tr>
+            <tr>
+                <td><strong>Sales Forecast</strong></td>
+                <td>Revenue prediction and planning</td>
+                <td>Weighted pipeline value, expected close dates, confidence levels</td>
+            </tr>
+            <tr>
+                <td><strong>Sales Performance</strong></td>
+                <td>Individual and team productivity</td>
+                <td>Activities logged, opportunities created, deals closed, revenue generated</td>
+            </tr>
+            <tr>
+                <td><strong>Conversion Analysis</strong></td>
+                <td>Pipeline efficiency measurement</td>
+                <td>Lead-to-opportunity conversion, stage progression rates, time in each stage</td>
+            </tr>
+            <tr>
+                <td><strong>Lost Deal Analysis</strong></td>
+                <td>Identify improvement opportunities</td>
+                <td>Loss reasons, competitor analysis, stage where deals are lost</td>
+            </tr>
+        </table>
+
+        <h3>Generating Sales Reports</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>Sales → Reports</strong>.</li>
+            <li>Select the desired report type and time period.</li>
+            <li>Choose filtering options (sales rep, product, region).</li>
+            <li>Generate report in PDF or Excel format.</li>
+            <li>Schedule automated reports for regular distribution.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Use Cases & Examples</h2>
+
+        <div class="use-case">
+            <div class="use-case-title">B2B Software Sales Process</div>
+            <div class="use-case-content">
+                <p>Technology company selling business software solutions:</p>
+                <ul>
+                    <li>Lead generation: Website forms, trade shows, referral programs</li>
+                    <li>Lead qualification: Budget, authority, need, timing (BANT) criteria</li>
+                    <li>Discovery calls: Understand current systems, pain points, requirements</li>
+                    <li>Solution demos: Customized product demonstrations addressing specific needs</li>
+                    <li>Proposal: Detailed implementation plan, pricing tiers, support packages</li>
+                    <li>Negotiation: License terms, implementation timeline, training requirements</li>
+                    <li>Closure: Contract execution, implementation handoff to delivery team</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Manufacturing Equipment Sales</div>
+            <div class="use-case-content">
+                <p>Industrial equipment manufacturer managing complex sales cycles:</p>
+                <ul>
+                    <li>Lead identification: Industry targeting, engineering specifications review</li>
+                    <li>Technical consultation: Site visits, requirement analysis, feasibility studies</li>
+                    <li>Custom configuration: Equipment specifications, installation requirements</li>
+                    <li>Proposal development: Technical specifications, delivery timeline, financing options</li>
+                    <li>Stakeholder management: Engineering, procurement, finance, operations teams</li>
+                    <li>Contract negotiation: Payment terms, delivery milestones, warranty coverage</li>
+                    <li>Project handoff: Manufacturing, installation, training, support</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Professional Services Sales</div>
+            <div class="use-case-content">
+                <p>Consulting firm selling advisory and implementation services:</p>
+                <ul>
+                    <li>Relationship building: Executive networking, thought leadership content</li>
+                    <li>Opportunity identification: Business challenges, strategic initiatives</li>
+                    <li>Needs assessment: Current state analysis, desired outcomes, constraints</li>
+                    <li>Proposal presentation: Methodology, team qualifications, project timeline</li>
+                    <li>Scope refinement: Statement of work, deliverables, success criteria</li>
+                    <li>Contract execution: Master agreement, project-specific work orders</li>
+                    <li>Project initiation: Team assignment, kickoff meeting, project planning</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Consistent Data Entry:</strong> Maintain complete and accurate records for all leads and opportunities.</li>
+            <li><strong>Regular Pipeline Reviews:</strong> Conduct weekly reviews to update opportunity status and plan next steps.</li>
+            <li><strong>Activity Tracking:</strong> Log all customer interactions to maintain relationship continuity and measure effort.</li>
+            <li><strong>Follow-up Discipline:</strong> Set and honor follow-up commitments to maintain customer engagement.</li>
+            <li><strong>Qualification Criteria:</strong> Establish clear lead qualification criteria to focus efforts on viable opportunities.</li>
+            <li><strong>Competitive Intelligence:</strong> Maintain awareness of competitor activities and positioning.</li>
+            <li><strong>Customer Feedback:</strong> Regularly seek feedback to improve sales process and customer experience.</li>
+        </ul>
+    </div>
+
+    <div class="summary">
+        <div class="summary-title">Summary</div>
+        <p>The Sales Management module provides comprehensive tools for managing the entire customer acquisition process. From initial lead capture through opportunity development, proposal generation, and deal closure, the system supports sales teams in building relationships, managing pipelines, and achieving revenue targets through structured, data-driven sales processes.</p>
+    </div>
+</body>
+</html>

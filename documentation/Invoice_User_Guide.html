@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice Management - User Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafbfc;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #9b59b6;
+        }
+        .page-header h1 {
+            margin: 0;
+            color: #8e44ad;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .page-header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #8e44ad;
+            font-size: 1.8em;
+            border-left: 4px solid #9b59b6;
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step-list {
+            list-style: decimal;
+            margin-left: 25px;
+            line-height: 2;
+        }
+        .step-list li {
+            margin-bottom: 15px;
+        }
+        .field-group {
+            background: #f4ecf7;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #9b59b6;
+            border-radius: 4px;
+        }
+        .field-name {
+            font-weight: 600;
+            color: #8e44ad;
+            margin-bottom: 8px;
+        }
+        .field-description {
+            margin: 5px 0;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        .screenshot-placeholder {
+            background: #d5dbdb;
+            border: 2px dashed #95a5a6;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .note {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #d68910;
+        }
+        .use-case {
+            background: #f5eef8;
+            border-left: 4px solid #9b59b6;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .use-case-title {
+            font-weight: 600;
+            color: #8e44ad;
+            margin-bottom: 10px;
+        }
+        .use-case-content {
+            color: #2c3e50;
+        }
+        .use-case-content li {
+            margin: 8px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        .table th {
+            background: #9b59b6;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .summary {
+            background: #e8f6f3;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-weight: 600;
+            color: #1e8449;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Invoice Management</h1>
+        <p>Complete Guide to Creating, Sending, and Managing Customer Invoices</p>
+    </div>
+
+    <div class="section">
+        <h2>Overview</h2>
+        <p>The Invoice Management module provides comprehensive tools for creating professional invoices, tracking payments, managing customer billing, and maintaining financial records. Users can generate invoices from quotes or projects, customize invoice templates, automate recurring billing, and monitor accounts receivable.</p>
+        <p>This module integrates with sales, project management, and accounting systems to streamline the billing process from order to payment.</p>
+    </div>
+
+    <div class="section">
+        <h2>Create an Invoice</h2>
+        
+        <h3>Steps to Create an Invoice</h3>
+        <ol class="step-list">
+            <li>Navigate to <code>Billing → Invoices → New Invoice</code> as shown in the below image.
+                <div class="screenshot-placeholder">
+                    ![Create Invoice](images/billing/invoice_create.png)
+                </div>
+            </li>
+            <li>Select the customer and fill out invoice details.
+                <div class="screenshot-placeholder">
+                    ![Invoice Form](images/billing/invoice_form.png)
+                </div>
+            </li>
+            <li>Add line items for products or services.</li>
+            <li>Review totals and terms before saving.</li>
+            <li>Click <strong>Save</strong> to create the invoice.</li>
+        </ol>
+
+        <h3>📋 Customer Information</h3>
+        <div class="field-group">
+            <div class="field-name">Customer</div>
+            <div class="field-description">Select the customer being billed.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Invoice Number</div>
+            <div class="field-description">Unique identifier for the invoice (auto-generated).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Invoice Date</div>
+            <div class="field-description">Date the invoice is issued.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Due Date</div>
+            <div class="field-description">Payment due date.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Purchase Order Number</div>
+            <div class="field-description">Customer's purchase order reference, if applicable. Important for customers requiring PO matching.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Project Reference</div>
+            <div class="field-description">Link to specific project or work order. Enables project-based billing and cost tracking.</div>
+        </div>
+
+        <h3>📦 Line Items</h3>
+        <div class="field-group">
+            <div class="field-name">Product/Service</div>
+            <div class="field-description">Select from products/services catalog or enter custom description. Include model numbers or specifications as needed.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description</div>
+            <div class="field-description">Detailed description of the item or service provided. Be specific to avoid customer queries.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Quantity</div>
+            <div class="field-description">Number of units being billed. Include unit of measure (hours, pieces, licenses, etc.)</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Unit Price</div>
+            <div class="field-description">Price per unit before discounts. Should match quoted prices or catalog rates.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Discount (%)</div>
+            <div class="field-description">Percentage discount applied to this line item, if applicable. Document reason for discounts.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tax Rate</div>
+            <div class="field-description">Applicable tax rate for this item. System can auto-apply based on customer location and product tax class.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Line Total</div>
+            <div class="field-description">Automatically calculated as: (Quantity × Unit Price) - Discount + Tax.</div>
+        </div>
+
+        <h3>Invoice Totals Section</h3>
+        <div class="field-group">
+            <div class="field-name">Subtotal</div>
+            <div class="field-description">Sum of all line items before discounts and taxes.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Total Discount</div>
+            <div class="field-description">Combined discount amount across all line items.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tax Total</div>
+            <div class="field-description">Total tax amount across all applicable line items.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Invoice Total</div>
+            <div class="field-description">Final amount due: Subtotal - Discounts + Taxes.</div>
+        </div>
+
+        <div class="note">
+            <div class="note-title">💡 Tip:</div>
+            Double-check all amounts and customer information before sending to avoid payment delays and customer queries.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Converting Quotes to Invoices</h2>
+
+        <h3>Invoice from Accepted Quote</h3>
+        <ol class="step-list">
+            <li>Navigate to the accepted quote record.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Quote record showing Accepted status]
+                </div>
+            </li>
+            <li>Click <strong>Convert to Invoice</strong> button.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Convert to Invoice interface]
+                </div>
+            </li>
+            <li>Review and modify invoice details if needed.</li>
+            <li>Adjust quantities or prices if partial delivery or changes occurred.</li>
+            <li>Click <strong>Save</strong> to create the invoice.</li>
+        </ol>
+
+        <h3>Benefits of Quote-to-Invoice Conversion</h3>
+        <ul>
+            <li><strong>Data Consistency:</strong> All product details, pricing, and customer information transfer automatically</li>
+            <li><strong>Time Savings:</strong> Eliminates manual data entry and reduces errors</li>
+            <li><strong>Audit Trail:</strong> Maintains link between original quote and final invoice</li>
+            <li><strong>Price Protection:</strong> Preserves agreed pricing even if catalog prices change</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Invoice Templates and Customization</h2>
+
+        <h3>Selecting Invoice Templates</h3>
+        <div class="field-group">
+            <div class="field-name">Standard Template</div>
+            <div class="field-description">Default company template with logo, standard layout, and payment terms.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Detailed Template</div>
+            <div class="field-description">Extended format with additional product details, project information, and expanded terms.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Service Template</div>
+            <div class="field-description">Optimized for service billing with time tracking, hourly rates, and professional services layout.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">International Template</div>
+            <div class="field-description">Multi-currency format with international address formats and tax compliance information.</div>
+        </div>
+
+        <h3>Customizing Invoice Content</h3>
+        <div class="field-group">
+            <div class="field-name">Payment Terms</div>
+            <div class="field-description">Standard terms: "Payment due within 30 days of invoice date" or custom terms specific to customer agreements.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Methods</div>
+            <div class="field-description">Accepted payment options: Bank transfer, credit card, check, online portal. Include relevant account information.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Notes/Comments</div>
+            <div class="field-description">Additional information for the customer: delivery instructions, warranty details, or project specifics.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Footer Information</div>
+            <div class="field-description">Company registration details, tax numbers, contact information for billing inquiries.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Sending and Delivery</h2>
+
+        <h3>Invoice Delivery Methods</h3>
+        <table class="table">
+            <tr>
+                <th>Delivery Method</th>
+                <th>When to Use</th>
+                <th>Setup Requirements</th>
+            </tr>
+            <tr>
+                <td><strong>Email (PDF)</strong></td>
+                <td>Standard delivery for most customers</td>
+                <td>Customer email address, PDF generation enabled</td>
+            </tr>
+            <tr>
+                <td><strong>Portal Access</strong></td>
+                <td>Customers preferring self-service access</td>
+                <td>Customer portal account, invoice sharing enabled</td>
+            </tr>
+            <tr>
+                <td><strong>Print and Mail</strong></td>
+                <td>Customers requiring physical copies</td>
+                <td>Print queue setup, mailing address verification</td>
+            </tr>
+            <tr>
+                <td><strong>EDI Integration</strong></td>
+                <td>Large corporate customers with automated systems</td>
+                <td>EDI connection established, format mapping configured</td>
+            </tr>
+        </table>
+
+        <h3>Sending Invoice via Email</h3>
+        <ol class="step-list">
+            <li>From the invoice record, click <strong>Send Email</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Invoice email composition interface]
+                </div>
+            </li>
+            <li>Review email recipients and subject line.</li>
+            <li>Customize email message if needed.</li>
+            <li>Attach invoice PDF and any supporting documents.</li>
+            <li>Click <strong>Send</strong> to deliver the invoice.</li>
+        </ol>
+
+        <h3>Email Template Customization</h3>
+        <div class="field-group">
+            <div class="field-name">Email Subject</div>
+            <div class="field-description">Professional subject line: "Invoice [Invoice Number] from [Company Name] - Due [Due Date]"</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Email Body</div>
+            <div class="field-description">Courteous message including payment instructions, due date, and contact information for questions.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Attachments</div>
+            <div class="field-description">Invoice PDF, delivery receipts, contracts, or other supporting documentation.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Payment Tracking and Follow-up</h2>
+
+        <h3>Invoice Status Management</h3>
+        <table class="table">
+            <tr>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Typical Actions</th>
+            </tr>
+            <tr>
+                <td><strong>Draft</strong></td>
+                <td>Invoice created but not yet finalized</td>
+                <td>Review, edit, approve for sending</td>
+            </tr>
+            <tr>
+                <td><strong>Sent</strong></td>
+                <td>Invoice delivered to customer</td>
+                <td>Monitor for payment, schedule follow-up</td>
+            </tr>
+            <tr>
+                <td><strong>Partial Payment</strong></td>
+                <td>Customer made partial payment</td>
+                <td>Record payment, follow up on balance</td>
+            </tr>
+            <tr>
+                <td><strong>Paid</strong></td>
+                <td>Invoice fully paid</td>
+                <td>Record final payment, close invoice</td>
+            </tr>
+            <tr>
+                <td><strong>Overdue</strong></td>
+                <td>Payment due date passed</td>
+                <td>Send reminder, escalate collection efforts</td>
+            </tr>
+            <tr>
+                <td><strong>Disputed</strong></td>
+                <td>Customer disputed invoice or amount</td>
+                <td>Resolve dispute, adjust if necessary</td>
+            </tr>
+        </table>
+
+        <h3>Recording Payments</h3>
+        <ol class="step-list">
+            <li>From the invoice record, click <strong>Record Payment</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Payment recording interface]
+                </div>
+            </li>
+            <li>Enter payment details and amount received.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Payment entry form]
+                </div>
+            </li>
+            <li>Select payment method and reference information.</li>
+            <li>Click <strong>Save</strong> to record the payment.</li>
+        </ol>
+
+        <h3>Payment Details</h3>
+        <div class="field-group">
+            <div class="field-name">Payment Date</div>
+            <div class="field-description">Date payment was received. Important for cash flow reporting and aging calculations.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Amount</div>
+            <div class="field-description">Amount received. Can be partial payment if customer paying in installments.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Method</div>
+            <div class="field-description">How payment was received: Bank transfer, credit card, check, cash, etc.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Reference Number</div>
+            <div class="field-description">Transaction ID, check number, or other payment reference for reconciliation.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Notes</div>
+            <div class="field-description">Additional information about the payment or any special circumstances.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Recurring Invoices and Subscriptions</h2>
+
+        <h3>Setting Up Recurring Billing</h3>
+        <ol class="step-list">
+            <li>Create a template invoice with standard products/services.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Recurring invoice template setup]
+                </div>
+            </li>
+            <li>Configure recurrence schedule and parameters.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Recurrence configuration interface]
+                </div>
+            </li>
+            <li>Set start date and duration (if applicable).</li>
+            <li>Activate recurring billing schedule.</li>
+        </ol>
+
+        <h3>Recurrence Configuration</h3>
+        <div class="field-group">
+            <div class="field-name">Billing Frequency</div>
+            <div class="field-description">How often invoices are generated:
+                <ul>
+                    <li><strong>Weekly:</strong> Every 7 days</li>
+                    <li><strong>Monthly:</strong> Same date each month</li>
+                    <li><strong>Quarterly:</strong> Every 3 months</li>
+                    <li><strong>Annually:</strong> Same date each year</li>
+                    <li><strong>Custom:</strong> Specific day intervals</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Start Date</div>
+            <div class="field-description">Date when recurring billing begins. First invoice will be generated on this date.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">End Date</div>
+            <div class="field-description">Optional end date for recurring series. Leave blank for ongoing subscriptions.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Auto-Send</div>
+            <div class="field-description">Automatically email invoices to customer when generated, or create as draft for manual review.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Price Escalation</div>
+            <div class="field-description">Optional annual price increases based on percentage or fixed amount.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Invoice Reports and Analytics</h2>
+
+        <h3>Financial Reports</h3>
+        <table class="table">
+            <tr>
+                <th>Report Type</th>
+                <th>Purpose</th>
+                <th>Key Information</th>
+            </tr>
+            <tr>
+                <td><strong>Accounts Receivable Aging</strong></td>
+                <td>Track outstanding customer balances</td>
+                <td>Current, 30-day, 60-day, 90+ day outstanding amounts</td>
+            </tr>
+            <tr>
+                <td><strong>Revenue Summary</strong></td>
+                <td>Period revenue analysis</td>
+                <td>Total billed, payments received, revenue recognition</td>
+            </tr>
+            <tr>
+                <td><strong>Customer Payment History</strong></td>
+                <td>Individual customer payment patterns</td>
+                <td>Payment timeliness, aging trends, credit risk assessment</td>
+            </tr>
+            <tr>
+                <td><strong>Invoice Status Summary</strong></td>
+                <td>Overall billing pipeline health</td>
+                <td>Draft, sent, paid, overdue invoice counts and amounts</td>
+            </tr>
+        </table>
+
+        <h3>Generating Invoice Reports</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>Invoices → Reports</strong>.</li>
+            <li>Select desired report type and date range.</li>
+            <li>Choose filtering options (customer, product, status).</li>
+            <li>Generate report in PDF or Excel format.</li>
+            <li>Schedule automated reports for regular distribution.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Use Cases & Examples</h2>
+
+        <div class="use-case">
+            <div class="use-case-title">Professional Services Billing</div>
+            <div class="use-case-content">
+                <p>Consulting firm billing for time and materials:</p>
+                <ul>
+                    <li>Time tracking: Capture hours worked by project and team member</li>
+                    <li>Expense inclusion: Travel, materials, subcontractor costs</li>
+                    <li>Billing rates: Different hourly rates by skill level and project type</li>
+                    <li>Progress billing: Monthly invoices based on work completed</li>
+                    <li>Project milestones: Billing tied to deliverable completion</li>
+                    <li>Retainer management: Advance payments and draw-downs</li>
+                    <li>Client reporting: Detailed breakdown of time and activities</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Product Sales with Subscriptions</div>
+            <div class="use-case-content">
+                <p>Software company with license sales and ongoing support:</p>
+                <ul>
+                    <li>Initial license sale: One-time invoice for software licenses</li>
+                    <li>Implementation services: Professional services for setup and training</li>
+                    <li>Monthly support: Recurring billing for ongoing support and maintenance</li>
+                    <li>Usage-based billing: Additional charges based on transaction volume</li>
+                    <li>Annual renewals: Subscription renewal invoices with price updates</li>
+                    <li>Multi-currency: International customers billed in local currency</li>
+                    <li>Volume discounts: Tiered pricing based on license count</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Manufacturing and Distribution</div>
+            <div class="use-case-content">
+                <p>Manufacturing company with complex product sales:</p>
+                <ul>
+                    <li>Product catalog: Standard pricing for manufactured goods</li>
+                    <li>Custom configurations: Modified products with engineering charges</li>
+                    <li>Volume pricing: Quantity breaks and contract pricing</li>
+                    <li>Shipping charges: Freight and handling calculated by weight and distance</li>
+                    <li>Payment terms: Net 30 for established customers, COD for new accounts</li>
+                    <li>International trade: Export documentation and currency conversion</li>
+                    <li>Warranty tracking: Extended warranty and service contract billing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Accurate Information:</strong> Verify all customer and product details before sending invoices to avoid disputes and delays.</li>
+            <li><strong>Clear Descriptions:</strong> Use detailed, unambiguous descriptions for all products and services to prevent customer confusion.</li>
+            <li><strong>Timely Billing:</strong> Send invoices promptly after delivery to maintain cash flow and customer expectations.</li>
+            <li><strong>Consistent Terms:</strong> Apply payment terms consistently and communicate clearly with customers.</li>
+            <li><strong>Follow-up Procedures:</strong> Establish systematic follow-up processes for overdue accounts.</li>
+            <li><strong>Record Keeping:</strong> Maintain complete documentation for all invoices, payments, and customer communications.</li>
+            <li><strong>Regular Reconciliation:</strong> Reconcile invoice records with accounting system and bank statements regularly.</li>
+        </ul>
+    </div>
+
+    <div class="summary">
+        <div class="summary-title">Summary</div>
+        <p>The Invoice Management module provides comprehensive tools for professional billing and accounts receivable management. From creating accurate invoices and managing customer communications to tracking payments and generating financial reports, the system supports efficient billing operations that improve cash flow and customer relationships.</p>
+    </div>
+</body>
+</html>

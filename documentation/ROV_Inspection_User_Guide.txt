@@ -1,0 +1,444 @@
+ROV INSPECTION MANAGEMENT - USER GUIDE
+Complete Guide to Managing Underwater Inspection Projects
+
+================================================================================
+OVERVIEW
+================================================================================
+
+The ROV Inspection module enables comprehensive management of Remote Operated Vehicle (ROV) inspection projects. Users can create inspection projects, define structures and survey areas, add inspection points, manage media uploads (photos and videos), and track inspection findings and observations.
+
+This module is ideal for offshore operations, marine infrastructure inspection, pipeline surveys, and underwater asset assessment workflows.
+
+================================================================================
+CREATING A NEW ROV PROJECT
+================================================================================
+
+Steps to Create a Project:
+
+1. Navigate to ROV → Projects → Create New Project or click the + New Project button.
+   [Screenshot Reference: Navigation menu and Project creation button]
+
+2. Fill out the project creation form with the required information (described in sections below).
+   [Screenshot Reference: Project creation form]
+
+3. Click Save to create the project. You will be redirected to the Project View page.
+
+
+General Section
+===============
+
+PROJECT NAME
+Enter a descriptive name for the ROV inspection project. Example: "North Pipeline Survey Q1 2026" or "Offshore Platform Inspection".
+
+PROJECT TYPE
+Select the type of inspection being conducted:
+- Pipeline Inspection: Surveys of subsea pipelines for integrity assessment
+- Infrastructure Inspection: Inspection of platforms, jackets, and offshore structures
+- Cable Route Survey: Examination of submarine cables and routes
+- General Survey: Miscellaneous inspection activities
+
+DESCRIPTION
+Provide a detailed overview of the inspection project scope, objectives, and any special requirements. This helps team members understand the project goals and context.
+
+CLIENT/CUSTOMER
+Link this project to the client or asset owner. Useful for organizing projects by customer and generating client-specific reports.
+
+
+Project Schedule Section
+=========================
+
+START DATE
+The date when the ROV inspection will begin. Important for scheduling resources and coordination.
+
+END DATE
+The expected date of project completion or survey window. Helps track project duration and planning.
+
+WATER DEPTH (METERS)
+The average or maximum water depth at the survey location. Critical for ROV capability planning and equipment selection.
+
+
+Location & Environmental Section
+=================================
+
+SURVEY LOCATION/AREA
+Geographic location or area name. Examples: "North Sea Block 15", "Gulf of Mexico Platform A", "Mediterranean Route Section 3".
+
+GPS COORDINATES
+Enter latitude and longitude or allow automatic location capture. Used for mapping and site reference.
+
+WEATHER RESTRICTIONS
+Document any environmental conditions or restrictions (sea state limitations, current speed, visibility requirements).
+
+
+Operational Settings Section
+=============================
+
+PROJECT MANAGER
+Assign the team member responsible for overall project coordination and decision-making.
+
+SURVEY SUPERVISOR
+The field supervisor responsible for day-to-day operations and quality control during the survey.
+
+ROV OPERATOR
+The pilot operating the ROV equipment. May assign multiple operators for shift-based operations.
+
+VESSEL/SUPPORT PLATFORM
+Name and type of support vessel or installation being used as the survey base.
+
+
+Documentation & Standards Section
+==================================
+
+INSPECTION STANDARD
+Reference the applicable inspection standard or code. Examples: "DNV-RP-F201", "ASME B31.8", "Client Specification v2.1".
+
+INSPECTION PURPOSE
+Define the primary purpose: Integrity Assessment, Maintenance Check, Installation Verification, Damage Investigation, or Routine Monitoring.
+
+Tip: Fill in all fields accurately as they will appear on generated reports and be used for filtering and searching projects.
+
+
+After Creating the Project
+===========================
+
+Once created, the Project View page displays:
+
+- Edit Project: Modify project details and settings
+- Structures: Add and manage survey structures (see section below)
+- Inspection Points: Define specific areas requiring inspection
+- Media Gallery: View all uploaded inspection photos and videos
+- Reports: Generate inspection reports and findings documentation
+
+================================================================================
+MANAGING STRUCTURES & SURVEY AREAS
+================================================================================
+
+Overview
+========
+
+Structures represent the physical assets or areas being inspected within an ROV project. Each structure can have multiple inspection points and associated documentation.
+
+
+Adding a Structure to a Project
+================================
+
+1. From the Project View page, click Structures or + Add Structure.
+   [Screenshot Reference: Project view with Structures section]
+
+2. Fill in the structure details as described below.
+   [Screenshot Reference: Structure creation form]
+
+3. Click Save to add the structure to the project.
+
+
+Structure Details
+=================
+
+STRUCTURE NAME
+Unique identifier for the structure. Examples: "Main Pipeline Section A", "Platform Jacket Leg 1", "Riser Clamp Assembly".
+
+STRUCTURE TYPE
+Classification of the asset:
+- Pipeline
+- Platform/Jacket
+- Riser/Jumper
+- Cable
+- Debris/Hazard
+- Other
+
+DIMENSIONS
+Physical dimensions relevant to the structure (diameter for pipes, length, height, etc.).
+
+MATERIAL SPECIFICATION
+Material composition and specifications (carbon steel, stainless steel, dual-phase, etc.).
+
+INSTALLATION YEAR
+Year the asset was installed or commissioned. Used for calculating asset age and service history.
+
+SURFACE PHOTO / DIAGRAM
+Upload a reference photo or engineering drawing showing the structure before or above water. Helps with field identification and reference during survey.
+
+ANNOTATABLE DIAGRAM
+Upload a technical drawing or cross-section diagram. Inspection points can be plotted on this image for visual reference and precise location marking.
+
+================================================================================
+SETTING INSPECTION POINTS
+================================================================================
+
+Overview
+========
+
+Inspection points are specific locations or areas on a structure that require detailed examination. They can be plotted on diagrams and tracked through the inspection workflow.
+
+
+Adding Inspection Points
+=========================
+
+1. From a Structure View, click + Add Inspection Point.
+   [Screenshot Reference: Inspection Points section]
+
+2. Enter the inspection point details.
+   [Screenshot Reference: Inspection Point form]
+
+3. Click on the diagram to mark the physical location if an annotatable diagram is available.
+
+4. Click Save.
+
+
+Inspection Point Fields
+=======================
+
+POINT NAME/ID
+Unique identifier for the inspection point. Examples: "Corrosion Area 1", "Weld Seam A", "Connection Point B".
+
+LOCATION DESCRIPTION
+Detailed description of where the inspection point is located on the structure. Include reference distances or positions.
+
+GPS COORDINATES (IF AVAILABLE)
+Precise location coordinates for surface-referenced points.
+
+INSPECTION PRIORITY
+Set priority level:
+- Critical: High-risk areas requiring immediate attention
+- High: Important areas for integrity assessment
+- Medium: Standard inspection areas
+- Low: Reference or documentation points
+
+INSPECTION TYPE
+Type of inspection to perform:
+- Visual Assessment
+- Corrosion Evaluation
+- Crack Detection
+- Dimensional Measurement
+- Thickness Survey
+- Damage Assessment
+
+ASSIGNED INSPECTOR
+Assign the technician or engineer responsible for this specific inspection point.
+
+================================================================================
+MANAGING INSPECTION MEDIA
+================================================================================
+
+Overview
+========
+
+Upload and organize photos and videos captured during the ROV inspection. Media is linked to specific inspection points for reference and documentation.
+
+
+Uploading Media
+===============
+
+1. From the Project View or Inspection Point page, click + Add Media or Upload Media.
+   [Screenshot Reference: Media upload interface]
+
+2. Select media file(s) from your computer. Supported formats:
+   - Images: JPEG, PNG, WebP (max 100MB each)
+   - Video: MP4, WebM (max 500MB each)
+
+3. Assign media to relevant structures or inspection points.
+
+4. Add tags and descriptions for easy searching and organization.
+
+5. Click Upload.
+
+
+Media Properties
+================
+
+FILE NAME
+Auto-populated but editable. Give meaningful names like "Corrosion_Point_A_20260330" for easy reference.
+
+MEDIA TYPE
+Automatically detected as Image or Video. Used for filtering and gallery display.
+
+LINKED INSPECTION POINT
+Associate the media with a specific inspection point. Creates a direct reference in inspection reports.
+
+DESCRIPTION/OBSERVATIONS
+Add notes about what the media shows, observations, defects identified, or measurements taken.
+
+DATE CAPTURED
+Date and time the media was captured during the survey. Automatically extracted from video metadata if available.
+
+CAPTURED BY
+Operator or technician who captured the media. Useful for tracking data sources and responsibility.
+
+TAGS
+Apply tags for classification: "Corrosion", "Weld", "Coating", "Damage", "Reference", etc. Enables quick filtering and searching.
+
+
+Media Gallery View
+==================
+
+All project media is displayed in a gallery with:
+- Thumbnail preview of photos
+- Video duration display
+- Associated inspection point reference
+- Date and operator information
+- Quick search and filter by tags or inspection points
+
+================================================================================
+RECORDING FINDINGS & OBSERVATIONS
+================================================================================
+
+Overview
+========
+
+Document all findings, defects, and observations associated with each inspection point for reporting and follow-up actions.
+
+
+Adding Findings
+===============
+
+1. From an Inspection Point View, click + Add Finding.
+   [Screenshot Reference: Inspection findings form]
+
+2. Complete the finding details as described below.
+
+3. Attach relevant media (photos/videos) to the finding.
+
+4. Click Save.
+
+
+Finding Details
+===============
+
+FINDING TITLE
+Brief summary of the finding. Examples: "Surface Corrosion", "Minor Crack Detected", "Coating Degradation".
+
+SEVERITY LEVEL
+Rate the finding:
+- Critical: Immediate risk to integrity or safety
+- High: Significant defect requiring near-term remediation
+- Medium: Moderate defect requiring monitoring or planning
+- Low: Minor defect or observation for reference
+
+FINDING DESCRIPTION
+Detailed description of what was observed, extent of damage, location within the inspection point, and any measurements taken.
+
+RECOMMENDED ACTION
+Suggested remediation or follow-up action. Examples: "Repair needed", "Monitor at next survey", "No action required".
+
+LINKED MEDIA
+Attach photos or video clips showing the finding. Multiple media files can be linked to one finding.
+
+INSPECTOR NOTES
+Additional comments, observations, or context from the inspector conducting the examination.
+
+================================================================================
+GENERATING REPORTS
+================================================================================
+
+Report Types Available
+======================
+
+SURVEY SUMMARY
+Purpose: Overview of completed inspection
+Includes: Project details, structures inspected, media count, general observations
+
+DETAILED INSPECTION REPORT
+Purpose: Comprehensive findings documentation
+Includes: All inspection points, findings with severity, media, remediation recommendations
+
+MEDIA REPORT
+Purpose: Organized gallery of all inspection photos/videos
+Includes: Thumbnails, captions, location references, dates, operators
+
+ACTION ITEMS REPORT
+Purpose: Follow-up and remediation tracking
+Includes: Critical and high-severity findings with recommended actions and assigned owners
+
+
+Generating a Report
+===================
+
+1. From the Project View, click Reports or Generate Report.
+
+2. Select the desired report type and any filtering options.
+
+3. Choose output format: PDF or Excel.
+
+4. Click Generate to create the report.
+
+5. Download or email the report as needed.
+
+================================================================================
+USE CASES & EXAMPLES
+================================================================================
+
+Oil & Gas Pipeline Inspection
+=============================
+
+A subsea pipeline operator requires quarterly integrity surveys of their 48-inch transmission line:
+
+1. Create project: "Q1 2026 North Sea Pipeline Integrity Survey"
+2. Define structure: "Main Pipeline 240 km section, starting from coordinates X,Y"
+3. Add inspection points at: Pipe transitions, connection points, known repair areas, areas of external loading
+4. During ROV survey: Capture HD video and stills of each section, mark corrosion or coating defects
+5. Document findings: Rate severity, attach media, note measurements and observations
+6. Generate report: Detailed report with media evidence sent to regulatory authority
+
+
+Offshore Platform Annual Inspection
+====================================
+
+A platform operator performs annual structural integrity assessment:
+
+1. Create project: "2026 Annual Platform A Inspection" with client reference
+2. Add multiple structures: Each jacket leg, risers, conductors, well heads
+3. Set inspection points: Foundation mud-line clearance, weld areas, anodes, biofouling assessment zones
+4. Upload reference diagrams showing platform layout and measurements
+5. During survey: Operators capture high-resolution imagery at each defined point
+6. Record observations: Anode condition, coating assessment, marine growth, structural changes
+7. Generate findings: Compile all defects with remediation recommendations for engineering review
+
+
+Submarine Cable Route Survey
+=============================
+
+Telecom company needs to survey a submarine communications cable route:
+
+1. Create project: "Trans-Atlantic Cable Route Survey - 2026"
+2. Define structure: Cable route with waypoint coordinates and depth information
+3. Add inspection points: At regular intervals (every 5 km), hazard areas, and areas of concern from desktop study
+4. Survey execution: ROV captures continuous video with GPS logging, takes photos of anomalies
+5. Document findings: Cable burial depth, hazards (anchors, debris), potential route conflicts
+6. Generate report: High-definition survey summary with location references for route planning adjustments
+
+================================================================================
+BEST PRACTICES
+================================================================================
+
+NAMING CONVENTIONS
+Use consistent, descriptive naming for projects, structures, and inspection points to enable easy searching and filtering.
+
+MEDIA ORGANIZATION
+Immediately tag and link media to inspection points after capture. Waiting until later can result in orphaned, unidentified files.
+
+TIMELY DOCUMENTATION
+Record findings while the ROV is on location. Waiting to document findings from memory reduces accuracy and detail.
+
+QUALITY CONTROL
+Assign a supervisor to verify all inspection points were visited and documented before concluding the survey.
+
+DIAGRAM REFERENCES
+Upload clear, accurate engineering drawings or surface photos to enable precise annotation of inspection points.
+
+REGULAR BACKUPS
+The system automatically backs up all media to AWS S3 cloud storage. Verify backups are current before departing the survey location.
+
+================================================================================
+SUMMARY
+================================================================================
+
+The ROV Inspection module provides a complete framework for managing underwater inspection campaigns from project planning through findings documentation and reporting. By following the structured workflow—creating projects, defining structures and inspection points, capturing media, recording findings, and generating reports—organizations can ensure comprehensive asset assessment, maintain regulatory compliance, and support data-driven maintenance planning.
+
+================================================================================
+ADDITIONAL RESOURCES
+================================================================================
+
+- Video Tutorial: Creating Your First ROV Project
+- Template Library: Standard Inspection Point Definitions
+- FAQ: Common Issues and Solutions
+- Support Contact

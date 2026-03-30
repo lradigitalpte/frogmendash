@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ROV Inspection Management - User Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafbfc;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+        }
+        .page-header h1 {
+            margin: 0;
+            color: #2980b9;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .page-header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #2980b9;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step-list {
+            list-style: decimal;
+            margin-left: 25px;
+            line-height: 2;
+        }
+        .step-list li {
+            margin-bottom: 15px;
+        }
+        .field-group {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .field-name {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 8px;
+        }
+        .field-description {
+            margin: 5px 0;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        .screenshot-placeholder {
+            background: #d5dbdb;
+            border: 2px dashed #95a5a6;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .note {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #d68910;
+        }
+        .use-case {
+            background: #d6eaf8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .use-case-title {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        .use-case-content {
+            color: #2c3e50;
+        }
+        .use-case-content li {
+            margin: 8px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        .table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .summary {
+            background: #e8f8f5;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-weight: 600;
+            color: #1e8449;
+            margin-bottom: 10px;
+        }
+        .nav-path {
+            background: #ecf0f1;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            color: #2c3e50;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>ROV Inspection Management</h1>
+        <p>Complete Guide to Managing Underwater Inspection Projects</p>
+    </div>
+
+    <div class="section">
+        <h2>Overview</h2>
+        <p>The ROV Inspection module enables comprehensive management of Remote Operated Vehicle (ROV) inspection projects. Users can create inspection projects, define structures and survey areas, add inspection points, manage media uploads (photos and videos), and track inspection findings and observations.</p>
+        <p>This module is ideal for offshore operations, marine infrastructure inspection, pipeline surveys, and underwater asset assessment workflows.</p>
+    </div>
+
+    <div class="section">
+        <h2>Creating a New ROV Project</h2>
+        
+        <h3>Steps to Create a Project</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>ROV → Projects → Create New Project</strong> or click the <strong>+ New Project</strong> button.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Navigation menu and Project creation button]
+                </div>
+            </li>
+            <li>Fill out the project creation form with the required information (described in sections below).
+                <div class="screenshot-placeholder">
+                    [Screenshot: Project creation form]
+                </div>
+            </li>
+            <li>Click <strong>Save</strong> to create the project. You will be redirected to the Project View page.</li>
+        </ol>
+
+        <h3>General Section</h3>
+        <div class="field-group">
+            <div class="field-name">Project Name</div>
+            <div class="field-description">Enter a descriptive name for the ROV inspection project. Example: "North Pipeline Survey Q1 2026" or "Offshore Platform Inspection".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Project Type</div>
+            <div class="field-description">Select the type of inspection being conducted:
+                <ul>
+                    <li><strong>Pipeline Inspection:</strong> Surveys of subsea pipelines for integrity assessment</li>
+                    <li><strong>Infrastructure Inspection:</strong> Inspection of platforms, jackets, and offshore structures</li>
+                    <li><strong>Cable Route Survey:</strong> Examination of submarine cables and routes</li>
+                    <li><strong>General Survey:</strong> Miscellaneous inspection activities</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description</div>
+            <div class="field-description">Provide a detailed overview of the inspection project scope, objectives, and any special requirements. This helps team members understand the project goals and context.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Client/Customer</div>
+            <div class="field-description">Link this project to the client or asset owner. Useful for organizing projects by customer and generating client-specific reports.</div>
+        </div>
+
+        <h3>Project Schedule Section</h3>
+        <div class="field-group">
+            <div class="field-name">Start Date</div>
+            <div class="field-description">The date when the ROV inspection will begin. Important for scheduling resources and coordination.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">End Date</div>
+            <div class="field-description">The expected date of project completion or survey window. Helps track project duration and planning.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Water Depth (meters)</div>
+            <div class="field-description">The average or maximum water depth at the survey location. Critical for ROV capability planning and equipment selection.</div>
+        </div>
+
+        <h3>Location & Environmental Section</h3>
+        <div class="field-group">
+            <div class="field-name">Survey Location/Area</div>
+            <div class="field-description">Geographic location or area name. Examples: "North Sea Block 15", "Gulf of Mexico Platform A", "Mediterranean Route Section 3".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">GPS Coordinates</div>
+            <div class="field-description">Enter latitude and longitude or allow automatic location capture. Used for mapping and site reference.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Weather Restrictions</div>
+            <div class="field-description">Document any environmental conditions or restrictions (sea state limitations, current speed, visibility requirements).</div>
+        </div>
+
+        <h3>Operational Settings Section</h3>
+        <div class="field-group">
+            <div class="field-name">Project Manager</div>
+            <div class="field-description">Assign the team member responsible for overall project coordination and decision-making.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Survey Supervisor</div>
+            <div class="field-description">The field supervisor responsible for day-to-day operations and quality control during the survey.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">ROV Operator</div>
+            <div class="field-description">The pilot operating the ROV equipment. May assign multiple operators for shift-based operations.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Vessel/Support Platform</div>
+            <div class="field-description">Name and type of support vessel or installation being used as the survey base.</div>
+        </div>
+
+        <h3>Documentation & Standards Section</h3>
+        <div class="field-group">
+            <div class="field-name">Inspection Standard</div>
+            <div class="field-description">Reference the applicable inspection standard or code. Examples: "DNV-RP-F201", "ASME B31.8", "Client Specification v2.1".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Inspection Purpose</div>
+            <div class="field-description">Define the primary purpose: Integrity Assessment, Maintenance Check, Installation Verification, Damage Investigation, or Routine Monitoring.</div>
+        </div>
+
+        <div class="note">
+            <div class="note-title">💡 Tip:</div>
+            Fill in all fields accurately as they will appear on generated reports and be used for filtering and searching projects.
+        </div>
+
+        <h3>After Creating the Project</h3>
+        <p>Once created, the Project View page displays:</p>
+        <ul>
+            <li><strong>Edit Project:</strong> Modify project details and settings</li>
+            <li><strong>Structures:</strong> Add and manage survey structures (see section below)</li>
+            <li><strong>Inspection Points:</strong> Define specific areas requiring inspection</li>
+            <li><strong>Media Gallery:</strong> View all uploaded inspection photos and videos</li>
+            <li><strong>Reports:</strong> Generate inspection reports and findings documentation</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Managing Structures & Survey Areas</h2>
+
+        <h3>Overview</h3>
+        <p>Structures represent the physical assets or areas being inspected within an ROV project. Each structure can have multiple inspection points and associated documentation.</p>
+
+        <h3>Adding a Structure to a Project</h3>
+        <ol class="step-list">
+            <li>From the Project View page, click <strong>Structures</strong> or <strong>+ Add Structure</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Project view with Structures section]
+                </div>
+            </li>
+            <li>Fill in the structure details as described below.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Structure creation form]
+                </div>
+            </li>
+            <li>Click <strong>Save</strong> to add the structure to the project.</li>
+        </ol>
+
+        <h3>Structure Details</h3>
+        <div class="field-group">
+            <div class="field-name">Structure Name</div>
+            <div class="field-description">Unique identifier for the structure. Examples: "Main Pipeline Section A", "Platform Jacket Leg 1", "Riser Clamp Assembly".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Structure Type</div>
+            <div class="field-description">Classification of the asset:
+                <ul>
+                    <li>Pipeline</li>
+                    <li>Platform/Jacket</li>
+                    <li>Riser/Jumper</li>
+                    <li>Cable</li>
+                    <li>Debris/Hazard</li>
+                    <li>Other</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Dimensions</div>
+            <div class="field-description">Physical dimensions relevant to the structure (diameter for pipes, length, height, etc.).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Material Specification</div>
+            <div class="field-description">Material composition and specifications (carbon steel, stainless steel, dual-phase, etc.).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Installation Year</div>
+            <div class="field-description">Year the asset was installed or commissioned. Used for calculating asset age and service history.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Surface Photo / Diagram</div>
+            <div class="field-description">Upload a reference photo or engineering drawing showing the structure before or above water. Helps with field identification and reference during survey.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Annotatable Diagram</div>
+            <div class="field-description">Upload a technical drawing or cross-section diagram. Inspection points can be plotted on this image for visual reference and precise location marking.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Setting Inspection Points</h2>
+
+        <h3>Overview</h3>
+        <p>Inspection points are specific locations or areas on a structure that require detailed examination. They can be plotted on diagrams and tracked through the inspection workflow.</p>
+
+        <h3>Adding Inspection Points</h3>
+        <ol class="step-list">
+            <li>From a Structure View, click <strong>+ Add Inspection Point</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Inspection Points section]
+                </div>
+            </li>
+            <li>Enter the inspection point details.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Inspection Point form]
+                </div>
+            </li>
+            <li>Click on the diagram to mark the physical location if an annotatable diagram is available.</li>
+            <li>Click <strong>Save</strong>.</li>
+        </ol>
+
+        <h3>Inspection Point Fields</h3>
+        <div class="field-group">
+            <div class="field-name">Point Name/ID</div>
+            <div class="field-description">Unique identifier for the inspection point. Examples: "Corrosion Area 1", "Weld Seam A", "Connection Point B".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Location Description</div>
+            <div class="field-description">Detailed description of where the inspection point is located on the structure. Include reference distances or positions.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">GPS Coordinates (if available)</div>
+            <div class="field-description">Precise location coordinates for surface-referenced points.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Inspection Priority</div>
+            <div class="field-description">Set priority level:
+                <ul>
+                    <li><strong>Critical:</strong> High-risk areas requiring immediate attention</li>
+                    <li><strong>High:</strong> Important areas for integrity assessment</li>
+                    <li><strong>Medium:</strong> Standard inspection areas</li>
+                    <li><strong>Low:</strong> Reference or documentation points</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Inspection Type</div>
+            <div class="field-description">Type of inspection to perform:
+                <ul>
+                    <li>Visual Assessment</li>
+                    <li>Corrosion Evaluation</li>
+                    <li>Crack Detection</li>
+                    <li>Dimensional Measurement</li>
+                    <li>Thickness Survey</li>
+                    <li>Damage Assessment</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Assigned Inspector</div>
+            <div class="field-description">Assign the technician or engineer responsible for this specific inspection point.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Managing Inspection Media</h2>
+
+        <h3>Overview</h3>
+        <p>Upload and organize photos and videos captured during the ROV inspection. Media is linked to specific inspection points for reference and documentation.</p>
+
+        <h3>Uploading Media</h3>
+        <ol class="step-list">
+            <li>From the Project View or Inspection Point page, click <strong>+ Add Media</strong> or <strong>Upload Media</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Media upload interface]
+                </div>
+            </li>
+            <li>Select media file(s) from your computer. Supported formats:
+                <ul>
+                    <li><strong>Images:</strong> JPEG, PNG, WebP (max 100MB each)</li>
+                    <li><strong>Video:</strong> MP4, WebM (max 500MB each)</li>
+                </ul>
+            </li>
+            <li>Assign media to relevant structures or inspection points.</li>
+            <li>Add tags and descriptions for easy searching and organization.</li>
+            <li>Click <strong>Upload</strong>.</li>
+        </ol>
+
+        <h3>Media Properties</h3>
+        <div class="field-group">
+            <div class="field-name">File Name</div>
+            <div class="field-description">Auto-populated but editable. Give meaningful names like "Corrosion_Point_A_20260330" for easy reference.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Media Type</div>
+            <div class="field-description">Automatically detected as Image or Video. Used for filtering and gallery display.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Linked Inspection Point</div>
+            <div class="field-description">Associate the media with a specific inspection point. Creates a direct reference in inspection reports.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description/Observations</div>
+            <div class="field-description">Add notes about what the media shows, observations, defects identified, or measurements taken.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Date Captured</div>
+            <div class="field-description">Date and time the media was captured during the survey. Automatically extracted from video metadata if available.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Captured By</div>
+            <div class="field-description">Operator or technician who captured the media. Useful for tracking data sources and responsibility.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tags</div>
+            <div class="field-description">Apply tags for classification: "Corrosion", "Weld", "Coating", "Damage", "Reference", etc. Enables quick filtering and searching.</div>
+        </div>
+
+        <h3>Media Gallery View</h3>
+        <p>All project media is displayed in a gallery with:</p>
+        <ul>
+            <li>Thumbnail preview of photos</li>
+            <li>Video duration display</li>
+            <li>Associated inspection point reference</li>
+            <li>Date and operator information</li>
+            <li>Quick search and filter by tags or inspection points</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>Recording Findings & Observations</h2>
+
+        <h3>Overview</h3>
+        <p>Document all findings, defects, and observations associated with each inspection point for reporting and follow-up actions.</p>
+
+        <h3>Adding Findings</h3>
+        <ol class="step-list">
+            <li>From an Inspection Point View, click <strong>+ Add Finding</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Inspection findings form]
+                </div>
+            </li>
+            <li>Complete the finding details as described below.</li>
+            <li>Attach relevant media (photos/videos) to the finding.</li>
+            <li>Click <strong>Save</strong>.</li>
+        </ol>
+
+        <h3>Finding Details</h3>
+        <div class="field-group">
+            <div class="field-name">Finding Title</div>
+            <div class="field-description">Brief summary of the finding. Examples: "Surface Corrosion", "Minor Crack Detected", "Coating Degradation".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Severity Level</div>
+            <div class="field-description">Rate the finding:
+                <ul>
+                    <li><strong>Critical:</strong> Immediate risk to integrity or safety</li>
+                    <li><strong>High:</strong> Significant defect requiring near-term remediation</li>
+                    <li><strong>Medium:</strong> Moderate defect requiring monitoring or planning</li>
+                    <li><strong>Low:</strong> Minor defect or observation for reference</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Finding Description</div>
+            <div class="field-description">Detailed description of what was observed, extent of damage, location within the inspection point, and any measurements taken.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Recommended Action</div>
+            <div class="field-description">Suggested remediation or follow-up action. Examples: "Repair needed", "Monitor at next survey", "No action required".</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Linked Media</div>
+            <div class="field-description">Attach photos or video clips showing the finding. Multiple media files can be linked to one finding.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Inspector Notes</div>
+            <div class="field-description">Additional comments, observations, or context from the inspector conducting the examination.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Generating Reports</h2>
+
+        <h3>Report Types Available</h3>
+        <table class="table">
+            <tr>
+                <th>Report Type</th>
+                <th>Purpose</th>
+                <th>Includes</th>
+            </tr>
+            <tr>
+                <td><strong>Survey Summary</strong></td>
+                <td>Overview of completed inspection</td>
+                <td>Project details, structures inspected, media count, general observations</td>
+            </tr>
+            <tr>
+                <td><strong>Detailed Inspection Report</strong></td>
+                <td>Comprehensive findings documentation</td>
+                <td>All inspection points, findings with severity, media, remediation recommendations</td>
+            </tr>
+            <tr>
+                <td><strong>Media Report</strong></td>
+                <td>Organized gallery of all inspection photos/videos</td>
+                <td>Thumbnails, captions, location references, dates, operators</td>
+            </tr>
+            <tr>
+                <td><strong>Action Items Report</strong></td>
+                <td>Follow-up and remediation tracking</td>
+                <td>Critical and high-severity findings with recommended actions and assigned owners</td>
+            </tr>
+        </table>
+
+        <h3>Generating a Report</h3>
+        <ol class="step-list">
+            <li>From the Project View, click <strong>Reports</strong> or <strong>Generate Report</strong>.</li>
+            <li>Select the desired report type and any filtering options.</li>
+            <li>Choose output format: PDF or Excel.</li>
+            <li>Click <strong>Generate</strong> to create the report.</li>
+            <li>Download or email the report as needed.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Use Cases & Examples</h2>
+
+        <div class="use-case">
+            <div class="use-case-title">Oil & Gas Pipeline Inspection</div>
+            <div class="use-case-content">
+                <p>A subsea pipeline operator requires quarterly integrity surveys of their 48-inch transmission line:</p>
+                <ul>
+                    <li>Create project: "Q1 2026 North Sea Pipeline Integrity Survey"</li>
+                    <li>Define structure: "Main Pipeline 240 km section, starting from coordinates X,Y"</li>
+                    <li>Add inspection points at: Pipe transitions, connection points, known repair areas, areas of external loading</li>
+                    <li>During ROV survey: Capture HD video and stills of each section, mark corrosion or coating defects</li>
+                    <li>Document findings: Rate severity, attach media, note measurements and observations</li>
+                    <li>Generate report: Detailed report with media evidence sent to regulatory authority</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Offshore Platform Annual Inspection</div>
+            <div class="use-case-content">
+                <p>A platform operator performs annual structural integrity assessment:</p>
+                <ul>
+                    <li>Create project: "2026 Annual Platform A Inspection" with client reference</li>
+                    <li>Add multiple structures: Each jacket leg, risers, conductors, well heads</li>
+                    <li>Set inspection points: Foundation mud-line clearance, weld areas, anodes, biofouling assessment zones</li>
+                    <li>Upload reference diagrams showing platform layout and measurements</li>
+                    <li>During survey: Operators capture high-resolution imagery at each defined point</li>
+                    <li>Record observations: Anode condition, coating assessment, marine growth, structural changes</li>
+                    <li>Generate findings: Compile all defects with remediation recommendations for engineering review</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Submarine Cable Route Survey</div>
+            <div class="use-case-content">
+                <p>Telecom company needs to survey a submarine communications cable route:</p>
+                <ul>
+                    <li>Create project: "Trans-Atlantic Cable Route Survey - 2026"</li>
+                    <li>Define structure: Cable route with waypoint coordinates and depth information</li>
+                    <li>Add inspection points: At regular intervals (every 5 km), hazard areas, and areas of concern from desktop study</li>
+                    <li>Survey execution: ROV captures continuous video with GPS logging, takes photos of anomalies</li>
+                    <li>Document findings: Cable burial depth, hazards (anchors, debris), potential route conflicts</li>
+                    <li>Generate report: High-definition survey summary with location references for route planning adjustments</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Naming Conventions:</strong> Use consistent, descriptive naming for projects, structures, and inspection points to enable easy searching and filtering.</li>
+            <li><strong>Media Organization:</strong> Immediately tag and link media to inspection points after capture. Waiting until later can result in orphaned, unidentified files.</li>
+            <li><strong>Timely Documentation:</strong> Record findings while the ROV is on location. Waiting to document findings from memory reduces accuracy and detail.</li>
+            <li><strong>Quality Control:</strong> Assign a supervisor to verify all inspection points were visited and documented before concluding the survey.</li>
+            <li><strong>Diagram References:</strong> Upload clear, accurate engineering drawings or surface photos to enable precise annotation of inspection points.</li>
+            <li><strong>Regular Backups:</strong> The system automatically backs up all media to AWS S3 cloud storage. Verify backups are current before departing the survey location.</li>
+        </ul>
+    </div>
+
+    <div class="summary">
+        <div class="summary-title">Summary</div>
+        <p>The ROV Inspection module provides a complete framework for managing underwater inspection campaigns from project planning through findings documentation and reporting. By following the structured workflow—creating projects, defining structures and inspection points, capturing media, recording findings, and generating reports—organizations can ensure comprehensive asset assessment, maintain regulatory compliance, and support data-driven maintenance planning.</p>
+    </div>
+
+    <div class="section">
+        <h2>Additional Resources</h2>
+        <ul>
+            <li><a href="#">Video Tutorial: Creating Your First ROV Project</a></li>
+            <li><a href="#">Template Library: Standard Inspection Point Definitions</a></li>
+            <li><a href="#">FAQ: Common Issues and Solutions</a></li>
+            <li><a href="#">Support Contact</a></li>
+        </ul>
+    </div>
+</body>
+</html>

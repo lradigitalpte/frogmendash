@@ -11,6 +11,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "aws/aws-sdk-php": "^3.374",
         "barryvdh/laravel-debugbar": "^3.15",
         "barryvdh/laravel-dompdf": "^3.1",
         "bezhansalleh/filament-shield": "^4.0",
@@ -20,6 +21,7 @@
         "guava/filament-icon-picker": "^3.0",
         "laravel/framework": "^11.9",
         "laravel/tinker": "^2.9",
+        "league/flysystem-aws-s3-v3": "^3.32",
         "maatwebsite/excel": "^3.1",
         "malzariey/filament-daterangepicker-filter": "^4.0",
         "milon/barcode": "^11.0",

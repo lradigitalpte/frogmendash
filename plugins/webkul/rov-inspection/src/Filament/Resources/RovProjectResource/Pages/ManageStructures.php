@@ -57,14 +57,14 @@ class ManageStructures extends ManageRelatedRecords
                     ->label('Surface Photo')
                     ->image()
                     ->maxSize(10240)
-                    ->disk('public')
+                    ->disk('s3')
                     ->directory('rov-inspection/structure-photos')
                     ->helperText('Above-water or surface photo of this structure. Shown in the Inspection Image gallery.'),
                 FileUpload::make('diagram_path')
                     ->label('Annotatable Diagram')
                     ->image()
                     ->maxSize(20480)
-                    ->disk('public')
+                    ->disk('s3')
                     ->directory('rov-inspection/diagrams')
                     ->helperText('Engineering elevation, cross-section or plan drawing. Inspection pins will be plotted on this image.'),
             ])
@@ -79,7 +79,7 @@ class ManageStructures extends ManageRelatedRecords
             ->columns([
                 ImageColumn::make('photo_path')
                     ->label('Photo')
-                    ->disk('public')
+                    ->disk('s3')
                     ->height(48)
                     ->width(64)
                     ->extraImgAttributes(['class' => 'object-cover rounded'])

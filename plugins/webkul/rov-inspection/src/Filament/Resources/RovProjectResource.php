@@ -162,7 +162,7 @@ class RovProjectResource extends Resource
                                     ->image()
                                     ->imageEditor()
                                     ->maxSize(20480)
-                                    ->disk('public')
+                                    ->disk('s3')
                                     ->directory('rov-inspection/plan-views')
                                     ->helperText('Upload a top-down CAD, architectural or engineering plan drawing.'),
                             ]),
@@ -343,7 +343,7 @@ class RovProjectResource extends Resource
                             ->schema([
                                 ImageEntry::make('plan_view_path')
                                     ->label('')
-                                    ->disk('public')
+                                    ->disk('s3')
                                     ->height(300)
                                     ->extraImgAttributes(['class' => 'rounded-lg border w-full object-contain'])
                                     ->hidden(fn ($record) => ! $record->plan_view_path),

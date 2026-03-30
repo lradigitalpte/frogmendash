@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Management - User Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafbfc;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+        }
+        .page-header h1 {
+            margin: 0;
+            color: #2980b9;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .page-header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #2980b9;
+            font-size: 1.8em;
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step-list {
+            list-style: decimal;
+            margin-left: 25px;
+            line-height: 2;
+        }
+        .step-list li {
+            margin-bottom: 15px;
+        }
+        .field-group {
+            background: #ecf0f1;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
+            border-radius: 4px;
+        }
+        .field-name {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 8px;
+        }
+        .field-description {
+            margin: 5px 0;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        .screenshot-placeholder {
+            background: #d5dbdb;
+            border: 2px dashed #95a5a6;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .note {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #d68910;
+        }
+        .use-case {
+            background: #d6eaf8;
+            border-left: 4px solid #3498db;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .use-case-title {
+            font-weight: 600;
+            color: #2980b9;
+            margin-bottom: 10px;
+        }
+        .use-case-content {
+            color: #2c3e50;
+        }
+        .use-case-content li {
+            margin: 8px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        .table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .summary {
+            background: #e8f8f5;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-weight: 600;
+            color: #1e8449;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Project Management</h1>
+        <p>Complete Guide to Managing Business Projects and Tasks</p>
+    </div>
+
+    <div class="section">
+        <h2>Overview</h2>
+        <p>The Project Management module enables comprehensive project planning, task management, resource allocation, and progress tracking. Users can create projects, assign team members, set deadlines, manage budgets, track milestones, and generate project reports.</p>
+        <p>This module is ideal for managing business projects, client engagements, construction projects, software development sprints, and multi-phase initiatives.</p>
+    </div>
+
+    <div class="section">
+        <h2>Create a New Project</h2>
+        
+        <h3>Steps to Create a Project</h3>
+        <ol class="step-list">
+            <li>Navigate to <code>Projects → Projects → New Project</code> as shown in the below image.
+                <div class="screenshot-placeholder">
+                    ![Create Project](images/projects/project_create.png)
+                </div>
+            </li>
+            <li>Fill out the following details in the form that appears:
+                <div class="screenshot-placeholder">
+                    [Screenshot: Project creation form]
+                </div>
+            </li>
+        </ol>
+        <ol class="step-list" start="3">
+            <li><strong>After Creating the Project</strong><br>
+            Click <strong>Create</strong>. You will be redirected to the View Project page. Here, you'll see:
+                <ul>
+                    <li><strong>Edit Project:</strong> Modify project details.</li>
+                    <li><strong>Tasks:</strong> Manage all tasks under this project.</li>
+                    <li><strong>Milestone:</strong> Track major progress points (if enabled).</li>
+                </ul>
+                <div class="screenshot-placeholder">
+                    ![View Project](images/projects/project_view.png)
+                </div>
+            </li>
+        </ol>
+
+        <h3>📋 General Section</h3>
+        <div class="field-group">
+            <div class="field-name">Name</div>
+            <div class="field-description">Enter the name of the project (e.g., Website Redesign, Client Onboarding).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description</div>
+            <div class="field-description">Provide a brief overview or purpose of the project. Helps team members understand the goal.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![General Project](images/projects/project_general.png)
+                </div>
+
+        <div class="field-group">
+            <div class="field-name">Project Type</div>
+            <div class="field-description">Classify the project:
+                <ul>
+                    <li><strong>Internal:</strong> Company-internal projects and initiatives</li>
+                    <li><strong>Client:</strong> Customer-facing projects and deliverables</li>
+                    <li><strong>Research:</strong> Investigation and development projects</li>
+                    <li><strong>Maintenance:</strong> Ongoing support and maintenance work</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Client/Customer</div>
+            <div class="field-description">Link the project to a specific client or internal department. Used for billing, reporting, and communication management.</div>
+        </div>
+
+        <h3>📅 Additional Information</h3>
+        <div class="field-group">
+            <div class="field-name">Project Manager</div>
+            <div class="field-description">Assign the team member responsible for managing the project.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Customer</div>
+            <div class="field-description">Link the project to a specific customer or client. Useful for client-based work.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Start Date</div>
+            <div class="field-description">Choose the date when the project will begin.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">End Date</div>
+            <div class="field-description">Select the expected date of project completion.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Allocated Hours</div>
+            <div class="field-description">Define the total number of working hours expected for the project. Helps in workload planning.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tags</div>
+            <div class="field-description">Add labels to organize and filter projects (e.g., Urgent, Internal, Long-Term).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Company</div>
+            <div class="field-description">Select the company under which this project is being managed, if applicable.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Additional Project](images/projects/project_additional.png)
+                </div>
+
+        <div class="field-group">
+            <div class="field-name">Project Status</div>
+            <div class="field-description">Current project status:
+                <ul>
+                    <li><strong>Planning:</strong> Project being planned and scoped</li>
+                    <li><strong>Active:</strong> Project in progress</li>
+                    <li><strong>On Hold:</strong> Temporarily suspended</li>
+                    <li><strong>Completed:</strong> Successfully finished</li>
+                    <li><strong>Cancelled:</strong> Terminated before completion</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>⚙️ Settings</h3>
+        <div class="field-group">
+            <div class="field-name">Visibility Options</div>
+            <div class="field-description">
+                <ul>
+                    <li><strong>Private:</strong> Only invited internal users can see the project.</li>
+                    <li><strong>Internal:</strong> All internal users can view the project.</li>
+                    <li><strong>Public:</strong> Internal users and invited external (portal) users can view the project.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Time Management</div>
+            <div class="field-description">
+                <ul>
+                    <li><strong>Allow Timesheets:</strong> Enable to allow users to log their time against this project.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Task Management</div>
+            <div class="field-description">
+                <ul>
+                    <li><strong>Allow Milestones:</strong> Enable to track significant phases of the project like design, development, testing, etc.</li>
+                </ul>
+            </div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Settings Project](images/projects/project_settings.png)
+                </div>
+
+        <h3>Project Classification Section</h3>
+        <div class="field-group">
+            <div class="field-name">Priority Level</div>
+            <div class="field-description">Project priority for resource allocation:
+                <ul>
+                    <li><strong>Critical:</strong> Highest priority, urgent delivery</li>
+                    <li><strong>High:</strong> Important projects with firm deadlines</li>
+                    <li><strong>Medium:</strong> Standard priority projects</li>
+                    <li><strong>Low:</strong> Background projects, flexible timelines</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tags</div>
+            <div class="field-description">Add tags for categorization: "Marketing", "Development", "Infrastructure", "Client-Work". Enables filtering and search.</div>
+        </div>
+
+        <div class="note">
+            <div class="note-title">💡 Tip:</div>
+            Complete all project details accurately as they drive resource allocation, reporting, and billing processes.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Task Creation in a Project</h2>
+
+        <h3>Steps to Create a Task</h3>
+        <ol class="step-list">
+            <li>On the View Project page, click <strong>Tasks</strong>.</li>
+            <li>Click on the <strong>New Task</strong> button.
+                <div class="screenshot-placeholder">
+                    ![Task Project](images/projects/project_task.png)
+                </div>
+            </li>
+            <li>Fill out the task creation form:
+        <h3>📋 General Section</h3>
+        <div class="field-group">
+            <div class="field-name">Title</div>
+            <div class="field-description">Task title (e.g., Design Landing Page, API Integration).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">State</div>
+            <div class="field-description">Task progress state:
+                <ul>
+                    <li>In Progress</li>
+                    <li>Change Requested</li>
+                    <li>Approved</li>
+                    <li>Cancelled</li>
+                    <li>Done</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tags</div>
+            <div class="field-description">Add tags or create new ones using (+) button to label or group tasks.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description</div>
+            <div class="field-description">Provide a detailed explanation of the task.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Task General](images/projects/project_task_general.png)
+                </div>
+
+        <h3>⚙️ Settings Section</h3>
+
+        <div class="field-group">
+            <div class="field-name">Project</div>
+            <div class="field-description">Select the project this task belongs to. Defaults to the current project.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Customer</div>
+            <div class="field-description">Link to a customer, if applicable.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Assignees</div>
+            <div class="field-description">Choose users responsible for this task. The task becomes visible in their dashboard.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Deadline</div>
+            <div class="field-description">Set the task completion date.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Allocated Hours</div>
+            <div class="field-description">Estimate time required for the task.</div>
+        </div>
+
+                <div class="screenshot-placeholder">
+                    ![Task Settings](images/projects/project_task_setting.png)
+                </div>
+
+        </ol>
+        <ol class="step-list" start="4">
+            <li>Click <strong>Create</strong> to save the task. You will be redirected to the View Task page.</li>
+        </ol>
+
+        <h3>On View Task Page</h3>
+        <ul>
+            <li><strong>Edit Task:</strong> Modify the task details.</li>
+            <li><strong>Delete:</strong> Permanently remove the task.</li>
+            <li><strong>Sub Tasks:</strong> Click to create smaller, trackable items within this task.</li>
+        </ul>
+
+                <div class="screenshot-placeholder">
+                    ![Task View](images/projects/project_task_view.png)
+                </div>
+    </div>
+
+    <div class="section">
+        <h2>Time Tracking</h2>
+
+        <h3>Logging Time on Tasks</h3>
+        <ol class="step-list">
+            <li>From a task view, click <strong>Log Time</strong> or access the time tracking interface.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Time logging interface]
+                </div>
+            </li>
+            <li>Enter time details and descriptions.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Time entry form]
+                </div>
+            </li>
+            <li>Click <strong>Save</strong> to record the time entry.</li>
+        </ol>
+
+        <h3>Time Entry Fields</h3>
+        <div class="field-group">
+            <div class="field-name">Date</div>
+            <div class="field-description">Date when the work was performed. Defaults to today but can be adjusted for retrospective entries.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Hours Worked</div>
+            <div class="field-description">Actual time spent on the task (e.g., 2.5 hours, 8 hours).</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Work Description</div>
+            <div class="field-description">Brief description of what was accomplished during this time period.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Billable/Non-Billable</div>
+            <div class="field-description">Specify whether this time should be billed to the client or treated as internal cost.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Project Collaboration</h2>
+
+        <h3>Team Communication</h3>
+        <table class="table">
+            <tr>
+                <th>Feature</th>
+                <th>Purpose</th>
+                <th>How to Use</th>
+            </tr>
+            <tr>
+                <td><strong>Comments</strong></td>
+                <td>Task-specific discussions and updates</td>
+                <td>Add comments on tasks to provide updates, ask questions, or share feedback</td>
+            </tr>
+            <tr>
+                <td><strong>File Attachments</strong></td>
+                <td>Share documents, designs, and resources</td>
+                <td>Upload files to projects or tasks for team access and reference</td>
+            </tr>
+            <tr>
+                <td><strong>Activity Feed</strong></td>
+                <td>Track all project changes and updates</td>
+                <td>View the activity feed to see recent project developments and team actions</td>
+            </tr>
+            <tr>
+                <td><strong>Notifications</strong></td>
+                <td>Stay informed about project developments</td>
+                <td>Configure notification preferences for task assignments, due dates, and comments</td>
+            </tr>
+        </table>
+
+        <h3>File Management</h3>
+        <ol class="step-list">
+            <li>Navigate to the <strong>Files</strong> section of your project.</li>
+            <li>Upload documents, images, and resources related to the project.</li>
+            <li>Organize files into folders for easy access and reference.</li>
+            <li>Share file access with specific team members as needed.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Project Reports and Analytics</h2>
+
+        <h3>Available Reports</h3>
+        <table class="table">
+            <tr>
+                <th>Report Type</th>
+                <th>Purpose</th>
+                <th>Key Metrics</th>
+            </tr>
+            <tr>
+                <td><strong>Project Status Report</strong></td>
+                <td>Overall project health and progress</td>
+                <td>Completion percentage, budget utilization, timeline adherence</td>
+            </tr>
+            <tr>
+                <td><strong>Time & Cost Analysis</strong></td>
+                <td>Resource utilization and budget tracking</td>
+                <td>Hours logged, costs incurred, budget variance analysis</td>
+            </tr>
+            <tr>
+                <td><strong>Team Performance</strong></td>
+                <td>Individual and team productivity metrics</td>
+                <td>Tasks completed, time efficiency, workload distribution</td>
+            </tr>
+            <tr>
+                <td><strong>Client Summary</strong></td>
+                <td>Client-facing project overview</td>
+                <td>Deliverables status, milestones achieved, billing summary</td>
+            </tr>
+        </table>
+
+        <h3>Generating Reports</h3>
+        <ol class="step-list">
+            <li>From the Project Dashboard, click <strong>Reports</strong>.</li>
+            <li>Select the desired report type and date range.</li>
+            <li>Choose filtering options (team members, tasks, etc.).</li>
+            <li>Generate the report in PDF or Excel format.</li>
+            <li>Download or email the report as needed.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>📋 Use Case Example</h2>
+        <p><strong>Example:</strong> You're managing a software development project for a client.</p>
+        <ul>
+            <li>Create the project "Client App Development" and assign a project manager.</li>
+            <li>Add tasks like "Frontend Design", "Backend API Development", "Testing", each with different assignees and deadlines.</li>
+            <li>For "Frontend Design", create sub tasks like "Login Screen UI", "Dashboard Layout", etc.</li>
+            <li>Enable <strong>Allow Timesheets</strong> to track developer time on each task.</li>
+            <li>Track key stages using <strong>Milestones</strong> like "Design Phase Complete" or "Beta Launch".</li>
+        </ul>
+        <p>This structured approach keeps the team aligned and helps management monitor progress easily.</p>
+    </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Marketing Campaign Launch</div>
+            <div class="use-case-content">
+                <p>Marketing team coordinating a product launch campaign:</p>
+                <ul>
+                    <li>Create project: "Product X Launch Campaign Q2 2026"</li>
+                    <li>Set milestones: Campaign strategy approval, creative asset completion, media placement, launch event</li>
+                    <li>Assign tasks: Market research, content creation, social media scheduling, PR outreach, event planning</li>
+                    <li>Track budgets: Creative costs, media buying, event expenses, personnel time</li>
+                    <li>Collaborate: Creative reviews, compliance approvals, vendor coordination</li>
+                    <li>Monitor progress: Daily task completion, campaign performance metrics, budget utilization</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Construction Project Management</div>
+            <div class="use-case-content">
+                <p>Construction firm managing a commercial building project:</p>
+                <ul>
+                    <li>Create project: "Office Complex Phase 2 Construction"</li>
+                    <li>Define phases: Foundation, structural work, mechanical systems, interior finishing</li>
+                    <li>Add team members: Site supervisor, subcontractors, safety officer, quality inspector</li>
+                    <li>Track resources: Material deliveries, equipment rental, labor hours, permit status</li>
+                    <li>Monitor compliance: Safety inspections, quality checkpoints, regulatory approvals</li>
+                    <li>Generate reports: Progress updates for stakeholders, cost analysis, schedule adherence</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Clear Project Scope:</strong> Define project objectives, deliverables, and success criteria upfront to avoid scope creep.</li>
+            <li><strong>Regular Check-ins:</strong> Schedule periodic team meetings and progress reviews to maintain project momentum.</li>
+            <li><strong>Task Granularity:</strong> Break large tasks into smaller, manageable pieces with clear ownership and deadlines.</li>
+            <li><strong>Communication Standards:</strong> Establish guidelines for how team members should update task status and communicate issues.</li>
+            <li><strong>Resource Planning:</strong> Accurately estimate time and resources needed to avoid overcommitment and ensure quality delivery.</li>
+            <li><strong>Risk Management:</strong> Identify potential project risks early and develop mitigation strategies.</li>
+            <li><strong>Documentation:</strong> Maintain clear project documentation for reference, handoffs, and future similar projects.</li>
+        </ul>
+    </div>
+
+    <div class="summary">
+        <div class="summary-title">Summary</div>
+        <p>Projects module in FrogmenDash allow for efficient management of tasks, deadlines, and team collaboration. By utilizing features like task assignments, sub tasks, milestones, and timesheets, organizations can streamline their project workflows and ensure successful project delivery.</p>
+    </div>
+</body>
+</html>

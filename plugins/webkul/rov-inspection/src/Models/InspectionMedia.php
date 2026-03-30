@@ -61,13 +61,13 @@ class InspectionMedia extends Model
 
     public function getUrlAttribute(): ?string
     {
-        return $this->file_path ? Storage::disk('public')->url($this->file_path) : null;
+        return $this->file_path ? Storage::disk('s3')->url($this->file_path) : null;
     }
 
     public function getThumbnailUrlAttribute(): ?string
     {
         if ($this->thumbnail_path) {
-            return Storage::disk('public')->url($this->thumbnail_path);
+            return Storage::disk('s3')->url($this->thumbnail_path);
         }
 
         return $this->isImage() ? $this->url : null;

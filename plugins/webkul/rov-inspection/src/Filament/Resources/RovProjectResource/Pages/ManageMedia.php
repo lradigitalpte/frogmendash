@@ -106,7 +106,7 @@ class ManageMedia extends ManageRelatedRecords
                     ->native(false),
                 FileUpload::make('file_path')
                     ->label('Upload File')
-                    ->disk('public')
+                    ->disk('s3')
                     ->directory('rov-inspection/media')
                     ->maxSize(512000)
                     ->acceptedFileTypes(['video/mp4', 'video/webm', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/jfif'])

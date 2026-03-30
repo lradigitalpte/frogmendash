@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting Management - User Guide</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.8;
+            color: #2c3e50;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #fafbfc;
+        }
+        .page-header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #16a085;
+        }
+        .page-header h1 {
+            margin: 0;
+            color: #138d75;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .page-header p {
+            margin: 10px 0 0 0;
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .section {
+            margin-bottom: 50px;
+        }
+        .section h2 {
+            color: #138d75;
+            font-size: 1.8em;
+            border-left: 4px solid #16a085;
+            padding-left: 15px;
+            margin-top: 40px;
+            margin-bottom: 20px;
+        }
+        .section h3 {
+            color: #34495e;
+            font-size: 1.3em;
+            margin-top: 25px;
+            margin-bottom: 15px;
+        }
+        .step-list {
+            list-style: decimal;
+            margin-left: 25px;
+            line-height: 2;
+        }
+        .step-list li {
+            margin-bottom: 15px;
+        }
+        .field-group {
+            background: #e8f6f3;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid #16a085;
+            border-radius: 4px;
+        }
+        .field-name {
+            font-weight: 600;
+            color: #138d75;
+            margin-bottom: 8px;
+        }
+        .field-description {
+            margin: 5px 0;
+            color: #5a6c7d;
+            line-height: 1.6;
+        }
+        .screenshot-placeholder {
+            background: #d5dbdb;
+            border: 2px dashed #95a5a6;
+            padding: 60px 20px;
+            text-align: center;
+            margin: 25px 0;
+            border-radius: 6px;
+            font-style: italic;
+            color: #7f8c8d;
+        }
+        .note {
+            background: #fef9e7;
+            border-left: 4px solid #f39c12;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .note-title {
+            font-weight: 600;
+            color: #d68910;
+        }
+        .use-case {
+            background: #eafaf1;
+            border-left: 4px solid #16a085;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .use-case-title {
+            font-weight: 600;
+            color: #138d75;
+            margin-bottom: 10px;
+        }
+        .use-case-content {
+            color: #2c3e50;
+        }
+        .use-case-content li {
+            margin: 8px 0;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+        }
+        .table th {
+            background: #16a085;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+        }
+        .table td {
+            padding: 12px;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        .table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        .summary {
+            background: #e8f6f3;
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 4px;
+        }
+        .summary-title {
+            font-weight: 600;
+            color: #1e8449;
+            margin-bottom: 10px;
+        }
+        .warning {
+            background: #fdedec;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning-title {
+            font-weight: 600;
+            color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-header">
+        <h1>Accounting Management</h1>
+        <p>Complete Guide to Financial Record Keeping, Transactions, and Reporting</p>
+    </div>
+
+    <div class="section">
+        <h2>Overview</h2>
+        <p>The Accounting Management module provides comprehensive financial management capabilities including general ledger maintenance, accounts receivable/payable management, financial reporting, and regulatory compliance. Users can manage chart of accounts, record journal entries, track cash flow, generate financial statements, and maintain audit trails.</p>
+        <p>This module integrates with sales, purchasing, inventory, and payroll systems to provide complete financial visibility and control.</p>
+    </div>
+
+    <div class="section">
+        <h2>Chart of Accounts Setup</h2>
+        
+        <h3>Creating Account Structure</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>Accounting → Chart of Accounts → Add Account</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Chart of Accounts interface and Add Account button]
+                </div>
+            </li>
+            <li>Define account details and classification.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Account creation form]
+                </div>
+            </li>
+            <li>Set account properties and default behavior.</li>
+        </ol>
+        <ol class="step-list" start="3">
+            <li><strong>After Creating the Account</strong><br>
+            Click <strong>Create</strong>. You will be redirected to the View Account page. Here, you can:
+                <ul>
+                    <li><strong>Edit Account:</strong> Modify account settings and details.</li>
+                    <li><strong>View Transactions:</strong> See all posted journal entries.</li>
+                    <li><strong>Account Balance:</strong> Current balance and activity.</li>
+                </ul>
+            </li>
+        </ol>
+
+        <h3>Account Classification</h3>
+        <div class="field-group">
+            <div class="field-name">Account Type</div>
+            <div class="field-description">Primary classification determining account behavior:
+                <ul>
+                    <li><strong>Assets:</strong> Cash, receivables, inventory, equipment, investments</li>
+                    <li><strong>Liabilities:</strong> Payables, loans, accrued expenses, deferred revenue</li>
+                    <li><strong>Equity:</strong> Capital, retained earnings, dividends</li>
+                    <li><strong>Revenue:</strong> Sales, service income, investment income</li>
+                    <li><strong>Expenses:</strong> Cost of goods sold, operating expenses, taxes</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Account Number</div>
+            <div class="field-description">Unique numeric identifier following standard coding conventions:
+                <ul>
+                    <li>1xxx - Assets (1100-Cash, 1200-Receivables, 1300-Inventory)</li>
+                    <li>2xxx - Liabilities (2100-Payables, 2200-Accruals, 2300-Long-term Debt)</li>
+                    <li>3xxx - Equity (3100-Capital, 3200-Retained Earnings)</li>
+                    <li>4xxx - Revenue (4100-Sales, 4200-Services, 4300-Other Income)</li>
+                    <li>5xxx - Expenses (5100-COGS, 5200-Operating, 5300-Admin)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Account Name</div>
+            <div class="field-description">Clear, descriptive name for the account. Should be specific enough for easy identification but concise for reporting.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Normal Balance</div>
+            <div class="field-description">Natural balance side for the account:
+                <ul>
+                    <li><strong>Debit:</strong> Assets, Expenses</li>
+                    <li><strong>Credit:</strong> Liabilities, Equity, Revenue</li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>Account Properties</h3>
+        <div class="field-group">
+            <div class="field-name">Active/Inactive</div>
+            <div class="field-description">Control whether account is available for new transactions. Inactive accounts retain historical data but cannot receive new entries.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Bank Account</div>
+            <div class="field-description">Designate if this is a bank account for cash management and bank reconciliation processes.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tax Account</div>
+            <div class="field-description">Specify if account is used for tax calculations and reporting. Links to tax rates and compliance requirements.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Reconciliation Required</div>
+            <div class="field-description">Require monthly reconciliation for balance accuracy (typically bank accounts and credit card accounts).</div>
+        </div>
+
+        <div class="note">
+            <div class="note-title">💡 Tip:</div>
+            Follow standard chart of accounts numbering to ensure consistency with accounting software and reporting standards.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Journal Entries and Transactions</h2>
+
+        <h3>Recording Journal Entries</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>Accounting → Journal Entries → Create Entry</strong>.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Journal entry creation interface]
+                </div>
+            </li>
+            <li>Enter transaction header information.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Journal entry header form]
+                </div>
+            </li>
+            <li>Add debit and credit line items.</li>
+            <li>Verify that total debits equal total credits.</li>
+            <li>Click <strong>Post</strong> to record the transaction.</li>
+        </ol>
+
+        <h3>Journal Entry Header</h3>
+        <div class="field-group">
+            <div class="field-name">Entry Date</div>
+            <div class="field-description">Transaction date for the journal entry. Must be within an open accounting period.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Reference Number</div>
+            <div class="field-description">Unique identifier for the journal entry. Auto-generated but can be customized for specific numbering schemes.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Description</div>
+            <div class="field-description">Brief explanation of the transaction purpose. Should provide clear context for future reference and audit purposes.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Source Document</div>
+            <div class="field-description">Reference to supporting documentation (invoice number, receipt, contract reference). Essential for audit trails.</div>
+        </div>
+
+        <h3>Journal Entry Line Items</h3>
+        <div class="field-group">
+            <div class="field-name">Account</div>
+            <div class="field-description">Chart of accounts selection for this line item. Must be an active account appropriate for the transaction type.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Debit Amount</div>
+            <div class="field-description">Debit value for accounts with normal debit balance (assets, expenses) or to decrease credit balance accounts.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Credit Amount</div>
+            <div class="field-description">Credit value for accounts with normal credit balance (liabilities, equity, revenue) or to decrease debit balance accounts.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Line Description</div>
+            <div class="field-description">Specific details for this line item. Can be more detailed than the journal entry header description.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Project/Department</div>
+            <div class="field-description">Optional allocation to specific projects, departments, or cost centers for detailed tracking and reporting.</div>
+        </div>
+
+        <div class="warning">
+            <div class="warning-title">⚠️ Important:</div>
+            All journal entries must balance (total debits = total credits) before they can be posted. The system will prevent posting unbalanced entries.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Accounts Receivable Management</h2>
+
+        <h3>Customer Account Setup</h3>
+        <div class="field-group">
+            <div class="field-name">Customer Information</div>
+            <div class="field-description">Complete contact details, billing addresses, and communication preferences for accurate invoicing and collections.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Credit Terms</div>
+            <div class="field-description">Standard payment terms for the customer:
+                <ul>
+                    <li><strong>Net 15:</strong> Payment due 15 days after invoice</li>
+                    <li><strong>Net 30:</strong> Payment due 30 days after invoice</li>
+                    <li><strong>2/10 Net 30:</strong> 2% discount if paid within 10 days, otherwise due in 30</li>
+                    <li><strong>COD:</strong> Cash on delivery</li>
+                    <li><strong>Prepaid:</strong> Payment required before delivery</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Credit Limit</div>
+            <div class="field-description">Maximum outstanding balance allowed for the customer. System can warn or block new sales when limit is exceeded.</div>
+        </div>
+
+        <h3>Invoice Processing</h3>
+        <ol class="step-list">
+            <li>Invoice automatically creates accounts receivable entry when posted.</li>
+            <li>Customer balance increases by invoice amount.</li>
+            <li>Revenue is recognized based on accounting method (cash or accrual).</li>
+            <li>Payment terms determine due date and aging calculations.</li>
+        </ol>
+
+        <h3>Payment Processing</h3>
+        <div class="field-group">
+            <div class="field-name">Payment Application</div>
+            <div class="field-description">Record customer payments and apply to specific invoices. Can handle partial payments and payment allocation across multiple invoices.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Bank Reconciliation</div>
+            <div class="field-description">Match recorded payments with bank deposits to ensure accuracy and identify discrepancies.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Cash Discounts</div>
+            <div class="field-description">Apply early payment discounts when customers pay within discount terms. Automatically calculate discount amounts.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Accounts Payable Management</h2>
+
+        <h3>Vendor Setup</h3>
+        <div class="field-group">
+            <div class="field-name">Vendor Information</div>
+            <div class="field-description">Complete vendor details including remittance addresses, tax identification numbers, and payment preferences.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Terms</div>
+            <div class="field-description">Standard terms received from vendors. Important for cash flow planning and discount opportunities.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">1099 Reporting</div>
+            <div class="field-description">Flag vendors requiring 1099 reporting for tax compliance. Track total payments for annual reporting.</div>
+        </div>
+
+        <h3>Bill Entry and Approval</h3>
+        <ol class="step-list">
+            <li>Enter vendor bills with supporting documentation.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Bill entry interface]
+                </div>
+            </li>
+            <li>Route for approval based on amount and department policies.</li>
+            <li>Match against purchase orders when applicable.</li>
+            <li>Post approved bills to accounts payable.</li>
+        </ol>
+
+        <h3>Payment Processing</h3>
+        <div class="field-group">
+            <div class="field-name">Payment Selection</div>
+            <div class="field-description">Select bills for payment based on due dates, discount opportunities, and cash flow considerations.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Methods</div>
+            <div class="field-description">Support multiple payment types:
+                <ul>
+                    <li><strong>Check:</strong> Printed checks with check register</li>
+                    <li><strong>ACH/Wire Transfer:</strong> Electronic payments with bank file generation</li>
+                    <li><strong>Credit Card:</strong> Corporate card payments with expense tracking</li>
+                    <li><strong>Cash:</strong> Petty cash and direct cash payments</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Payment Approval</div>
+            <div class="field-description">Multi-level approval workflow based on payment amounts and authorization limits.</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Financial Reporting</h2>
+
+        <h3>Standard Financial Statements</h3>
+        <table class="table">
+            <tr>
+                <th>Report</th>
+                <th>Purpose</th>
+                <th>Key Information</th>
+            </tr>
+            <tr>
+                <td><strong>Balance Sheet</strong></td>
+                <td>Financial position at specific date</td>
+                <td>Assets, liabilities, equity balances</td>
+            </tr>
+            <tr>
+                <td><strong>Income Statement</strong></td>
+                <td>Revenue and expenses for period</td>
+                <td>Sales, cost of goods sold, operating expenses, net income</td>
+            </tr>
+            <tr>
+                <td><strong>Cash Flow Statement</strong></td>
+                <td>Cash receipts and disbursements</td>
+                <td>Operating, investing, financing activities</td>
+            </tr>
+            <tr>
+                <td><strong>Statement of Equity</strong></td>
+                <td>Changes in ownership equity</td>
+                <td>Capital contributions, retained earnings, distributions</td>
+            </tr>
+        </table>
+
+        <h3>Management Reports</h3>
+        <div class="field-group">
+            <div class="field-name">Aged Receivables</div>
+            <div class="field-description">Outstanding customer balances by aging period (current, 30, 60, 90+ days). Critical for collections management.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Aged Payables</div>
+            <div class="field-description">Outstanding vendor balances by due date. Helps manage cash flow and vendor relationships.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Budget vs. Actual</div>
+            <div class="field-description">Comparison of actual results to budgeted amounts. Identify variances and trends for management analysis.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Departmental P&L</div>
+            <div class="field-description">Profit and loss by department or cost center. Enable departmental performance evaluation and accountability.</div>
+        </div>
+
+        <h3>Generating Reports</h3>
+        <ol class="step-list">
+            <li>Navigate to <strong>Accounting → Reports</strong>.</li>
+            <li>Select desired report type and parameters.</li>
+            <li>Choose date range and filtering options.</li>
+            <li>Generate report in PDF or Excel format.</li>
+            <li>Schedule automated report distribution for regular reporting cycles.</li>
+        </ol>
+    </div>
+
+    <div class="section">
+        <h2>Period End Procedures</h2>
+
+        <h3>Monthly Closing Checklist</h3>
+        <ol class="step-list">
+            <li><strong>Record Recurring Entries:</strong> Depreciation, accruals, prepaid amortization.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Recurring entries management]
+                </div>
+            </li>
+            <li><strong>Bank Reconciliation:</strong> Match bank statements to cash accounts.
+                <div class="screenshot-placeholder">
+                    [Screenshot: Bank reconciliation interface]
+                </div>
+            </li>
+            <li><strong>Inventory Adjustments:</strong> Update inventory values and record adjustments.</li>
+            <li><strong>Review Accounts:</strong> Analyze unusual balances and resolve discrepancies.</li>
+            <li><strong>Generate Trial Balance:</strong> Verify that all accounts balance before closing.</li>
+            <li><strong>Close Period:</strong> Lock the accounting period to prevent further changes.</li>
+        </ol>
+
+        <h3>Accrual Entries</h3>
+        <div class="field-group">
+            <div class="field-name">Revenue Accruals</div>
+            <div class="field-description">Record revenue earned but not yet billed. Common for contracts with milestone billing or service periods.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Expense Accruals</div>
+            <div class="field-description">Record expenses incurred but not yet billed. Include utilities, professional services, and employee benefits.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Prepaid Adjustments</div>
+            <div class="field-description">Amortize prepaid expenses over applicable periods. Common for insurance, software licenses, and rent.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Depreciation</div>
+            <div class="field-description">Record monthly depreciation on fixed assets using appropriate methods (straight-line, accelerated).</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Tax Management and Compliance</h2>
+
+        <h3>Sales Tax Configuration</h3>
+        <div class="field-group">
+            <div class="field-name">Tax Rates</div>
+            <div class="field-description">Configure applicable tax rates by jurisdiction (state, county, city). Update rates as regulations change.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Tax Exemptions</div>
+            <div class="field-description">Manage customer tax exemptions with supporting documentation. Track exemption numbers and expiration dates.</div>
+        </div>
+
+        <div class="field-group">
+            <div class="field-name">Product Tax Classes</div>
+            <div class="field-description">Classify products by taxability (taxable, exempt, reduced rate). Ensures correct tax calculation on sales.</div>
+        </div>
+
+        <h3>Tax Reporting</h3>
+        <table class="table">
+            <tr>
+                <th>Report Type</th>
+                <th>Frequency</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><strong>Sales Tax Return</strong></td>
+                <td>Monthly/Quarterly</td>
+                <td>Report sales tax collected to state authorities</td>
+            </tr>
+            <tr>
+                <td><strong>1099 Forms</strong></td>
+                <td>Annual</td>
+                <td>Report payments to contractors and vendors</td>
+            </tr>
+            <tr>
+                <td><strong>W-2 Forms</strong></td>
+                <td>Annual</td>
+                <td>Report employee wages and tax withholdings</td>
+            </tr>
+            <tr>
+                <td><strong>Income Tax Returns</strong></td>
+                <td>Annual</td>
+                <td>Corporate tax filing with supporting schedules</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <h2>Use Cases & Examples</h2>
+
+        <div class="use-case">
+            <div class="use-case-title">Service Business Accounting</div>
+            <div class="use-case-content">
+                <p>Professional services firm managing project-based revenue:</p>
+                <ul>
+                    <li>Time tracking integration: Capture billable hours for revenue recognition</li>
+                    <li>Project accounting: Track costs and revenue by client engagement</li>
+                    <li>Retainer management: Handle advance payments and draw-downs</li>
+                    <li>Expense allocation: Distribute overhead costs across projects</li>
+                    <li>Revenue recognition: Percentage of completion or milestone-based</li>
+                    <li>WIP reporting: Work-in-progress analysis and billing efficiency</li>
+                    <li>Client profitability: Analyze margins by client and service type</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Manufacturing Company Accounting</div>
+            <div class="use-case-content">
+                <p>Manufacturing business with complex cost accounting requirements:</p>
+                <ul>
+                    <li>Inventory costing: Track raw materials, work-in-progress, finished goods</li>
+                    <li>Cost of goods sold: Calculate based on production and sales</li>
+                    <li>Standard costing: Set standard costs and analyze variances</li>
+                    <li>Overhead allocation: Distribute manufacturing overhead to products</li>
+                    <li>Fixed asset management: Track equipment depreciation and maintenance</li>
+                    <li>Multi-location reporting: Consolidate results across manufacturing sites</li>
+                    <li>Regulatory compliance: Meet industry-specific accounting requirements</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="use-case">
+            <div class="use-case-title">Retail Business Accounting</div>
+            <div class="use-case-content">
+                <p>Retail company managing high-volume transactions and inventory:</p>
+                <ul>
+                    <li>Point-of-sale integration: Automatic daily sales recording</li>
+                    <li>Inventory management: Track stock levels and cost of goods sold</li>
+                    <li>Multi-location consolidation: Combine results from multiple stores</li>
+                    <li>Sales tax management: Handle complex multi-state tax requirements</li>
+                    <li>Seasonal adjustments: Manage inventory markdowns and seasonal trends</li>
+                    <li>Vendor rebates: Track and account for supplier rebate programs</li>
+                    <li>Gift card accounting: Handle deferred revenue for gift card sales</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Best Practices</h2>
+        <ul>
+            <li><strong>Regular Reconciliation:</strong> Perform monthly bank reconciliations and balance sheet account analysis.</li>
+            <li><strong>Supporting Documentation:</strong> Maintain complete documentation for all transactions and journal entries.</li>
+            <li><strong>Period End Procedures:</strong> Follow consistent month-end and year-end closing procedures.</li>
+            <li><strong>Internal Controls:</strong> Implement segregation of duties and approval workflows for financial transactions.</li>
+            <li><strong>Backup and Security:</strong> Regular data backups and secure access controls for financial information.</li>
+            <li><strong>Audit Preparation:</strong> Maintain organized records and documentation for internal and external audits.</li>
+            <li><strong>Training and Updates:</strong> Keep accounting staff trained on system updates and regulatory changes.</li>
+        </ul>
+    </div>
+
+    <div class="summary">
+        <div class="summary-title">Summary</div>
+        <p>The Accounting Management module provides comprehensive financial management capabilities that support accurate record keeping, regulatory compliance, and strategic business decision making. From daily transaction processing to monthly financial reporting, the system ensures financial integrity while providing the visibility and control needed for successful business operations.</p>
+    </div>
+</body>
+</html>

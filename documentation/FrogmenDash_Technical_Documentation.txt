@@ -1,0 +1,224 @@
+FrogmenDash - Technical Documentation
+Enterprise ERP & ROV Inspection Platform
+
+
+SYSTEM OVERVIEW
+
+FrogmenDash is a comprehensive Enterprise Resource Planning (ERP) and Remote Operated Vehicle (ROV) inspection management platform built with modern web technologies. The system provides integrated solutions for business management, inspection workflows, and operational efficiency.
+
+Version: 1.0.0 | Framework: Laravel 11.48.0 | PHP: 8.2.12 | Environment: Production Ready
+
+
+INFRASTRUCTURE ARCHITECTURE
+
+Application Hosting
+• Platform: Railway
+• URL: https://frogmendash-production.up.railway.app
+• Deployment: Automated via GitHub CI/CD
+• Scaling: Horizontal auto-scaling enabled
+
+Database Infrastructure
+• Engine: MySQL 8.0
+• Hosting: Railway Managed Database
+• Backups: Automated daily backups
+• Connection: SSL encrypted connections
+
+File Storage System
+• Provider: Amazon Web Services S3
+• Bucket Name: frogmen
+• Region: eu-north-1 (Stockholm)
+• Access: IAM managed with restricted permissions
+
+CI/CD Pipeline
+• Source Control: GitHub Repository
+• Deployment: Automatic on master branch push
+• Testing: Automated test suite execution
+• Rollback: One-click deployment rollbacks
+
+Deployment Flow:
+GitHub Push → Railway CI/CD → Build & Test → Deploy to Production → Health Check
+
+
+TECHNOLOGY STACK
+
+Core Framework
+• Laravel 11.48.0
+• PHP 8.2.12
+• Filament Admin Panel
+
+Database & Caching
+• MySQL 8.0
+• Redis Caching
+• Database Sessions
+
+Frontend Technologies
+• Livewire Framework
+• Tailwind CSS
+• Alpine.js
+• Vite Build Tool
+
+Cloud & DevOps
+• AWS S3 Storage
+• Railway Hosting
+• GitHub Actions
+• Docker Containerization
+
+
+CORE FEATURES & MODULES
+
+ROV Inspection Management
+Complete underwater inspection workflow with project management, structure mapping, media handling, and inspection point tracking.
+
+ERP Core Modules
+Integrated accounting, inventory management, purchase orders, sales management, and financial reporting.
+
+Multi-Tenant Architecture
+Secure tenant isolation with company-scoped data access and customizable tenant configurations.
+
+User & Role Management
+Granular permission system with role-based access control and tenant-specific user management.
+
+Document Management
+PDF generation, report automation, and integrated file storage with AWS S3 integration.
+
+Communication System
+Built-in chat system (Chatter) with file attachments, notifications, and real-time messaging.
+
+Product Catalog
+Comprehensive product management with image handling, inventory tracking, and category organization.
+
+Security Framework
+Advanced security features including data encryption, audit trails, and access logging.
+
+
+DATABASE SCHEMA
+
+ROV Inspection Module
+Tables: rov_projects, project_structures, inspection_points, inspection_media
+Relationships: Hierarchical project → structure → points → media
+Features: Media management, GPS coordinates, inspection workflows
+
+Accounting Module
+Tables: accounts, journals, invoices, payments
+Relationships: Chart of accounts with journal entries
+Features: Double-entry bookkeeping, financial reporting
+
+Inventory Module
+Tables: products, inventory_items, stock_movements
+Relationships: Product → inventory → movements tracking
+Features: Stock levels, movement history, valuation
+
+Sales & Purchases Module
+Tables: quotations, orders, purchase_orders
+Relationships: Customer/supplier order management
+Features: Order lifecycle, approval workflows, invoicing
+
+User Management Module
+Tables: users, roles, permissions, model_has_roles
+Relationships: Spatie permission system integration
+Features: RBAC, tenant isolation, audit trails
+
+
+SECURITY IMPLEMENTATION
+
+Data Protection
+All sensitive data encrypted at rest and in transit using industry-standard encryption protocols.
+• AES-256 Encryption
+• SSL/TLS 1.3
+
+Access Control
+Multi-layered security with role-based permissions, tenant isolation, and IP-based restrictions.
+• RBAC System
+• 2FA Support
+
+Audit & Compliance
+Comprehensive audit logging with user activity tracking and data modification history.
+• Activity Logs
+• Change Tracking
+
+Infrastructure Security
+Railway platform security with automated security updates and vulnerability scanning.
+• Auto Updates
+• Vulnerability Scanning
+
+
+CONFIGURATION & ENVIRONMENT
+
+Application Configuration
+Component: Application | Configuration: Framework | Value: Laravel 11.48.0 | Environment: Production
+Component: Database | Configuration: MySQL Connection | Value: Railway Managed MySQL 8.0 | Environment: Production
+Component: File Storage | Configuration: Default Disk | Value: AWS S3 (frogmen bucket) | Environment: Production
+Component: Cache | Configuration: Cache Driver | Value: Database with Redis fallback | Environment: Production
+Component: Queue | Configuration: Queue Driver | Value: Database queue with worker processes | Environment: Production
+Component: Email | Configuration: Mail Driver | Value: SMTP/SES configured | Environment: Production
+Component: Session | Configuration: Session Driver | Value: Database sessions | Environment: Production
+Component: Timezone | Configuration: Application Timezone | Value: UTC | Environment: Global
+
+
+API & INTEGRATION POINTS
+
+AWS Integration
+• S3 File Storage: All file uploads, ROV media, and documents
+• SES Email Service: Transactional email delivery
+• Region: eu-north-1 (Stockholm)
+
+Third-Party Services
+• Payment Processing: Integration ready
+• SMS/Notifications: Extensible notification system
+• Analytics: Built-in reporting with export capabilities
+
+API Architecture
+• RESTful APIs: Laravel Sanctum secured
+• Real-time Updates: Livewire components
+• File Handling: Direct S3 upload capabilities
+
+Plugin System
+• Modular Design: Independent plugin architecture
+• Plugin Management: Dynamic loading and configuration
+• Custom Extensions: Extensible core functionality
+
+
+DEVELOPMENT & MAINTENANCE
+
+Development Workflow
+• Version Control: Git with GitHub
+• Branching Strategy: GitFlow with feature branches
+• Code Review: Required for all changes
+
+Testing Strategy
+• Unit Testing: PHPUnit test suite
+• Feature Testing: Laravel testing framework
+• CI/CD Testing: Automated on deployment
+
+Monitoring & Logging
+• Application Logs: Laravel daily log rotation
+• Error Tracking: Built-in error reporting
+• Performance: Railway metrics dashboard
+
+Backup Strategy
+• Database: Automated Railway backups
+• Files: S3 versioning and lifecycle policies
+• Code: GitHub repository with tags
+
+
+PERFORMANCE SPECIFICATIONS
+
+Metric: Page Load Time | Target: < 2 seconds | Current: Optimized with Vite build | Monitoring: Railway metrics
+Metric: Database Response | Target: < 100ms average | Current: Query optimization enabled | Monitoring: Laravel Debugbar
+Metric: File Upload | Target: 500MB max per file | Current: Direct S3 upload API | Monitoring: S3 CloudWatch
+Metric: Concurrent Users | Target: 500+ simultaneous | Current: Railway auto-scaling | Monitoring: Application metrics
+Metric: API Response | Target: < 200ms | Current: Cached responses | Monitoring: Built-in profiling
+Metric: Uptime | Target: 99.9% | Current: Railway SLA guarantee | Monitoring: Health check endpoints
+
+
+SUPPORT & DOCUMENTATION
+
+Technical Contact: Development Team
+System Administrator: Infrastructure Team
+Emergency Response: 24/7 Railway platform monitoring
+Documentation Updates: Maintained in repository wiki
+User Training: Comprehensive admin panel with built-in help
+
+Last Updated: March 30, 2026
+Document Version: 1.0
+Next Review: Quarterly

@@ -75,7 +75,7 @@ class Profile extends Page implements HasForms
                             ->avatar()
                             ->directory('users/avatars')
                             ->visibility('public')
-                            ->disk('public')
+                            ->disk('s3')
                             ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
                             ->maxSize(2048)
                             ->image()
@@ -184,7 +184,7 @@ class Profile extends Page implements HasForms
                     $user->avatar
                     && $data['avatar'] !== $user->avatar
                 ) {
-                    Storage::disk('public')->delete($user->avatar);
+                    Storage::delete($user->avatar);
                 }
 
                 $user->partner->avatar = $data['avatar'];
