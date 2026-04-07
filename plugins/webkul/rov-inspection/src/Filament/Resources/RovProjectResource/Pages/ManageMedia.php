@@ -108,10 +108,10 @@ class ManageMedia extends ManageRelatedRecords
                     ->label('Upload File')
                     ->disk('s3')
                     ->directory('rov-inspection/media')
-                    ->maxSize(512000)
+                    ->maxSize(2097152)
                     ->acceptedFileTypes(['video/mp4', 'video/webm', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/jfif'])
                     ->columnSpanFull()
-                    ->helperText('Max 500 MB. Accepted: MP4, WebM, JPEG, PNG, WebP.'),
+                    ->helperText('Max 2 GB. Accepted: MP4, WebM, JPEG, PNG, WebP.'),
             ])
             ->columns(2);
     }

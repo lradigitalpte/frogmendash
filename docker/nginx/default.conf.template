@@ -8,7 +8,8 @@ server {
     access_log /dev/stdout;
     error_log /dev/stderr warn;
 
-    client_max_body_size 64m;
+    client_max_body_size 2048m;
+    client_body_timeout 600;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -21,6 +22,7 @@ server {
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
         fastcgi_read_timeout 300;
+        fastcgi_request_buffering off;
     }
 
     location ~* \.(?:css|js|jpg|jpeg|gif|png|svg|ico|webp|woff|woff2|ttf)$ {

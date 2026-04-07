@@ -49,6 +49,7 @@ RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --prefer-dist --optimiz
     && chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
 COPY docker/nginx/default.conf.template /etc/nginx/templates/default.conf.template
+COPY docker/php/uploads.ini /usr/local/etc/php/conf.d/uploads.ini
 COPY docker/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/start.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
