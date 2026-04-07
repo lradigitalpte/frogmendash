@@ -184,6 +184,9 @@ class ManageMedia extends ManageRelatedRecords
 
                         return $data;
                     })
+                    ->using(function (array $data): \Webkul\RovInspection\Models\InspectionMedia {
+                        return \Webkul\RovInspection\Models\InspectionMedia::create($data);
+                    })
                     ->successNotification(
                         Notification::make()
                             ->success()

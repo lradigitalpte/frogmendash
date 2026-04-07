@@ -69,7 +69,7 @@
     </style>
 </head>
 
-<body class="bg-slate-50 text-gray-900 min-h-screen"
+<body class="bg-slate-50 text-gray-900 min-h-screen flex flex-col"
       x-data="{
           activeTab: 'home',
           activePinId: null,
@@ -148,13 +148,6 @@
                         Plan View
                     </button>
                 @endif
-                @if ($report->client_can_download)
-                    <button onclick="window.print()"
-                            class="inline-flex items-center gap-1.5 rounded-lg bg-blue-500 hover:bg-blue-400 px-3 py-1.5 text-xs font-semibold text-white transition-colors">
-                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
-                        Download
-                    </button>
-                @endif
             </div>
 
         </div>
@@ -164,25 +157,41 @@
 {{-- ═══════════════════════ TAB BAR ═══════════════════════ --}}
 <nav class="sticky top-0 z-40 bg-white shadow-sm no-print" style="border-bottom: 1px solid #e2e8f0;">
     <div class="mx-auto max-w-7xl px-4">
-        <div class="flex tab-bar overflow-x-auto">
-            @php
-                $tabs = [
-                    ['id'=>'home',         'label'=>'Home',             'icon'=>'M10.707 2.293a1 1 0 0 0-1.414 0l-7 7a1 1 0 0 0 1.414 1.414L4 10.414V17a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-6.586l.293.293a1 1 0 0 0 1.414-1.414l-7-7Z'],
-                    ['id'=>'images',       'label'=>'Inspection Images', 'icon'=>'M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'],
-                    ['id'=>'map',          'label'=>'Inspection Map',   'icon'=>'M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z'],
-                    ['id'=>'observations', 'label'=>'Observations',     'icon'=>'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z'],
-                    ['id'=>'data',         'label'=>'Inspection Data',  'icon'=>'m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z'],
-                    ['id'=>'conclusions',  'label'=>'Conclusions',      'icon'=>'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'],
-                ];
-            @endphp
-            @foreach ($tabs as $tab)
-                <button @click="activeTab = '{{ $tab['id'] }}'; @if ($tab['id'] === 'home') $nextTick(() => initMap()); @endif"
-                        :class="activeTab === '{{ $tab['id'] }}' ? 'active' : ''"
-                        class="tab-btn">
-                    <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $tab['icon'] }}"/></svg>
-                    {{ $tab['label'] }}
-                </button>
-            @endforeach
+        <div class="flex items-center justify-between gap-3">
+            <div class="flex min-w-0 flex-1 tab-bar overflow-x-auto">
+                @php
+                    $tabs = [
+                        ['id'=>'home',         'label'=>'Home',             'icon'=>'M10.707 2.293a1 1 0 0 0-1.414 0l-7 7a1 1 0 0 0 1.414 1.414L4 10.414V17a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-6.586l.293.293a1 1 0 0 0 1.414-1.414l-7-7Z'],
+                        ['id'=>'images',       'label'=>'Inspection Images', 'icon'=>'M2.25 15.75l5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z'],
+                        ['id'=>'map',          'label'=>'Inspection Map',   'icon'=>'M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z'],
+                        ['id'=>'observations', 'label'=>'Observations',     'icon'=>'M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 0 0 2.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 0 0-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 0 0 .75-.75 2.25 2.25 0 0 0-.1-.664m-5.8 0A2.251 2.251 0 0 1 13.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25ZM6.75 12h.008v.008H6.75V12Zm0 3h.008v.008H6.75V15Zm0 3h.008v.008H6.75V18Z'],
+                        ['id'=>'data',         'label'=>'Inspection Data',  'icon'=>'m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z'],
+                        ['id'=>'conclusions',  'label'=>'Conclusions',      'icon'=>'M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'],
+                    ];
+                @endphp
+                @foreach ($tabs as $tab)
+                    <button @click="activeTab = '{{ $tab['id'] }}'; @if ($tab['id'] === 'home') $nextTick(() => initMap()); @endif"
+                            :class="activeTab === '{{ $tab['id'] }}' ? 'active' : ''"
+                            class="tab-btn">
+                        <svg class="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $tab['icon'] }}"/></svg>
+                        {{ $tab['label'] }}
+                    </button>
+                @endforeach
+            </div>
+
+            <div class="hidden sm:flex shrink-0 items-center">
+                @if ($report->client_can_download)
+                    <a href="{{ route('rov-inspection.report.client.download-pdf', ['hash' => $report->shared_link_hash]) }}"
+                       class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-blue-500">
+                        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
+                        PDF
+                    </a>
+                @else
+                    <span class="inline-flex items-center rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-medium text-slate-400">
+                        PDF disabled
+                    </span>
+                @endif
+            </div>
         </div>
     </div>
 </nav>
@@ -200,7 +209,7 @@
         </div>
         <div class="overflow-auto p-4">
             @if ($project?->plan_view_path)
-                <img src="{{ asset('storage/'.$project->plan_view_path) }}" alt="Plan View" class="mx-auto max-w-full rounded-lg" />
+                <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($project->plan_view_path) }}" alt="Plan View" class="mx-auto max-w-full rounded-lg" />
             @endif
         </div>
     </div>
@@ -218,7 +227,7 @@
 </div>
 
 {{-- ═══════════════════════ MAIN CONTENT ═══════════════════════ --}}
-<main class="mx-auto max-w-7xl px-4 py-6 space-y-6">
+<main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 space-y-6">
 
     {{-- ─────────────────── TAB 1: HOME ─────────────────── --}}
     <div x-show="activeTab === 'home'" x-cloak>
@@ -293,13 +302,6 @@
                     </div>
                 </div>
 
-                @if ($report->client_can_download)
-                    <button onclick="window.print()"
-                            class="mt-4 w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 transition-colors flex items-center justify-center gap-2">
-                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"/><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"/></svg>
-                        Download Executive Report
-                    </button>
-                @endif
             </div>
         </div>
 
@@ -325,7 +327,7 @@
                                 <span x-text="open ? 'Hide full report' : 'Read full report'"></span>
                             </button>
                             <div x-show="open" x-cloak class="mt-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-700 leading-relaxed whitespace-pre-line">
-                                {{ $report->full_report }}
+                                {!! $report->full_report !!}
                             </div>
                         </div>
                     @endif
@@ -387,9 +389,9 @@
             <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                 @foreach ($project->structures->filter(fn($s) => $s->photo_path) as $structure)
                     <div class="card overflow-hidden group cursor-pointer"
-                         @click="openLightbox('{{ asset('storage/'.$structure->photo_path) }}')">
+                         @click="openLightbox('{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->photo_path) }}')">
                         <div class="overflow-hidden aspect-[4/3]">
-                            <img src="{{ asset('storage/'.$structure->photo_path) }}"
+                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->photo_path) }}"
                                  alt="{{ $structure->name }}"
                                  class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105" />
                         </div>
@@ -453,9 +455,9 @@
                                 {{-- Annotated diagram --}}
                                 <div class="min-w-0 flex-1 card overflow-hidden">
                                     @if ($structure->diagram_path)
-                                        <div class="relative select-none bg-slate-900"
+                                        <div class="relative max-h-[80vh] md:max-h-[70vh] xl:max-h-[60vh] overflow-auto select-none bg-slate-900"
                                              x-data="{ imageLoaded: false }">
-                                            <img src="{{ asset('storage/'.$structure->diagram_path) }}"
+                                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->diagram_path) }}"
                                                  alt="{{ $structure->name }}"
                                                  @load="imageLoaded = true"
                                                  class="w-full object-contain" />
@@ -774,8 +776,12 @@
                                         @endif
                                         <div class="mt-2 flex items-center justify-between">
                                             <span class="rounded-full bg-slate-100 px-2 py-0.5 text-[11px] capitalize text-slate-500 font-medium">{{ $media->media_type }}</span>
-                                            <a href="{{ $media->url }}" download="{{ $media->file_name }}"
-                                               class="text-xs font-semibold text-blue-600 hover:text-blue-500">↓ Download</a>
+                                            <div class="flex items-center gap-2">
+                                                <a href="{{ $media->url }}" target="_blank" rel="noopener"
+                                                   class="text-xs font-semibold text-slate-600 hover:text-slate-500">View</a>
+                                                <a href="{{ $media->url }}" download="{{ $media->file_name }}"
+                                                   class="text-xs font-semibold text-blue-600 hover:text-blue-500">Download</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

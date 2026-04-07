@@ -44,6 +44,14 @@ class RovInspectionServiceProvider extends PackageServiceProvider
             ->name('rov-inspection.report.client')
             ->middleware(['web']);
 
+        Route::get('/report/{hash}/data', [Http\Controllers\ClientReportController::class, 'data'])
+            ->name('rov-inspection.report.client.data')
+            ->middleware(['web']);
+
+        Route::get('/report/{hash}/download/pdf', [Http\Controllers\ClientReportController::class, 'downloadPdf'])
+            ->name('rov-inspection.report.client.download-pdf')
+            ->middleware(['web']);
+
     }
 
     public function packageRegistered(): void

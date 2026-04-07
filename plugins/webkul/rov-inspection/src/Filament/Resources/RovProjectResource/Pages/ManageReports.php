@@ -66,6 +66,13 @@ class ManageReports extends ManageRelatedRecords
                     ->default(ReportStatus::Draft->value)
                     ->native(false)
                     ->required(),
+                Toggle::make('client_can_download')
+                    ->label('Enable PDF Download')
+                    ->helperText('Show the PDF button in the shared client report.')
+                    ->default(true),
+                Toggle::make('client_can_print')
+                    ->label('Allow Browser Print')
+                    ->default(false),
             ])
             ->columns(2);
     }
@@ -90,6 +97,14 @@ class ManageReports extends ManageRelatedRecords
                     ->formatStateUsing(fn ($state) => $state ? 'Active' : 'Not Shared')
                     ->badge()
                     ->color(fn ($state) => $state ? 'success' : 'gray'),
+                IconColumn::make('client_can_download')
+                    ->label('PDF')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-circle')
+                    ->falseIcon('heroicon-o-x-circle')
+                    ->trueColor('success')
+                    ->falseColor('gray')
+                    ->tooltip(fn ($state) => $state ? 'Client PDF enabled' : 'Client PDF disabled'),
                 TextColumn::make('shared_date')
                     ->label('Shared Date')
                     ->dateTime('d M Y, H:i')
@@ -136,6 +151,20 @@ class ManageReports extends ManageRelatedRecords
                             return view('rov-inspection::filament.actions.share-link-modal', [
                                 'url' => url('/report/' . $record->shared_link_hash),
                             ]);
+                        }),
+                    Action::make('toggle_pdf')
+                        ->label(fn ($record) => $record->client_can_download ? 'Disable PDF' : 'Enable PDF')
+                        ->icon(fn ($record) => $record->client_can_download ? 'heroicon-o-lock-closed' : 'heroicon-o-document-arrow-down')
+                        ->color(fn ($record) => $record->client_can_download ? 'gray' : 'success')
+                        ->action(function ($record) {
+                            $record->update([
+                                'client_can_download' => ! $record->client_can_download,
+                            ]);
+
+                            Notification::make()
+                                ->success()
+                                ->title($record->client_can_download ? 'PDF Enabled' : 'PDF Disabled')
+                                ->send();
                         }),
                     DeleteAction::make()
                         ->successNotification(

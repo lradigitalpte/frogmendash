@@ -132,7 +132,7 @@ class InspectionReportResource extends Resource
                                 Toggle::make('client_can_download')
                                     ->label('Allow Client to Download')
                                     ->helperText('Allow the client to download a PDF copy')
-                                    ->default(false),
+                                    ->default(true),
                                 Toggle::make('client_can_print')
                                     ->label('Allow Client to Print')
                                     ->default(false),

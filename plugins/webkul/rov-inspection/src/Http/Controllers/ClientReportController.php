@@ -2,7 +2,10 @@
 
 namespace Webkul\RovInspection\Http\Controllers;
 
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Webkul\RovInspection\Models\InspectionReport;
 use Webkul\RovInspection\Models\ReportAccessLog;
@@ -10,6 +13,45 @@ use Webkul\RovInspection\Models\ReportAccessLog;
 class ClientReportController extends Controller
 {
     public function show(Request $request, string $hash)
+    {
+        [$report, $project, $severityCounts] = $this->loadReportContext($request, $hash);
+
+        return view('rov-inspection::client.report', [
+            'report'         => $report,
+            'project'        => $project,
+            'severityCounts' => $severityCounts,
+        ]);
+    }
+
+    public function data(Request $request, string $hash): JsonResponse
+    {
+        [$report, $project, $severityCounts] = $this->loadReportContext($request, $hash);
+
+        return response()->json($this->buildReportPayload($report, $project, $severityCounts));
+    }
+
+    public function downloadPdf(Request $request, string $hash): Response
+    {
+        [$report, $project, $severityCounts] = $this->loadReportContext($request, $hash);
+
+        abort_unless($report->client_can_download, 403, 'PDF download is not enabled for this report.');
+
+        $pdf = Pdf::loadView('rov-inspection::client.report-pdf', [
+            'report'         => $report,
+            'project'        => $project,
+            'severityCounts' => $severityCounts,
+            'payload'        => $this->buildReportPayload($report, $project, $severityCounts),
+        ])->setPaper('a4', 'portrait');
+
+        $fileName = str($report->title ?: 'inspection-report')
+            ->slug('-')
+            ->append('.pdf')
+            ->toString();
+
+        return $pdf->download($fileName);
+    }
+
+    private function loadReportContext(Request $request, string $hash): array
     {
         $report = InspectionReport::where('shared_link_hash', $hash)->firstOrFail();
 
@@ -24,21 +66,18 @@ class ClientReportController extends Controller
             'ip_address'  => $request->ip(),
         ]);
 
-        // Eager-load the full hierarchy: project → structures → views → points (with media)
-        // and structure media (for the Inspection Data gallery)
         $project = $report->project()->withoutGlobalScopes()
             ->with([
-                'structures' => function ($q) {
-                    $q->orderBy('sort')->with([
+                'structures' => function ($query) {
+                    $query->orderBy('sort')->with([
                         'views.points.media',
-                        'media' => fn ($q) => $q->whereNull('inspection_point_id'),
+                        'media' => fn ($mediaQuery) => $mediaQuery->whereNull('inspection_point_id'),
                     ]);
                 },
                 'customer',
             ])
             ->first();
 
-        // Build flat severity counts for the Conclusions tab
         $severityCounts = ['major' => 0, 'moderate' => 0, 'minor' => 0];
 
         if ($project) {
@@ -46,6 +85,7 @@ class ClientReportController extends Controller
                 foreach ($structure->views as $view) {
                     foreach ($view->points as $point) {
                         $key = strtolower($point->severity ?? '');
+
                         if (isset($severityCounts[$key])) {
                             $severityCounts[$key]++;
                         }
@@ -54,10 +94,87 @@ class ClientReportController extends Controller
             }
         }
 
-        return view('rov-inspection::client.report', [
-            'report'         => $report,
-            'project'        => $project,
-            'severityCounts' => $severityCounts,
-        ]);
+        return [$report, $project, $severityCounts];
+    }
+
+    private function buildReportPayload(InspectionReport $report, $project, array $severityCounts): array
+    {
+        return [
+            'report' => [
+                'id' => $report->id,
+                'title' => $report->title,
+                'summary' => $report->summary,
+                'full_report' => $report->full_report,
+                'conclusions' => $report->conclusions,
+                'recommendations' => $report->recommendations,
+                'status' => $report->status,
+                'shared_date' => optional($report->shared_date)?->toIso8601String(),
+                'expires_at' => optional($report->shared_link_expires_at)?->toIso8601String(),
+                'client_can_download' => $report->client_can_download,
+                'client_can_print' => $report->client_can_print,
+            ],
+            'project' => $project ? [
+                'id' => $project->id,
+                'name' => $project->name,
+                'location' => $project->location,
+                'latitude' => $project->latitude,
+                'longitude' => $project->longitude,
+                'start_date' => optional($project->start_date)?->toDateString(),
+                'end_date' => optional($project->end_date)?->toDateString(),
+                'plan_view_url' => $project->plan_view_path ? \Illuminate\Support\Facades\Storage::disk('s3')->url($project->plan_view_path) : null,
+                'customer' => $project->customer ? [
+                    'id' => $project->customer->id,
+                    'name' => $project->customer->name,
+                    'image_url' => $project->customer->image_url,
+                ] : null,
+                'structures' => $project->structures->map(function ($structure) {
+                    return [
+                        'id' => $structure->id,
+                        'name' => $structure->name,
+                        'description' => $structure->description,
+                        'photo_url' => $structure->photo_path ? \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->photo_path) : null,
+                        'diagram_url' => $structure->diagram_path ? \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->diagram_path) : null,
+                        'views' => $structure->views->map(function ($view) {
+                            return [
+                                'id' => $view->id,
+                                'name' => $view->name,
+                                'view_type' => $view->view_type,
+                                'points' => $view->points->map(function ($point) {
+                                    return [
+                                        'id' => $point->id,
+                                        'observation_id' => $point->observation_id,
+                                        'point_number' => $point->point_number,
+                                        'severity' => $point->severity,
+                                        'finding_type' => $point->finding_type,
+                                        'description' => $point->description,
+                                        'dive_location' => $point->dive_location,
+                                        'depth_m' => $point->depth_m,
+                                        'dimension_mm' => $point->dimension_mm,
+                                        'recommendations' => $point->recommendations,
+                                        'x_coordinate' => $point->x_coordinate,
+                                        'y_coordinate' => $point->y_coordinate,
+                                        'media' => $point->media->map(fn ($media) => [
+                                            'id' => $media->id,
+                                            'file_name' => $media->file_name,
+                                            'media_type' => $media->media_type,
+                                            'url' => $media->url,
+                                            'thumbnail_url' => $media->thumbnail_url,
+                                        ])->values()->all(),
+                                    ];
+                                })->values()->all(),
+                            ];
+                        })->values()->all(),
+                        'unlinked_media' => $structure->media->map(fn ($media) => [
+                            'id' => $media->id,
+                            'file_name' => $media->file_name,
+                            'media_type' => $media->media_type,
+                            'url' => $media->url,
+                            'thumbnail_url' => $media->thumbnail_url,
+                        ])->values()->all(),
+                    ];
+                })->values()->all(),
+            ] : null,
+            'severity_counts' => $severityCounts,
+        ];
     }
 }

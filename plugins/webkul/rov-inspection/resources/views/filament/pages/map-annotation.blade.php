@@ -14,7 +14,7 @@
             </a>
         </div>
     @else
-        @php $diagramUrl = $structure->diagram_path ? asset('storage/'.$structure->diagram_path) : null; @endphp
+        @php $diagramUrl = $structure->diagram_path ? \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->diagram_path) : null; @endphp
 
         <div
             class="space-y-4"
@@ -275,7 +275,8 @@
                                     <x-heroicon-m-x-mark class="h-4 w-4" />
                                 </button>
                             </div>
-                            <div class="space-y-3 p-4" x-show="editingPoint">
+                            <template x-if="editingPoint">
+                            <div class="space-y-3 p-4">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">Severity</label>
                                     <select x-model="editingPoint.severity"
@@ -335,16 +336,26 @@
                                 </div>
 
                                 {{-- Attached media for this pin --}}
-                                <div>
-                                    <label class="mb-1 block text-xs font-medium text-gray-600 dark:text-gray-400">Attached Media</label>
+                                <div class="border-t border-gray-100 pt-3 dark:border-gray-700">
+                                    <label class="mb-1.5 block text-xs font-medium text-gray-600 dark:text-gray-400">Attached Media</label>
+
+                                    {{-- Already-linked items (with thumbnail + unlink) --}}
                                     <template x-if="selectedPoint && selectedPoint.media && selectedPoint.media.length">
-                                        <div class="space-y-1">
+                                        <div class="mb-2 space-y-1">
                                             <template x-for="m in selectedPoint.media" :key="m.id">
                                                 <div class="flex items-center gap-2 rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-gray-800">
-                                                    <span class="flex-1 truncate text-xs" x-text="m.file_name"></span>
-                                                    <span class="rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] capitalize dark:bg-gray-700" x-text="m.media_type"></span>
-                                                    <button @click="unlinkMedia(m.id)"
-                                                            class="text-danger-500 hover:text-danger-700">
+                                                    <template x-if="m.thumbnail_url">
+                                                        <img :src="m.thumbnail_url" class="h-6 w-8 flex-shrink-0 rounded object-cover" />
+                                                    </template>
+                                                    <template x-if="!m.thumbnail_url">
+                                                        <div class="flex h-6 w-8 flex-shrink-0 items-center justify-center rounded bg-gray-200 dark:bg-gray-700">
+                                                            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M10.5 6.75h.008v.008H10.5V6.75Z"/></svg>
+                                                        </div>
+                                                    </template>
+                                                    <span class="flex-1 truncate text-xs text-gray-700 dark:text-gray-300" x-text="m.file_name"></span>
+                                                    <span class="flex-shrink-0 rounded-full bg-gray-200 px-1.5 py-0.5 text-[10px] capitalize dark:bg-gray-700" x-text="m.media_type"></span>
+                                                    <button @click="unlinkMedia(m.id)" title="Remove"
+                                                            class="flex-shrink-0 text-danger-500 hover:text-danger-700">
                                                         <x-heroicon-m-x-mark class="h-3.5 w-3.5" />
                                                     </button>
                                                 </div>
@@ -352,9 +363,38 @@
                                         </div>
                                     </template>
                                     <p x-show="!selectedPoint?.media?.length"
-                                       class="text-xs text-gray-400 italic">No media linked yet.</p>
+                                       class="mb-2 text-xs text-gray-400 italic">No media linked yet.</p>
+
+                                    {{-- Available library items to attach --}}
+                                    <div x-show="structureMedia.some(m => !m.inspection_point_id)">
+                                        <p class="mb-1 text-[10px] font-semibold uppercase tracking-wide text-gray-400">Add from library</p>
+                                        <div class="max-h-40 space-y-1 overflow-y-auto">
+                                            <template x-for="m in structureMedia.filter(m => !m.inspection_point_id)" :key="m.id">
+                                                <button type="button" @click="linkMedia(m.id)"
+                                                        class="flex w-full items-center gap-2 rounded-lg border border-gray-200 bg-white px-2 py-1.5 text-left transition-colors hover:border-primary-400 hover:bg-primary-50 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-primary-500 dark:hover:bg-primary-950/40">
+                                                    <template x-if="m.thumbnail_url">
+                                                        <img :src="m.thumbnail_url" class="h-6 w-8 flex-shrink-0 rounded object-cover" />
+                                                    </template>
+                                                    <template x-if="!m.thumbnail_url">
+                                                        <div class="flex h-6 w-8 flex-shrink-0 items-center justify-center rounded bg-gray-100 dark:bg-gray-700">
+                                                            <svg class="h-3.5 w-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M10.5 6.75h.008v.008H10.5V6.75Z"/></svg>
+                                                        </div>
+                                                    </template>
+                                                    <span class="flex-1 truncate text-xs text-gray-700 dark:text-gray-300" x-text="m.file_name"></span>
+                                                    <span class="flex-shrink-0 text-[10px] capitalize text-gray-400" x-text="m.media_type"></span>
+                                                    <span class="flex-shrink-0 rounded-full bg-primary-100 px-1.5 py-0.5 text-[10px] font-semibold text-primary-700 dark:bg-primary-900 dark:text-primary-300">+ Link</span>
+                                                </button>
+                                            </template>
+                                        </div>
+                                    </div>
+
+                                    <p x-show="structureMedia.length > 0 && !structureMedia.some(m => !m.inspection_point_id)"
+                                       class="text-[10px] text-gray-400 italic">All library media already linked to pins.</p>
+                                    <p x-show="!structureMedia.length"
+                                       class="text-[10px] text-gray-400 italic">No media uploaded for this structure yet.</p>
                                 </div>
                             </div>
+                            </template>
                         </div>
 
                         {{-- Observations list (always visible) --}}
