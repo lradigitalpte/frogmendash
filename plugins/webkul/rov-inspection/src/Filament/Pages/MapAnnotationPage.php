@@ -6,6 +6,7 @@ use BackedEnum;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Livewire\Attributes\On;
+use Webkul\RovInspection\Enums\Severity;
 use Webkul\RovInspection\Models\InspectionMedia;
 use Webkul\RovInspection\Models\InspectionPoint;
 use Webkul\RovInspection\Models\InspectionView;
@@ -100,7 +101,7 @@ class MapAnnotationPage extends Page
             'label'          => $p->label,
             'x'              => $p->x_coordinate,
             'y'              => $p->y_coordinate,
-            'severity'       => $p->severity,
+            'severity'       => Severity::normalize($p->severity) ?? 'minor',
             'finding_type'   => $p->finding_type,
             'description'    => $p->description,
             'dive_location'  => $p->dive_location,
@@ -192,7 +193,7 @@ class MapAnnotationPage extends Page
         }
 
         $point->update(array_filter([
-            'severity'        => $data['severity'] ?? null,
+            'severity'        => isset($data['severity']) ? (Severity::normalize($data['severity']) ?? 'minor') : null,
             'finding_type'    => $data['finding_type'] ?? null,
             'description'     => $data['description'] ?? null,
             'dive_location'   => $data['dive_location'] ?? null,

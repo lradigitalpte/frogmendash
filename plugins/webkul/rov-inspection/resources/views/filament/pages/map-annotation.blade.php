@@ -43,9 +43,11 @@
 
                 handleMapClick(event) {
                     if (! this.addMode) return;
-                    const rect = this.$refs.mapContainer.getBoundingClientRect();
-                    const x = ((event.clientX - rect.left) / rect.width * 100).toFixed(2);
-                    const y = ((event.clientY - rect.top)  / rect.height * 100).toFixed(2);
+                    const rect = this.$refs.mapImageFrame.getBoundingClientRect();
+                    const rawX = ((event.clientX - rect.left) / rect.width) * 100;
+                    const rawY = ((event.clientY - rect.top) / rect.height) * 100;
+                    const x = Math.min(100, Math.max(0, rawX)).toFixed(2);
+                    const y = Math.min(100, Math.max(0, rawY)).toFixed(2);
                     $wire.dispatch('map-point-placed', { x: parseFloat(x), y: parseFloat(y) });
                     this.addMode = false;
                 },
@@ -221,32 +223,34 @@
                         </p>
 
                         {{-- The annotatable image --}}
-                        <div class="relative select-none overflow-hidden"
-                             :class="addMode ? 'cursor-crosshair' : 'cursor-default'"
-                             @click="handleMapClick($event)"
-                             x-ref="mapContainer">
-                            <img src="{{ $diagramUrl }}" alt="{{ $structure->name }} diagram"
-                                 class="w-full object-contain max-h-[70vh]" />
+                            <div class="select-none overflow-auto"
+                                :class="addMode ? 'cursor-crosshair' : 'cursor-default'">
+                               <div class="relative w-full"
+                                   @click="handleMapClick($event)"
+                                   x-ref="mapImageFrame">
+                                  <img src="{{ $diagramUrl }}" alt="{{ $structure->name }} diagram"
+                                      class="block w-full h-auto max-h-[70vh] object-contain" />
 
-                            {{-- Pins --}}
-                            <template x-for="point in points" :key="point.id">
-                                <div class="absolute -translate-x-1/2 -translate-y-full group pointer-events-auto"
-                                     :style="`left: ${point.x}%; top: ${point.y}%;`">
-                                    {{-- Pin marker --}}
-                                    <div class="relative">
-                                        <div class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white shadow-lg cursor-pointer transition-all group-hover:scale-125"
-                                             :class="selectedPoint?.id === point.id ? 'ring-2 ring-offset-1 ring-white scale-125' : ''"
-                                             :style="`background-color: ${severityColor(point.severity)}`"
-                                             @click.stop="selectPoint(point)">
-                                            <span class="text-[10px] font-bold text-white leading-none"
-                                                  x-text="point.observation_id ?? point.point_number"></span>
+                                  {{-- Pins --}}
+                                  <template x-for="point in points" :key="point.id">
+                                     <div class="absolute -translate-x-1/2 -translate-y-full group pointer-events-auto"
+                                         :style="`left: ${point.x}%; top: ${point.y}%;`">
+                                        {{-- Pin marker --}}
+                                        <div class="relative">
+                                            <div class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white shadow-lg cursor-pointer transition-all group-hover:scale-125"
+                                                :class="selectedPoint?.id === point.id ? 'ring-2 ring-offset-1 ring-white scale-125' : ''"
+                                                :style="`background-color: ${severityColor(point.severity)}`"
+                                                @click.stop="selectPoint(point)">
+                                               <span class="text-[10px] font-bold text-white leading-none"
+                                                    x-text="point.observation_id ?? point.point_number"></span>
+                                            </div>
+                                            {{-- Pin stem --}}
+                                            <div class="mx-auto h-2 w-0.5 opacity-70"
+                                                :style="`background-color: ${severityColor(point.severity)}`"></div>
                                         </div>
-                                        {{-- Pin stem --}}
-                                        <div class="mx-auto h-2 w-0.5 opacity-70"
-                                             :style="`background-color: ${severityColor(point.severity)}`"></div>
-                                    </div>
-                                </div>
-                            </template>
+                                     </div>
+                                  </template>
+                               </div>
                         </div>
 
                         {{-- Severity legend --}}

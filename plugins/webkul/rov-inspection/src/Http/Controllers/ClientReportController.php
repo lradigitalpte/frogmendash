@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Webkul\RovInspection\Enums\Severity;
 use Webkul\RovInspection\Models\InspectionReport;
 use Webkul\RovInspection\Models\ReportAccessLog;
 
@@ -84,7 +85,9 @@ class ClientReportController extends Controller
             foreach ($project->structures as $structure) {
                 foreach ($structure->views as $view) {
                     foreach ($view->points as $point) {
-                        $key = strtolower($point->severity ?? '');
+                        $normalizedSeverity = Severity::normalize($point->severity ?? '') ?? 'minor';
+                        $point->severity = $normalizedSeverity;
+                        $key = $normalizedSeverity;
 
                         if (isset($severityCounts[$key])) {
                             $severityCounts[$key]++;
@@ -144,7 +147,7 @@ class ClientReportController extends Controller
                                         'id' => $point->id,
                                         'observation_id' => $point->observation_id,
                                         'point_number' => $point->point_number,
-                                        'severity' => $point->severity,
+                                        'severity' => Severity::normalize($point->severity) ?? 'minor',
                                         'finding_type' => $point->finding_type,
                                         'description' => $point->description,
                                         'dive_location' => $point->dive_location,

@@ -455,33 +455,35 @@
                                 {{-- Annotated diagram --}}
                                 <div class="min-w-0 flex-1 card overflow-hidden">
                                     @if ($structure->diagram_path)
-                                        <div class="relative max-h-[80vh] md:max-h-[70vh] xl:max-h-[60vh] overflow-auto select-none bg-slate-900"
+                                        <div class="max-h-[80vh] md:max-h-[70vh] xl:max-h-[60vh] overflow-auto select-none bg-slate-900"
                                              x-data="{ imageLoaded: false }">
-                                            <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->diagram_path) }}"
-                                                 alt="{{ $structure->name }}"
-                                                 @load="imageLoaded = true"
-                                                 class="w-full object-contain" />
+                                            <div class="relative w-full">
+                                                <img src="{{ \Illuminate\Support\Facades\Storage::disk('s3')->url($structure->diagram_path) }}"
+                                                     alt="{{ $structure->name }}"
+                                                     @load="imageLoaded = true"
+                                                     class="block w-full h-auto" />
 
-                                            @foreach ($view->points as $point)
-                                                @php
-                                                    $pinColor = match(strtolower($point->severity ?? '')) {
-                                                        'major'    => '#ef4444',
-                                                        'moderate' => '#f97316',
-                                                        'minor'    => '#eab308',
-                                                        default    => '#6b7280',
-                                                    };
-                                                @endphp
-                                                <div class="absolute -translate-x-1/2 -translate-y-full cursor-pointer group z-10"
-                                                     style="left: {{ $point->x_coordinate }}%; top: {{ $point->y_coordinate }}%;"
-                                                     @click.stop="activePinId = activePinId === {{ $point->id }} ? null : {{ $point->id }}">
-                                                    <div class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white shadow-lg transition-all group-hover:scale-125"
-                                                         :class="activePinId === {{ $point->id }} ? 'scale-125 ring-2 ring-white ring-offset-1' : ''"
-                                                         style="background-color: {{ $pinColor }}">
-                                                        <span class="text-[10px] font-bold text-white leading-none">{{ $point->observation_id ?? $point->point_number }}</span>
+                                                @foreach ($view->points as $point)
+                                                    @php
+                                                        $pinColor = match(strtolower($point->severity ?? '')) {
+                                                            'major'    => '#ef4444',
+                                                            'moderate' => '#f97316',
+                                                            'minor'    => '#eab308',
+                                                            default    => '#6b7280',
+                                                        };
+                                                    @endphp
+                                                    <div class="absolute -translate-x-1/2 -translate-y-full cursor-pointer group z-10"
+                                                         style="left: {{ $point->x_coordinate }}%; top: {{ $point->y_coordinate }}%;"
+                                                         @click.stop="activePinId = activePinId === {{ $point->id }} ? null : {{ $point->id }}">
+                                                        <div class="flex h-7 w-7 items-center justify-center rounded-full border-2 border-white shadow-lg transition-all group-hover:scale-125"
+                                                             :class="activePinId === {{ $point->id }} ? 'scale-125 ring-2 ring-white ring-offset-1' : ''"
+                                                             style="background-color: {{ $pinColor }}">
+                                                            <span class="text-[10px] font-bold text-white leading-none">{{ $point->observation_id ?? $point->point_number }}</span>
+                                                        </div>
+                                                        <div class="mx-auto h-2 w-0.5 opacity-60" style="background-color: {{ $pinColor }}"></div>
                                                     </div>
-                                                    <div class="mx-auto h-2 w-0.5 opacity-60" style="background-color: {{ $pinColor }}"></div>
-                                                </div>
-                                            @endforeach
+                                                @endforeach
+                                            </div>
                                         </div>
 
                                         {{-- Legend --}}

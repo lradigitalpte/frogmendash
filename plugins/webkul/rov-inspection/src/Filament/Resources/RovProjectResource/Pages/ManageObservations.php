@@ -118,8 +118,8 @@ class ManageObservations extends ManageRelatedRecords
                 TextColumn::make('severity')
                     ->label('Severity')
                     ->badge()
-                    ->formatStateUsing(fn ($state) => $state ? (Severity::tryFrom($state)?->getLabel() ?? ucfirst($state)) : '—')
-                    ->color(fn ($state) => $state ? (Severity::tryFrom($state)?->getColor() ?? 'gray') : 'gray'),
+                    ->formatStateUsing(fn ($state) => Severity::labelFor($state))
+                    ->color(fn ($state) => Severity::colorFor($state)),
                 TextColumn::make('dive_location')
                     ->label('Location')
                     ->searchable()
@@ -157,6 +157,20 @@ class ManageObservations extends ManageRelatedRecords
                 SelectFilter::make('severity')
                     ->label('Severity')
                     ->options(Severity::options())
+                    ->query(function (Builder $query, array $data) {
+                        if (! filled($data['value'])) {
+                            return;
+                        }
+
+                        $selected = Severity::normalize($data['value']);
+
+                        if (! $selected) {
+                            return;
+                        }
+
+                        $legacy = array_keys(array_filter(Severity::LEGACY_MAP, fn ($mapped) => $mapped === $selected));
+                        $query->whereIn('severity', array_unique(array_merge([$selected], $legacy)));
+                    })
                     ->native(false),
             ])
             ->recordActions([
