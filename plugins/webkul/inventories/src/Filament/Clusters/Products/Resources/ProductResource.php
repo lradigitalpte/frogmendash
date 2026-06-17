@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Account\Filament\Resources\ProductResource as BaseProductResource;
@@ -177,7 +178,17 @@ class ProductResource extends BaseProductResource
 
     public static function table(Table $table): Table
     {
-        return BaseProductResource::table($table);
+        $table = BaseProductResource::table($table);
+
+        $table->pushColumns([
+            TextColumn::make('on_hand_quantity')
+                ->label(__('inventories::filament/clusters/products/resources/product.table.columns.on-hand-quantity'))
+                ->badge()
+                ->color(fn ($state): string => $state > 0 ? 'success' : 'gray')
+                ->placeholder('0'),
+        ]);
+
+        return $table;
     }
 
     public static function infolist(Schema $schema): Schema

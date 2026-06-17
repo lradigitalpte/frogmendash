@@ -6,6 +6,12 @@ return [
         'group' => 'Inventory',
     ],
 
+    'table' => [
+        'columns' => [
+            'on-hand-quantity' => 'On Hand',
+        ],
+    ],
+
     'form' => [
         'sections' => [
             'inventory' => [

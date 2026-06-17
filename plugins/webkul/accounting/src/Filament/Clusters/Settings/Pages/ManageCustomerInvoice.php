@@ -61,6 +61,17 @@ class ManageCustomerInvoice extends SettingsPage
                     ->options(Incoterm::all()->pluck('name', 'id'))
                     ->inlineLabel()
                     ->searchable(),
+                Select::make('invoice_template')
+                    ->label(__('accounting::filament/clusters/settings/pages/manage-customer-invoice.form.invoice-template.label'))
+                    ->helperText(__('accounting::filament/clusters/settings/pages/manage-customer-invoice.form.invoice-template.helper-text'))
+                    ->options([
+                        'tax'     => 'Tax Invoice',
+                        'classic' => 'Classic',
+                        'minimal' => 'Minimal',
+                    ])
+                    ->default('tax')
+                    ->selectablePlaceholder(false)
+                    ->native(false),
             ]);
     }
 }

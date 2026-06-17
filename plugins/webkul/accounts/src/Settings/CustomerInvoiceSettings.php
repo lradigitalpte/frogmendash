@@ -10,6 +10,8 @@ class CustomerInvoiceSettings extends Settings
 
     public ?int $incoterm_id;
 
+    public string $invoice_template;
+
     public static function group(): string
     {
         return 'accounts_customer_invoice';

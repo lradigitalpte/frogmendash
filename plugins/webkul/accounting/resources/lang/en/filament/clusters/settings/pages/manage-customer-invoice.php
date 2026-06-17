@@ -12,5 +12,10 @@ return [
         'incoterm' => [
             'label' => 'Default Incoterm',
         ],
+
+        'invoice-template' => [
+            'label'       => 'Invoice Template',
+            'helper-text' => 'The design used when previewing and printing customer invoices.',
+        ],
     ],
 ];
