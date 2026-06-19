@@ -64,9 +64,13 @@ class CreateInvoiceAction extends Action
             ])
             ->hidden(fn ($record) => $record->invoice_status != InvoiceStatus::TO_INVOICE)
             ->action(function (Order $record, $data) {
-                $hasInvoiceableLine = $record->lines->contains(
-                    fn ($line) => $line->invoice_status == InvoiceStatus::TO_INVOICE
-                );
+                $hasInvoiceableLine = $record->lines->contains(function ($line) {
+                    $status = $line->invoice_status instanceof InvoiceStatus
+                        ? $line->invoice_status
+                        : InvoiceStatus::tryFrom($line->invoice_status);
+
+                    return $status === InvoiceStatus::TO_INVOICE;
+                });
 
                 if (! $hasInvoiceableLine) {
                     Notification::make()
