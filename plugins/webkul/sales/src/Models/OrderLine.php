@@ -15,6 +15,7 @@ use Webkul\Inventory\Models\Route;
 use Webkul\Inventory\Models\Warehouse;
 use Webkul\Partner\Models\Partner;
 use Webkul\Product\Models\Packaging;
+use Webkul\Sale\Enums\InvoiceStatus;
 use Webkul\Sale\Enums\OrderState;
 use Webkul\Sale\Enums\QtyDeliveredMethod;
 use Webkul\Security\Models\Scopes\CompanyScope;
@@ -77,7 +78,8 @@ class OrderLine extends Model implements Sortable
     ];
 
     protected $casts = [
-        'cast'                 => OrderState::class,
+        'state'                => OrderState::class,
+        'invoice_status'       => InvoiceStatus::class,
         'qty_delivered_method' => QtyDeliveredMethod::class,
     ];
 
