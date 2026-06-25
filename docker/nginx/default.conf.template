@@ -8,8 +8,8 @@ server {
     access_log /dev/stdout;
     error_log /dev/stderr warn;
 
-    client_max_body_size 2048m;
-    client_body_timeout 600;
+    client_max_body_size 15360m;
+    client_body_timeout 3600;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -21,7 +21,7 @@ server {
         fastcgi_index index.php;
         fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
         fastcgi_param DOCUMENT_ROOT $realpath_root;
-        fastcgi_read_timeout 300;
+        fastcgi_read_timeout 3600;
         fastcgi_request_buffering off;
     }
 

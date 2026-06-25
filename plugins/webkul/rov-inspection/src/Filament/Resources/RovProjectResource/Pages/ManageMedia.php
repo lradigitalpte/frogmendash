@@ -9,7 +9,6 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -21,6 +20,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Webkul\RovInspection\Filament\Forms\Components\S3MultipartUpload;
 use Webkul\RovInspection\Filament\Resources\RovProjectResource;
 use Webkul\RovInspection\Models\InspectionPoint;
 use Webkul\RovInspection\Models\ProjectStructure;
@@ -104,14 +105,13 @@ class ManageMedia extends ManageRelatedRecords
                     ->options(['video' => 'Video', 'image' => 'Image'])
                     ->required()
                     ->native(false),
-                FileUpload::make('file_path')
+                S3MultipartUpload::make('file_path')
                     ->label('Upload File')
-                    ->disk('s3')
-                    ->directory('rov-inspection/media')
-                    ->maxSize(2097152)
+                    ->required()
+                    ->maxSize(15728640)
                     ->acceptedFileTypes(['video/mp4', 'video/webm', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/jfif'])
                     ->columnSpanFull()
-                    ->helperText('Max 2 GB. Accepted: MP4, WebM, JPEG, PNG, WebP.'),
+                    ->helperText('Up to 15 GB. Uploads directly to S3. Accepted: MP4, WebM, JPEG, PNG, WebP.'),
             ])
             ->columns(2);
     }
@@ -181,6 +181,22 @@ class ManageMedia extends ManageRelatedRecords
                     ->icon('heroicon-o-arrow-up-tray')
                     ->mutateFormDataUsing(function (array $data): array {
                         $data['uploaded_by'] = Auth::id();
+
+                        // Derive size & mime from the object the browser uploaded
+                        // straight to S3 (cheap HEAD requests; file never hit PHP).
+                        if (! empty($data['file_path'])) {
+                            $disk = Storage::disk('s3');
+                            try {
+                                $data['file_size'] = $disk->size($data['file_path']);
+                            } catch (\Throwable $e) {
+                                // leave null if the object can't be inspected
+                            }
+                            try {
+                                $data['mime_type'] = $disk->mimeType($data['file_path']) ?: null;
+                            } catch (\Throwable $e) {
+                                // leave null
+                            }
+                        }
 
                         return $data;
                     })

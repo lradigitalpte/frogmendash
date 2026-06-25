@@ -3,6 +3,7 @@
 namespace Webkul\RovInspection;
 
 use Filament\Panel;
+use Filament\Support\Facades\FilamentView;
 use Illuminate\Support\Facades\Route;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -52,6 +53,23 @@ class RovInspectionServiceProvider extends PackageServiceProvider
             ->name('rov-inspection.report.client.download-pdf')
             ->middleware(['web']);
 
+        // Direct browser -> S3 multipart upload signing endpoints (auth-only).
+        Route::prefix('admin/rov-inspection/s3-multipart')
+            ->name('rov-inspection.s3-multipart.')
+            ->middleware(['web', 'auth'])
+            ->controller(Http\Controllers\S3MultipartUploadController::class)
+            ->group(function () {
+                Route::post('create', 'create')->name('create');
+                Route::post('sign', 'signPart')->name('sign');
+                Route::post('complete', 'complete')->name('complete');
+                Route::post('abort', 'abort')->name('abort');
+            });
+
+        // Make the uploader's Alpine factory available on every panel page.
+        FilamentView::registerRenderHook(
+            'panels::body.end',
+            fn (): string => view('rov-inspection::forms.components.s3-multipart-upload-script')->render(),
+        );
     }
 
     public function packageRegistered(): void
