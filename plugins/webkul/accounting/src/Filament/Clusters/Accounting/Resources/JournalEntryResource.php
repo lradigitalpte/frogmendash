@@ -655,7 +655,7 @@ class JournalEntryResource extends Resource
                     ->disabled(fn ($record) => in_array($record?->parent_state, [MoveState::POSTED, MoveState::CANCEL])),
                 Select::make('partner_id')
                     ->label(__('accounting::filament/clusters/accounting/resources/journal-entry.form.tabs.lines.repeater.fields.partner'))
-                    ->relationship('partner', 'name')
+                    ->relationship('partner', 'name', fn ($query) => $query->excludingStaff())
                     ->searchable()
                     ->preload()
                     ->selectablePlaceholder(false)

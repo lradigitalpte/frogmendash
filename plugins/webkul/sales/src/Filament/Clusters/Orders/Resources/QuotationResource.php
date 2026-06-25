@@ -154,7 +154,7 @@ class QuotationResource extends Resource
                                             ->relationship(
                                                 'partner',
                                                 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->orderBy('id')->withTrashed()
+                                                modifyQueryUsing: fn (Builder $query) => $query->excludingStaff()->orderBy('id')->withTrashed()
                                             )
                                             ->searchable()
                                             ->preload()

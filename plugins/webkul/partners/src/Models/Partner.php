@@ -155,6 +155,22 @@ class Partner extends Authenticatable implements FilamentUser
             ->where('account_type', '!=', AccountType::ADDRESS);
     }
 
+    /**
+     * Exclude internal staff (employees and partners linked to a user account)
+     * so vendor / customer / contact pickers only show real external contacts.
+     */
+    public function scopeExcludingStaff(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        $table = $this->getTable();
+
+        return $query
+            ->whereNull($table.'.user_id')
+            ->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($table) {
+                $q->where($table.'.sub_type', '!=', 'employee')
+                    ->orWhereNull($table.'.sub_type');
+            });
+    }
+
     public function bankAccounts(): HasMany
     {
         return $this->hasMany(BankAccount::class, 'partner_id');

@@ -55,6 +55,16 @@ class PartnerResource extends Resource
 {
     protected static ?string $model = Partner::class;
 
+    /**
+     * Contacts = external contacts/companies only. Hide internal staff
+     * (employees and partners tied to a user account) so the list isn't
+     * cluttered with your own users.
+     */
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->excludingStaff();
+    }
+
     protected static bool $shouldRegisterNavigation = false;
 
     protected static bool $isGloballySearchable = false;

@@ -17,6 +17,7 @@ use Webkul\Account\TenantProvisioner;
 use Webkul\Partner\Models\Partner;
 use Webkul\Security\Filament\Resources\CompanyResource;
 use Webkul\Security\Models\Scopes\CompanyScope;
+use Webkul\Security\Models\User;
 use Webkul\Support\Models\Company;
 use Webkul\TableViews\Filament\Concerns\HasTableViews;
 
@@ -45,6 +46,9 @@ class ListCompanies extends ListRecords
             Action::make('addTenant')
                 ->label(__('Add tenant (company + first user)'))
                 ->icon('heroicon-o-building-office-2')
+                // Only the platform admin can create a new top-level TENANT.
+                // Tenant admins use "New branch" below (a sub-company of theirs).
+                ->visible(fn (): bool => User::isPlatformAdmin())
                 ->form([
                     TextInput::make('company_name')
                         ->label(__('Company name'))
@@ -137,7 +141,11 @@ class ListCompanies extends ListRecords
                         ->send();
                 }),
             CreateAction::make()->icon('heroicon-o-plus-circle')
-                ->label(__('security::filament/resources/company/pages/list-company.header-actions.create.label')),
+                // Platform admin: a new top-level company. Tenant admin: a branch
+                // of their own company (parent_id is forced in CreateCompany).
+                ->label(fn (): string => User::isPlatformAdmin()
+                    ? __('security::filament/resources/company/pages/list-company.header-actions.create.label')
+                    : __('New branch')),
         ];
     }
 }

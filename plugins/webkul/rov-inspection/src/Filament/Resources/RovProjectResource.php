@@ -122,7 +122,7 @@ class RovProjectResource extends Resource
                                     ->prefixIcon('heroicon-o-map-pin'),
                                 Select::make('customer_id')
                                     ->label('Client / Customer')
-                                    ->relationship('customer', 'name')
+                                    ->relationship('customer', 'name', fn ($query) => $query->excludingStaff())
                                     ->searchable()
                                     ->preload()
                                     ->nullable(),

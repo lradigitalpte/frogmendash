@@ -139,7 +139,7 @@ class PaymentResource extends Resource
                                             ->relationship(
                                                 'partner',
                                                 'name',
-                                                fn (Builder $query, Get $get) => $query->orderBy('id'),
+                                                fn (Builder $query, Get $get) => $query->excludingStaff()->orderBy('id'),
                                             )
                                             ->reactive()
                                             ->afterStateUpdated(function (Set $set, $state) {

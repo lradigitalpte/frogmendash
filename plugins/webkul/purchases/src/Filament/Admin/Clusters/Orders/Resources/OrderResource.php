@@ -126,7 +126,7 @@ class OrderResource extends Resource
                                     ->relationship(
                                         'partner',
                                         'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->orderBy('id')->withTrashed()
+                                        modifyQueryUsing: fn (Builder $query) => $query->excludingStaff()->orderBy('id')->withTrashed()
                                     )
                                     ->getOptionLabelFromRecordUsing(function ($record): string {
                                         return $record->name.($record->trashed() ? ' (Deleted)' : '');
