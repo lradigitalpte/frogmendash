@@ -27,8 +27,8 @@ class CustomerPanelProvider extends PanelProvider
             ->homeUrl($websiteEnabled ? url('/') : url('/admin/login'))
             ->authPasswordBroker('customers')
             ->profile(isSimple: false)
-            ->favicon(asset('images/logo.png'))
-            ->brandLogo(asset('images/logo.png'))
+            ->favicon(fn (): string => asset('images/logo.png'))
+            ->brandLogo(fn (): string => asset('images/logo.png'))
             ->darkMode(false)
             ->brandLogoHeight('3.5rem')
             ->colors([

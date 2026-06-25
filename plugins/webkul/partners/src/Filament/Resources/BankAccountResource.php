@@ -50,7 +50,13 @@ class BankAccountResource extends Resource
                 TextInput::make('account_number')
                     ->label(__('partners::filament/resources/bank-account.form.account-number'))
                     ->required()
-                    ->unique(ignoreRecord: true)
+                    ->unique(ignoreRecord: true, modifyRuleUsing: function (\Illuminate\Validation\Rules\Unique $rule) {
+                        // Uniqueness is per-company, not global, so tenants don't
+                        // collide with (or learn about) each other's account numbers.
+                        $companyId = filament()->auth()->user()?->default_company_id;
+
+                        return $companyId ? $rule->where('company_id', $companyId) : $rule;
+                    })
                     ->maxLength(255),
                 Toggle::make('can_send_money')
                     ->label(__('partners::filament/resources/bank-account.form.can-send-money'))

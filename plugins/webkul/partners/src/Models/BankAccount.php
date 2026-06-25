@@ -7,8 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Webkul\Partner\Database\Factories\BankAccountFactory;
+use Webkul\Security\Models\Scopes\CompanyScope;
 use Webkul\Security\Models\User;
 use Webkul\Support\Models\Bank;
+use Webkul\Support\Models\Company;
 
 class BankAccount extends Model
 {
@@ -34,6 +36,7 @@ class BankAccount extends Model
         'creator_id',
         'partner_id',
         'bank_id',
+        'company_id',
     ];
 
     /**
@@ -61,6 +64,11 @@ class BankAccount extends Model
         return $this->belongsTo(User::class, 'creator_id');
     }
 
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
     /**
      * Bootstrap any application services.
      */
@@ -68,10 +76,20 @@ class BankAccount extends Model
     {
         parent::boot();
 
+        // Tenant isolation: only show bank accounts for the current company.
+        static::addGlobalScope(new CompanyScope);
+
         static::creating(function ($bankAccount) {
             $bankAccount->creator_id = filament()->auth()->id();
 
             $bankAccount->account_holder_name = $bankAccount->partner->name;
+
+            // Inherit the company from the owning partner, falling back to the
+            // current user's company, so the record is correctly tenant-scoped.
+            if (empty($bankAccount->company_id)) {
+                $bankAccount->company_id = $bankAccount->partner?->company_id
+                    ?? filament()->auth()->user()?->default_company_id;
+            }
         });
 
         static::updating(function ($bankAccount) {

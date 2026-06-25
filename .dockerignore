@@ -1,0 +1,38 @@
+# Version control
+.git
+.gitignore
+
+# Dependencies / build output are rebuilt inside the image
+vendor
+node_modules
+public/build
+public/hot
+
+# storage:link symlink — recreated at runtime; breaks Docker build on Windows
+public/storage
+
+# The separate idurar app (not part of this Laravel build) — big space/time saver
+frontend
+backend
+
+# NOTE: .env is intentionally NOT excluded — prod build behavior is unchanged.
+# (Railway injects env vars; the image keeps whatever .env handling it had.)
+
+# Database dumps and backups
+*.sql
+*.sql.gz
+
+# Runtime / caches
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*.php
+
+# Editor / OS noise
+.idea
+.vscode
+.fleet
+*.log
+.DS_Store
+Thumbs.db

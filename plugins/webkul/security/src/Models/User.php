@@ -50,7 +50,9 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEm
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return true;
+        // Pending self-signups are created inactive and cannot enter the panel
+        // until a platform admin approves them. All pre-existing users are active.
+        return (bool) $this->is_active;
     }
 
     public function getAvatarUrlAttribute()
@@ -108,10 +110,15 @@ class User extends BaseUser implements FilamentUser, HasAppAuthentication, HasEm
         if ($user->is_default === true || $user->hasRole('super_admin')) {
             return true;
         }
+        // Fallback for a brand-new install only: before an is_default user is
+        // set, the very first/only panel user counts as platform admin. Guarded
+        // by count() <= 1 so it can NEVER promote a tenant user once real users
+        // (multiple tenants) exist — closing the over-grant from the audit.
         $panelRoleName = Utils::getPanelUserRoleName();
 
         return $user->hasRole($panelRoleName)
-            && ! self::where('is_default', true)->exists();
+            && ! self::where('is_default', true)->exists()
+            && self::count() <= 1;
     }
 
     /**

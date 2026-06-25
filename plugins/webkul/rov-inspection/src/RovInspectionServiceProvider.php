@@ -30,6 +30,7 @@ class RovInspectionServiceProvider extends PackageServiceProvider
                 '2026_03_08_000008_update_rov_projects_add_gps_and_plan_view',
                 '2026_03_08_000009_update_inspection_points_for_views',
                 '2026_03_08_000010_update_inspection_media_for_structures',
+                '2026_06_25_000002_add_company_id_to_inspection_reports_table',
             ])
             ->runsMigrations()
             ->hasInstallCommand(function (InstallCommand $command) {

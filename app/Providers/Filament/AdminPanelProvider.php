@@ -92,9 +92,12 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->homeUrl('/admin/plugins?tab=apps')
             ->login()
-            ->registration(false) // Tenants created by admins: Companies + Users (assign role so they can access panel)
-            ->favicon(asset('images/logo.png'))
-            ->brandLogo(asset('images/logo.png'))
+            // Public self-signup: creates a PENDING tenant (company + first user),
+            // inactive until a platform admin approves it. Admins can still create
+            // tenants directly from Companies. See App\Filament\Auth\RegisterTenant.
+            ->registration(\App\Filament\Auth\RegisterTenant::class)
+            ->favicon(fn (): string => asset('images/logo.png'))
+            ->brandLogo(fn (): string => asset('images/logo.png'))
             ->brandLogoHeight('3.5rem')
             ->passwordReset()
             ->emailVerification()

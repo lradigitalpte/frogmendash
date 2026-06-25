@@ -10,6 +10,7 @@ use Illuminate\Routing\Controller;
 use Webkul\RovInspection\Enums\Severity;
 use Webkul\RovInspection\Models\InspectionReport;
 use Webkul\RovInspection\Models\ReportAccessLog;
+use Webkul\Security\Models\Scopes\CompanyScope;
 
 class ClientReportController extends Controller
 {
@@ -54,7 +55,11 @@ class ClientReportController extends Controller
 
     private function loadReportContext(Request $request, string $hash): array
     {
-        $report = InspectionReport::where('shared_link_hash', $hash)->firstOrFail();
+        // Public, hash-gated endpoint: bypass tenant scoping so the shared link
+        // resolves without an authenticated user (access is controlled by the hash).
+        $report = InspectionReport::withoutGlobalScope(CompanyScope::class)
+            ->where('shared_link_hash', $hash)
+            ->firstOrFail();
 
         if ($report->shared_link_expires_at && $report->shared_link_expires_at->isPast()) {
             abort(410, 'This report link has expired.');

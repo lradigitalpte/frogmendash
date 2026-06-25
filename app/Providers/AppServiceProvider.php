@@ -26,14 +26,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Pin generated URLs to APP_URL. Needed because we trust all proxies
+        // (Railway), which otherwise mis-derives host/port — e.g. dropping the
+        // :8000 port for local Docker and redirecting to a refused port 80.
+        $appUrl = config('app.url');
+
+        if (is_string($appUrl) && $appUrl !== '') {
+            URL::forceRootUrl($appUrl);
+        }
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
-
-            $appUrl = config('app.url');
-
-            if (is_string($appUrl) && $appUrl !== '') {
-                URL::forceRootUrl($appUrl);
-            }
         }
 
         Fieldset::configureUsing(fn (Fieldset $fieldset) => $fieldset

@@ -39,6 +39,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Webkul\Account\TenantProvisioner;
 use Webkul\Field\Filament\Traits\HasCustomFields;
 use Webkul\Security\Enums\CompanyStatus;
 use Webkul\Security\Filament\Resources\CompanyResource\Pages\CreateCompany;
@@ -66,36 +67,45 @@ class CompanyResource extends Resource
      */
     protected static function isPlatformAdmin(): bool
     {
-        $user = Auth::user();
+        // Single source of truth — see User::isPlatformAdmin() (hardened against
+        // the over-grant fallback).
+        return User::isPlatformAdmin();
+    }
 
-        if (! $user) {
-            return false;
-        }
-
-        // First user (installer) always sees Companies
-        if (isset($user->id) && (int) $user->id === 1) {
-            return true;
-        }
-
-        if ($user->is_default === true || $user->hasRole('super_admin')) {
-            return true;
-        }
-
-        // Fallback: if no user has is_default, treat users with panel "Admin" role as platform (e.g. first setup)
-        $panelRoleName = \BezhanSalleh\FilamentShield\Support\Utils::getPanelUserRoleName();
-
-        return $user->hasRole($panelRoleName)
-            && ! \Webkul\Security\Models\User::where('is_default', true)->exists();
+    /**
+     * Model B (hierarchical tenancy): the platform admin manages every company;
+     * a tenant admin may also open Companies, but only to see/manage their own
+     * company and the branches under it (enforced by the scoped query below and
+     * the parent_id lock on create). A user with no company sees nothing here.
+     */
+    public static function canManageCompanies(): bool
+    {
+        return static::isPlatformAdmin() || (bool) Auth::user()?->default_company_id;
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return static::isPlatformAdmin();
+        return static::canManageCompanies();
     }
 
     public static function canViewAny(): bool
     {
-        return static::isPlatformAdmin();
+        return static::canManageCompanies();
+    }
+
+    public static function canCreate(): bool
+    {
+        return static::canManageCompanies();
+    }
+
+    /**
+     * Tenant admins only ever see their own company + its branches; the platform
+     * admin sees all. (Company itself is excluded from the global CompanyScope,
+     * so we scope it explicitly here via the forCurrentUser query scope.)
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->forCurrentUser();
     }
 
     public static function getNavigationLabel(): string
@@ -411,6 +421,30 @@ class CompanyResource extends Resource
             ->filtersFormColumns(2)
             ->recordActions([
                 ActionGroup::make([
+                    Action::make('approve')
+                        ->label(__('Approve tenant'))
+                        ->icon('heroicon-o-check-badge')
+                        ->color('success')
+                        ->visible(fn ($record) => User::isPlatformAdmin() && ! $record->is_active)
+                        ->requiresConfirmation()
+                        ->modalDescription(__('This activates the company and its first user, and seeds its starter data (journals, taxes, etc.).'))
+                        ->action(function ($record) {
+                            $record->update(['is_active' => true]);
+
+                            // Activate the pending users that belong to this company.
+                            User::withoutGlobalScopes()
+                                ->where('default_company_id', $record->id)
+                                ->update(['is_active' => true]);
+
+                            // Seed the tenant's starter data now that it is approved.
+                            TenantProvisioner::provisionAll($record->fresh());
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('Tenant approved'))
+                                ->body(__('The company and its users are now active and seeded. They can log in.'))
+                                ->send();
+                        }),
                     ViewAction::make(),
                     EditAction::make()
                         ->successNotification(
