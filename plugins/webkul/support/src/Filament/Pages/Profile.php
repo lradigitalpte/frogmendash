@@ -74,7 +74,6 @@ class Profile extends Page implements HasForms
                             ->label(__('support::filament/pages/profile.fields.avatar'))
                             ->avatar()
                             ->directory('users/avatars')
-                            ->visibility('public')
                             ->disk('s3')
                             ->acceptedFileTypes(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
                             ->maxSize(2048)

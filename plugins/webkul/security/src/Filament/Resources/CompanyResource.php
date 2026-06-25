@@ -297,8 +297,7 @@ class CompanyResource extends Resource
                                                 FileUpload::make('avatar')
                                                     ->label(__('security::filament/resources/company.form.sections.branding.fields.company-logo'))
                                                     ->image()
-                                                    ->directory('company-logos')
-                                                    ->visibility('public'),
+                                                    ->directory('company-logos'),
                                             ]),
                                         ColorPicker::make('color')
                                             ->label(__('security::filament/resources/company.form.sections.branding.fields.color'))

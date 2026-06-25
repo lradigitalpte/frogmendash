@@ -157,8 +157,7 @@ class EmployeeResource extends Resource
                                             ->imageResizeMode('cover')
                                             ->imageEditor()
                                             ->avatar()
-                                            ->directory('employees/avatar')
-                                            ->visibility('public'),
+                                            ->directory('employees/avatar'),
                                     ]),
                             ])->columns(2),
                         Group::make()
@@ -664,8 +663,7 @@ class EmployeeResource extends Resource
                                                                 'image/*',
                                                                 'application/pdf',
                                                             ])
-                                                            ->directory('employees/work-permit')
-                                                            ->visibility('public'),
+                                                            ->directory('employees/work-permit'),
                                                     ])->columns(1),
                                             ])
                                             ->columnSpan(['lg' => 1]),

@@ -166,8 +166,7 @@ class PartnerResource extends Resource
                                             ->imageResizeMode('cover')
                                             ->imageEditor()
                                             ->avatar()
-                                            ->directory('partners/avatar')
-                                            ->visibility('public'),
+                                            ->directory('partners/avatar'),
                                     ]),
                             ])->columns(2),
                         Group::make()
