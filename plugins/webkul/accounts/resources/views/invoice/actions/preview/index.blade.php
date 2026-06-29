@@ -14,9 +14,15 @@
     // fall back to the company's own logo column if present.
     $logoPath = $company?->partner?->avatar ?: $company?->logo;
     $logoData = null;
-    if ($logoPath && Storage::disk('public')->exists($logoPath)) {
-        $ext = pathinfo($logoPath, PATHINFO_EXTENSION) ?: 'png';
-        $logoData = 'data:image/' . $ext . ';base64,' . base64_encode(Storage::disk('public')->get($logoPath));
+    if ($logoPath) {
+        $defaultDisk = config('filesystems.default', 'public');
+        if (Storage::disk($defaultDisk)->exists($logoPath)) {
+            $ext = pathinfo($logoPath, PATHINFO_EXTENSION) ?: 'png';
+            $logoData = 'data:image/' . $ext . ';base64,' . base64_encode(Storage::disk($defaultDisk)->get($logoPath));
+        } elseif (Storage::disk('public')->exists($logoPath)) {
+            $ext = pathinfo($logoPath, PATHINFO_EXTENSION) ?: 'png';
+            $logoData = 'data:image/' . $ext . ';base64,' . base64_encode(Storage::disk('public')->get($logoPath));
+        }
     }
 
     // Effective VAT rate (falls back to 5% when there is nothing to derive from).

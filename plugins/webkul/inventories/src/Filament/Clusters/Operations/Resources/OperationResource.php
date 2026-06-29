@@ -839,7 +839,7 @@ class OperationResource extends Resource
                 $data = array_merge($data, [
                     'creator_id'              => Auth::id(),
                     'company_id'              => Auth::user()->default_company_id,
-                    'warehouse_id'            => $record->destinationLocation->warehouse_id,
+                    'warehouse_id'            => $record->destinationLocation?->warehouse_id ?? $record->sourceLocation?->warehouse_id ?? $record->operationType?->warehouse_id,
                     'state'                   => $record->state->value,
                     'name'                    => $product->name,
                     'procure_method'          => ProcureMethod::MAKE_TO_STOCK,
@@ -906,11 +906,11 @@ class OperationResource extends Resource
             $columns++;
         }
 
-        if ($move->sourceLocation->type == LocationType::INTERNAL) {
+        if ($move->sourceLocation?->type == LocationType::INTERNAL) {
             $columns++;
         }
 
-        if ($move->destinationLocation->type != LocationType::INTERNAL) {
+        if ($move->destinationLocation?->type != LocationType::INTERNAL) {
             $columns--;
         }
 

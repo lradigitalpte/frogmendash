@@ -164,7 +164,11 @@ class Partner extends Authenticatable implements FilamentUser
         $table = $this->getTable();
 
         return $query
-            ->whereNull($table.'.user_id')
+            ->whereNotExists(function ($subQuery) use ($table) {
+                $subQuery->selectRaw(1)
+                    ->from('users')
+                    ->whereColumn('users.partner_id', $table.'.id');
+            })
             ->where(function (\Illuminate\Database\Eloquent\Builder $q) use ($table) {
                 $q->where($table.'.sub_type', '!=', 'employee')
                     ->orWhereNull($table.'.sub_type');

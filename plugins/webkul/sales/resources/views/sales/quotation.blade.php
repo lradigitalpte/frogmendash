@@ -1,3 +1,20 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+
+    $company = $record->company;
+    $logoPath = $company?->partner?->avatar ?: $company?->logo;
+    $logoData = null;
+    if ($logoPath) {
+        $defaultDisk = config('filesystems.default', 'public');
+        if (Storage::disk($defaultDisk)->exists($logoPath)) {
+            $ext = pathinfo($logoPath, PATHINFO_EXTENSION) ?: 'png';
+            $logoData = 'data:image/' . $ext . ';base64,' . base64_encode(Storage::disk($defaultDisk)->get($logoPath));
+        } elseif (Storage::disk('public')->exists($logoPath)) {
+            $ext = pathinfo($logoPath, PATHINFO_EXTENSION) ?: 'png';
+            $logoData = 'data:image/' . $ext . ';base64,' . base64_encode(Storage::disk('public')->get($logoPath));
+        }
+    }
+@endphp
 <!DOCTYPE html>
 <html>
 <head>
@@ -157,6 +174,9 @@
         <div class="header">
             <!-- Company Address -->
             <div class="company-info">
+                @if ($logoData)
+                    <img src="{{ $logoData }}" alt="{{ $record->company->name }}" style="max-height: 80px; width: auto; margin-bottom: 15px;" /><br>
+                @endif
                 <div style="font-size: 28px; color: #1a4587; margin-bottom: 10px;">{{ $record->company->name }}</div>
 
                 @if ($record->company->address)

@@ -62,6 +62,8 @@ class SaleManager
 
     public function confirmSaleOrder(Order $record): Order
     {
+        $record = $this->computeWarehouseId($record);
+
         $this->applyPullRules($record);
 
         $record->update([
