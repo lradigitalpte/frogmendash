@@ -31,6 +31,7 @@ use Filament\Tables\Filters\QueryBuilder\Constraints\TextConstraint;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Sale\Filament\Clusters\Configuration;
 use Webkul\Sale\Filament\Clusters\Configuration\Resources\ActivityPlanResource\Pages\EditActivityPlan;
@@ -72,7 +73,7 @@ class ActivityPlanResource extends Resource
                             ->maxLength(255),
                         Select::make('company_id')
                             ->label(__('sales::filament/clusters/configurations/resources/activity-plan.form.sections.general.fields.company'))
-                            ->relationship(name: 'company', titleAttribute: 'name')
+                            ->relationship(name: 'company', titleAttribute: 'name', modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker())
                             ->searchable()
                             ->preload()
                             ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema))

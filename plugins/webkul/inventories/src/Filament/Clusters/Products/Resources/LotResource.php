@@ -194,7 +194,7 @@ class LotResource extends Resource
                     ->preload(),
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/products/resources/lot.table.filters.company'))
-                    ->relationship('company', 'name', fn ($query) => $query?->forCurrentUser() ?? $query)
+                    ->relationship('company', 'name', fn ($query) => $query?->forBranchPicker() ?? $query)
                     ->searchable()
                     ->preload(),
             ])

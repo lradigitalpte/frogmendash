@@ -175,6 +175,40 @@ class Partner extends Authenticatable implements FilamentUser
             });
     }
 
+    /**
+     * Exclude tenant company records from customer/vendor pickers.
+     */
+    public function scopeExcludingCompanyRecords(\Illuminate\Database\Eloquent\Builder $query): \Illuminate\Database\Eloquent\Builder
+    {
+        $table = $this->getTable();
+
+        return $query->whereNotExists(function ($subQuery) use ($table) {
+            $subQuery->selectRaw(1)
+                ->from('companies')
+                ->whereColumn('companies.partner_id', $table.'.id');
+        });
+    }
+
+    /**
+     * Active external contacts for customer/vendor selects.
+     */
+    public function scopeForContactPicker(\Illuminate\Database\Eloquent\Builder $query, ?int $includeId = null): \Illuminate\Database\Eloquent\Builder
+    {
+        $table = $this->getTable();
+
+        return $query
+            ->excludingStaff()
+            ->excludingCompanyRecords()
+            ->when(
+                $includeId,
+                fn (\Illuminate\Database\Eloquent\Builder $q) => $q->where(function (\Illuminate\Database\Eloquent\Builder $inner) use ($table, $includeId) {
+                    $inner->whereNull($table.'.deleted_at')
+                        ->orWhere($table.'.id', $includeId);
+                }),
+                fn (\Illuminate\Database\Eloquent\Builder $q) => $q->whereNull($table.'.deleted_at'),
+            );
+    }
+
     public function bankAccounts(): HasMany
     {
         return $this->hasMany(BankAccount::class, 'partner_id');

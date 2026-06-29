@@ -154,7 +154,9 @@ class QuotationResource extends Resource
                                             ->relationship(
                                                 'partner',
                                                 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->excludingStaff()->orderBy('id')->withTrashed()
+                                                modifyQueryUsing: fn (Builder $query, ?Model $record) => $query
+                                                    ->forContactPicker($record?->partner_id)
+                                                    ->orderBy('name')
                                             )
                                             ->searchable()
                                             ->preload()
@@ -167,9 +169,7 @@ class QuotationResource extends Resource
                                                 $set('payment_term_id', $partner?->propertyPaymentTerm?->id);
                                             })
                                             ->disabled(fn ($record): bool => $record?->locked || in_array($record?->state, [OrderState::CANCEL]))
-                                            ->columnSpan(1)
-                                            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->name.($record->trashed() ? ' (Deleted)' : ''))
-                                            ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)')),
+                                            ->columnSpan(1),
                                     ]),
                                 DatePicker::make('validity_date')
                                     ->label(__('sales::filament/clusters/orders/resources/quotation.form.section.general.fields.expiration'))
@@ -280,13 +280,7 @@ class QuotationResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.additional-information.fields.company'))
-                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
-                                            ->getOptionLabelFromRecordUsing(function ($record): string {
-                                                return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                            })
-                                            ->disableOptionWhen(function ($label) {
-                                                return str_contains($label, ' (Deleted)');
-                                            })
+                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker())
                                             ->searchable()
                                             ->preload()
                                             ->live()
@@ -297,8 +291,6 @@ class QuotationResource extends Resource
                                                     $set('currency_id', $company->currency_id);
                                                 }
                                             })
-                                            ->reactive()
-                                            ->afterStateUpdated(fn (callable $set, $state) => $set('currency_id', Company::find($state)?->currency_id))
                                             ->default(Auth::user()->default_company_id),
                                         Select::make('currency_id')
                                             ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.other-information.fieldset.additional-information.fields.currency'))
@@ -1350,7 +1342,7 @@ class QuotationResource extends Resource
                 TableColumn::make('discount')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.order-line.repeater.products.columns.discount-percentage'))
                     ->width(100)
-                    ->toggleable(isToggledHiddenByDefault: true)
+                    ->toggleable()
                     ->visible(fn () => resolve(PriceSettings::class)->enable_discount),
                 TableColumn::make('price_subtotal')
                     ->label(__('sales::filament/clusters/orders/resources/quotation.form.tabs.order-line.repeater.products.columns.amount'))

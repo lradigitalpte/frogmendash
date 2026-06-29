@@ -150,12 +150,12 @@ class InvoiceResource extends Resource
                                     ->schema([
                                         Select::make('partner_id')
                                             ->label(__('accounts::filament/resources/invoice.form.section.general.fields.customer'))
-                                            ->getOptionLabelFromRecordUsing(fn ($record): string => $record->name.($record->trashed() ? ' (Deleted)' : ''))
-                                            ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
                                             ->relationship(
                                                 'partner',
                                                 'name',
-                                                fn (Builder $query) => $query->excludingStaff()->orderBy('id')->withTrashed(),
+                                                fn (Builder $query, ?Model $record) => $query
+                                                    ->forContactPicker($record?->partner_id)
+                                                    ->orderBy('name'),
                                             )
                                             ->required()
                                             ->searchable()
@@ -317,7 +317,7 @@ class InvoiceResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('accounts::filament/resources/invoice.form.tabs.other-information.fieldset.accounting.fields.company'))
-                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forCurrentUser()->withTrashed())
+                                            ->relationship('company', 'name', modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker())
                                             ->getOptionLabelFromRecordUsing(function ($record): string {
                                                 return $record->name.($record->trashed() ? ' (Deleted)' : '');
                                             })

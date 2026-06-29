@@ -45,7 +45,7 @@ class TaxGroupResource extends Resource
                 Section::make()
                     ->schema([
                         Select::make('company_id')
-                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
+                            ->relationship('company', 'name', fn ($q) => $q?->forBranchPicker() ?? $q)
                             ->searchable()
                             ->label(__('accounts::filament/resources/tax-group.form.sections.fields.company'))
                             ->preload(),

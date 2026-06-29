@@ -78,7 +78,7 @@ class WorkLocationResource extends Resource
                     ->label(__('employees::filament/clusters/configurations/resources/work-location.form.company'))
                     ->required()
                     ->preload()
-                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q),
+                    ->relationship('company', 'name', fn ($q) => $q?->forBranchPicker() ?? $q),
                 Toggle::make('is_active')
                     ->label(__('employees::filament/clusters/configurations/resources/work-location.form.status'))
                     ->required(),

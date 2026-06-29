@@ -86,7 +86,7 @@ class TeamResource extends Resource
                                     ->label(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.fields.team-leader'))
                                     ->searchable(),
                                 Select::make('company_id')
-                                    ->relationship('company', 'name', fn ($q) => $q->forCurrentUser())
+                                    ->relationship('company', 'name', fn ($q) => $q->forBranchPicker())
                                     ->preload()
                                     ->label(__('sales::filament/clusters/configurations/resources/team.form.sections.fields.fieldset.team-details.fields.company'))
                                     ->searchable(),

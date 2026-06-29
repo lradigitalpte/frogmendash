@@ -171,7 +171,7 @@ class ProjectResource extends Resource
                                     ->preload()
                                     ->createOptionForm(fn (Schema $schema) => TagResource::form($schema)),
                                 Select::make('company_id')
-                                    ->relationship('company', 'name', fn ($q) => $q->forCurrentUser())
+                                    ->relationship('company', 'name', fn ($q) => $q->forBranchPicker())
                                     ->searchable()
                                     ->preload()
                                     ->label(__('projects::filament/resources/project.form.sections.additional.fields.company'))

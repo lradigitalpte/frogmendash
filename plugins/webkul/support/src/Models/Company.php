@@ -158,7 +158,7 @@ class Company extends Model implements Sortable
 
     /**
      * Scope company options to those visible to the current user.
-     * Platform admin: all companies. Tenant user: only their allowed companies + branches.
+     * Platform admin: all companies (Companies management screen only).
      */
     public function scopeForCurrentUser(Builder $query): Builder
     {
@@ -166,6 +166,15 @@ class Company extends Model implements Sortable
             return $query;
         }
 
+        return $query->forBranchPicker();
+    }
+
+    /**
+     * Companies selectable on transactional forms (orders, products, journals, etc.).
+     * Always limited to the user's tenant and its branches — never every tenant.
+     */
+    public function scopeForBranchPicker(Builder $query): Builder
+    {
         $user = Auth::user();
 
         if (! $user) {

@@ -20,6 +20,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Webkul\Inventory\Enums\AllowNewProduct;
 use Webkul\Inventory\Filament\Clusters\Configurations;
@@ -91,7 +92,7 @@ class StorageCategoryResource extends Resource
                             ->default(AllowNewProduct::MIXED),
                         Select::make('company_id')
                             ->label(__('inventories::filament/clusters/configurations/resources/storage-category.form.sections.general.fields.company'))
-                            ->relationship(name: 'company', titleAttribute: 'name')
+                            ->relationship(name: 'company', titleAttribute: 'name', modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker())
                             ->searchable()
                             ->preload()
                             ->default(Auth::user()->default_company_id),

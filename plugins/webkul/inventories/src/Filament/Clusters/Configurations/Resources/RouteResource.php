@@ -99,13 +99,7 @@ class RouteResource extends Resource
                             ->relationship(
                                 name: 'company',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
-                            )
-                            ->getOptionLabelFromRecordUsing(
-                                fn (Model $record): string => $record->name.($record->trashed() ? ' (Deleted)' : ''),
-                            )
-                            ->disableOptionWhen(
-                                fn (string $label): bool => str_contains($label, ' (Deleted)'),
+                                modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker(),
                             )
                             ->live()
                             ->searchable()
@@ -182,7 +176,7 @@ class RouteResource extends Resource
             ->filters([
                 SelectFilter::make('company_id')
                     ->label(__('inventories::filament/clusters/configurations/resources/route.table.filters.company'))
-                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
+                    ->relationship('company', 'name', fn ($q) => $q ? $q->forBranchPicker() : $q)
                     ->searchable()
                     ->preload(),
             ])

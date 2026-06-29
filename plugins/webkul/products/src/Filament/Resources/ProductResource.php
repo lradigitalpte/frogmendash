@@ -170,12 +170,8 @@ class ProductResource extends Resource
                                     ->relationship(
                                         'company',
                                         'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
+                                        modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker(),
                                     )
-                                    ->getOptionLabelFromRecordUsing(function ($record): string {
-                                        return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                    })
-                                    ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
                                     ->searchable()
                                     ->preload()
                                     ->default(Auth::user()->default_company_id),

@@ -181,7 +181,7 @@ class RovProjectResource extends Resource
                                     ->native(false),
                                 Select::make('company_id')
                                     ->label('Company')
-                                    ->relationship('company', 'name', fn ($q) => $q ? $q->forCurrentUser() : $q)
+                                    ->relationship('company', 'name', fn ($q) => $q ? $q->forBranchPicker() : $q)
                                     ->searchable()
                                     ->preload()
                                     ->default(fn () => filament()->auth()->user()?->default_company_id)

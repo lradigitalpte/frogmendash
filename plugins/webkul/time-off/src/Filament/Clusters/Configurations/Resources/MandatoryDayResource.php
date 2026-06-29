@@ -100,7 +100,7 @@ class MandatoryDayResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('company_id')
-                    ->relationship('company', 'name', fn ($query) => $query?->forCurrentUser() ?? $query)
+                    ->relationship('company', 'name', fn ($query) => $query?->forBranchPicker() ?? $query)
                     ->searchable()
                     ->preload()
                     ->label(__('time-off::filament/clusters/configurations/resources/mandatory-days.table.filters.company-name')),

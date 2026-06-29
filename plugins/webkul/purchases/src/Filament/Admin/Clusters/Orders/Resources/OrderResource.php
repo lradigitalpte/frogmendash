@@ -126,14 +126,10 @@ class OrderResource extends Resource
                                     ->relationship(
                                         'partner',
                                         'name',
-                                        modifyQueryUsing: fn (Builder $query) => $query->excludingStaff()->orderBy('id')->withTrashed()
+                                        modifyQueryUsing: fn (Builder $query, ?Model $record) => $query
+                                            ->forContactPicker($record?->partner_id)
+                                            ->orderBy('name')
                                     )
-                                    ->getOptionLabelFromRecordUsing(function ($record): string {
-                                        return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                    })
-                                    ->disableOptionWhen(function ($label) {
-                                        return str_contains($label, ' (Deleted)');
-                                    })
                                     ->searchable()
                                     ->required()
                                     ->preload()
@@ -296,12 +292,8 @@ class OrderResource extends Resource
                                             ->relationship(
                                                 'company',
                                                 'name',
-                                                modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
+                                                modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker(),
                                             )
-                                            ->getOptionLabelFromRecordUsing(function ($record): string {
-                                                return $record->name.($record->trashed() ? ' (Deleted)' : '');
-                                            })
-                                            ->disableOptionWhen(fn ($label) => str_contains($label, ' (Deleted)'))
                                             ->searchable()
                                             ->preload()
                                             ->required()

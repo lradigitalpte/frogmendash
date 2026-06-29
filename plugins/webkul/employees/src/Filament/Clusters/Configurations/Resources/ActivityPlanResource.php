@@ -74,16 +74,10 @@ class ActivityPlanResource extends Resource
                             ->editOptionForm(fn (Schema $schema) => DepartmentResource::form($schema)),
                         Select::make('company_id')
                             ->label(__('employees::filament/clusters/configurations/resources/activity-plan.form.sections.general.fields.company'))
-                            ->relationship(name: 'company', titleAttribute: 'name', modifyQueryUsing: fn (Builder $query) => $query->withTrashed())
+                            ->relationship(name: 'company', titleAttribute: 'name', modifyQueryUsing: fn (Builder $query) => $query->forBranchPicker())
                             ->searchable()
                             ->preload()
-                            ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema))
-                            ->getOptionLabelFromRecordUsing(
-                                fn (Model $record): string => $record->name.($record->trashed() ? ' (Deleted)' : ''),
-                            )
-                            ->disableOptionWhen(
-                                fn (string $label): bool => str_contains($label, ' (Deleted)'),
-                            ),
+                            ->createOptionForm(fn (Schema $schema) => CompanyResource::form($schema)),
                         Toggle::make('is_active')
                             ->label(__('employees::filament/clusters/configurations/resources/activity-plan.form.sections.general.fields.status'))
                             ->default(true)

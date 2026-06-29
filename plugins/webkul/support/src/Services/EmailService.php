@@ -12,13 +12,21 @@ class EmailService
     public function send(string $view, string $mailClass, array $payload, array $attachments = [])
     {
         try {
+            $user = Auth::user();
+
+            // Resend (and most providers) require a verified domain in MAIL_FROM_ADDRESS.
             $payload['from'] = [
-                'address' => Auth::user()->email,
-                'name'    => Auth::user()->name,
+                'address' => config('mail.from.address'),
+                'name'    => $user->defaultCompany?->name ?? config('mail.from.name'),
             ];
 
-            if (Auth::user()->defaultCompany) {
-                $payload['from']['company'] = Auth::user()->defaultCompany->toArray();
+            $payload['sender'] = [
+                'address' => $user->email,
+                'name'    => $user->name,
+            ];
+
+            if ($user->defaultCompany) {
+                $payload['from']['company'] = $user->defaultCompany->toArray();
             }
 
             Mail::to($payload['to']['address'], '"'.addslashes($payload['to']['name']).'"')

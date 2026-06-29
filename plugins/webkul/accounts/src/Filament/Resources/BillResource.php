@@ -300,7 +300,7 @@ class BillResource extends Resource
                                     ->schema([
                                         Select::make('company_id')
                                             ->label(__('accounts::filament/resources/bill.form.tabs.other-information.fieldset.accounting.fields.company'))
-                                            ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
+                                            ->relationship('company', 'name', fn ($q) => $q?->forBranchPicker() ?? $q)
                                             ->searchable()
                                             ->preload()
                                             ->live()

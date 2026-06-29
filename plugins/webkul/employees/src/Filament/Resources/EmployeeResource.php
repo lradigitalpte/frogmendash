@@ -318,7 +318,7 @@ class EmployeeResource extends Resource
                                                         Fieldset::make(__('employees::filament/resources/employee.form.tabs.work-information.fields.organization-details'))
                                                             ->schema([
                                                                 Select::make('company_id')
-                                                                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
+                                                                    ->relationship('company', 'name', fn ($q) => $q?->forBranchPicker() ?? $q)
                                                                     ->searchable()
                                                                     ->preload()
                                                                     ->prefixIcon('heroicon-o-building-office')

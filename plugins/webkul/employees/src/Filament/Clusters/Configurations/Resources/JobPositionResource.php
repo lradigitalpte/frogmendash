@@ -109,7 +109,7 @@ class JobPositionResource extends Resource
                                             }),
                                         Select::make('company_id')
                                             ->label(__('employees::filament/clusters/configurations/resources/job-position.form.sections.employment-information.fields.company'))
-                                            ->relationship(name: 'company', titleAttribute: 'name')
+                                            ->relationship(name: 'company', titleAttribute: 'name', modifyQueryUsing: fn ($query) => $query->forBranchPicker())
                                             ->searchable()
                                             ->preload()
                                             ->live()
@@ -223,7 +223,7 @@ class JobPositionResource extends Resource
                     ->relationship('employmentType', 'name')
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.employment-type')),
                 SelectFilter::make('company')
-                    ->relationship('company', 'name', fn ($q) => $q?->forCurrentUser() ?? $q)
+                    ->relationship('company', 'name', fn ($q) => $q?->forBranchPicker() ?? $q)
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.company')),
                 TernaryFilter::make('is_active')
                     ->label(__('employees::filament/clusters/configurations/resources/job-position.table.filters.status')),
