@@ -433,7 +433,13 @@ class PurchaseOrder
 
         $record->save();
 
-        $supplierLocation = Location::where('type', InventoryEnums\LocationType::SUPPLIER)->first();
+        $supplierLocation = Location::withoutGlobalScopes()
+            ->where('type', InventoryEnums\LocationType::SUPPLIER)
+            ->where(function ($query) use ($record) {
+                $query->where('company_id', $record->company_id)
+                    ->orWhereNull('company_id');
+            })
+            ->first();
 
         $operation = Receipt::create([
             'state'                   => InventoryEnums\OperationState::DRAFT,

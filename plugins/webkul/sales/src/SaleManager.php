@@ -806,7 +806,13 @@ class SaleManager
     {
         $foundRule = null;
 
-        $location = Location::where('type', InventoryEnums\LocationType::CUSTOMER)->first();
+        $location = Location::withoutGlobalScopes()
+            ->where('type', InventoryEnums\LocationType::CUSTOMER)
+            ->where(function ($query) use ($line) {
+                $query->where('company_id', $line->order->company_id)
+                    ->orWhereNull('company_id');
+            })
+            ->first();
 
         $filters['action'] = [InventoryEnums\RuleAction::PULL, InventoryEnums\RuleAction::PULL_PUSH];
 
