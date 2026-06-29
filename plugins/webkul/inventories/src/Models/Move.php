@@ -237,7 +237,7 @@ class Move extends Model
 
     public function shouldBypassReservation(): bool
     {
-        return $this->sourceLocation->shouldBypassReservation() || ! $this->product->is_storable;
+        return $this->sourceLocation?->shouldBypassReservation() || ! $this->product->is_storable;
     }
 
     public function purchaseOrderLine(): BelongsTo

@@ -933,7 +933,7 @@ class OperationResource extends Resource
                             ->options(function ($record) use ($move) {
                                 if (in_array($record?->state, [MoveState::DONE, MoveState::CANCELED])) {
                                     $nameParts = array_filter([
-                                        $record->sourceLocation->full_name,
+                                        $record->sourceLocation?->full_name,
                                         $record->lot?->name,
                                         $record->package?->name,
                                     ]);

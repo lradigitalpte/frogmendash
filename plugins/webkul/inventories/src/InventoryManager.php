@@ -4,6 +4,7 @@ namespace Webkul\Inventory;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Webkul\Inventory\Enums\CreateBackorder;
 use Webkul\Inventory\Enums\LocationType;
 use Webkul\Inventory\Enums\MoveState;
@@ -36,32 +37,34 @@ class InventoryManager
 
     public function validateTransfer(Operation $record): Operation
     {
-        $record = $this->computeTransfer($record);
+        return DB::transaction(function () use ($record) {
+            $record = $this->computeTransfer($record);
 
-        // Update each move and its lines, adjusting quantities.
-        foreach ($record->moves as $move) {
-            $this->validateTransferMove($move);
-        }
-
-        $record = $this->computeTransferState($record);
-
-        $record->save();
-
-        if (Package::isPluginInstalled('purchases')) {
-            foreach ($record->purchaseOrders as $purchaseOrder) {
-                PurchaseOrderFacade::computePurchaseOrder($purchaseOrder);
+            // Update each move and its lines, adjusting quantities.
+            foreach ($record->moves as $move) {
+                $this->validateTransferMove($move);
             }
-        }
 
-        if (Package::isPluginInstalled('sales')) {
-            if ($record->saleOrder) {
-                SaleFacade::computeSaleOrder($record->saleOrder);
+            $record = $this->computeTransferState($record);
+
+            $record->save();
+
+            if (Package::isPluginInstalled('purchases')) {
+                foreach ($record->purchaseOrders as $purchaseOrder) {
+                    PurchaseOrderFacade::computePurchaseOrder($purchaseOrder);
+                }
             }
-        }
 
-        $this->applyPushRules($record);
+            if (Package::isPluginInstalled('sales')) {
+                if ($record->saleOrder) {
+                    SaleFacade::computeSaleOrder($record->saleOrder);
+                }
+            }
 
-        return $record;
+            $this->applyPushRules($record);
+
+            return $record;
+        });
     }
 
     public function validateTransferMove(Move $move): Move
@@ -541,6 +544,10 @@ class InventoryManager
      */
     private function calculateReservedQty($location, $qty): int
     {
+        if (! $location) {
+            return 0;
+        }
+
         if ($location->type === LocationType::INTERNAL && ! $location->is_stock_location) {
             return $qty;
         }
@@ -650,7 +657,7 @@ class InventoryManager
             ]);
         }
 
-        if (! $newMove->sourceLocation->shouldBypassReservation()) {
+        if (! $newMove->sourceLocation?->shouldBypassReservation()) {
             $move->moveDestinations()->attach($newMove->id);
         }
 

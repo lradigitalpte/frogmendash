@@ -27,6 +27,16 @@ class TenantProvisioner
     }
 
     /**
+     * Clone warehouse, location, route, and operation-type data for one company.
+     */
+    public static function provisionInventoryFor(Company $company): void
+    {
+        $sourceCompanyId = self::resolveSourceCompanyId($company->id);
+
+        self::provisionInventory($company, $sourceCompanyId);
+    }
+
+    /**
      * Create the standard journals for $company if they do not already exist.
      */
     public static function provisionJournals(Company $company): void
@@ -495,8 +505,8 @@ class TenantProvisioner
             $record['company_id'] = $targetCompanyId;
             $record['creator_id'] = $creatorId;
             $record['warehouse_id'] = null;
-            $record['source_location_id'] = $locationMap[$row->source_location_id] ?? $row->source_location_id;
-            $record['destination_location_id'] = $locationMap[$row->destination_location_id] ?? $row->destination_location_id;
+            $record['source_location_id'] = $locationMap[$row->source_location_id] ?? null;
+            $record['destination_location_id'] = $locationMap[$row->destination_location_id] ?? null;
             $record['return_operation_type_id'] = null;
             $record['created_at'] = now();
             $record['updated_at'] = now();
@@ -552,8 +562,8 @@ class TenantProvisioner
             $record['company_id'] = $targetCompanyId;
             $record['creator_id'] = $creatorId;
             $record['warehouse_id'] = null;
-            $record['source_location_id'] = $locationMap[$row->source_location_id] ?? $row->source_location_id;
-            $record['destination_location_id'] = $locationMap[$row->destination_location_id] ?? $row->destination_location_id;
+            $record['source_location_id'] = $locationMap[$row->source_location_id] ?? null;
+            $record['destination_location_id'] = $locationMap[$row->destination_location_id] ?? null;
             $record['route_id'] = $routeMap[$row->route_id] ?? $row->route_id;
             $record['operation_type_id'] = $operationTypeMap[$row->operation_type_id] ?? $row->operation_type_id;
             $record['created_at'] = now();

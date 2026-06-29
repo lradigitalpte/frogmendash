@@ -6,6 +6,7 @@ use Filament\Panel;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Inventory\Console\Commands\RepairInventoryLocationReferences;
 use Webkul\Inventory\Facades\Inventory as InventoryFacade;
 use Webkul\PluginManager\Console\Commands\InstallCommand;
 use Webkul\PluginManager\Console\Commands\UninstallCommand;
@@ -107,7 +108,10 @@ class InventoryServiceProvider extends PackageServiceProvider
                     }
                 });
             })
-            ->icon('inventories');
+            ->icon('inventories')
+            ->hasCommands([
+                RepairInventoryLocationReferences::class,
+            ]);
     }
 
     public function packageBooted(): void
