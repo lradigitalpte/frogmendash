@@ -18,6 +18,7 @@ use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Inventory\Support\QuantityDisplay;
 use Webkul\Support\Traits\HasRecordNavigationTabs;
 
 class ManageQuantities extends ManageRelatedRecords
@@ -76,8 +77,9 @@ class ManageQuantities extends ManageRelatedRecords
                     ->label(__('inventories::filament/clusters/products/resources/lot/pages/manage-quantities.table.columns.on-hand'))
                     ->searchable()
                     ->sortable()
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->rules([
-                        'numeric',
+                        'integer',
                         'min:1',
                         'max:'.($this->getOwnerRecord()->product->tracking == ProductTracking::SERIAL ? '1' : '999999999'),
                     ])

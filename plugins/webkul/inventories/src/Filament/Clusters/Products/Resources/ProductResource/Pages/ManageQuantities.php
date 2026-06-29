@@ -23,6 +23,7 @@ use Webkul\Inventory\Enums\ProductTracking;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\LotResource;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\PackageResource;
 use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource;
+use Webkul\Inventory\Support\QuantityDisplay;
 use Webkul\Inventory\Models\Location;
 use Webkul\Inventory\Models\ProductQuantity;
 use Webkul\Inventory\Models\Warehouse;
@@ -245,8 +246,9 @@ class ManageQuantities extends ManageRelatedRecords
                 TextInputColumn::make('quantity')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.on-hand'))
                     ->sortable()
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->rules([
-                        'numeric',
+                        'integer',
                         'min:1',
                         'max:'.($this->getOwnerRecord()->tracking == ProductTracking::SERIAL ? '1' : '999999999'),
                     ])
@@ -307,6 +309,7 @@ class ManageQuantities extends ManageRelatedRecords
                 TextColumn::make('reserved_quantity')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.reserved-quantity'))
                     ->sortable()
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->summarize(Sum::make()),
             ])
             ->headerActions([

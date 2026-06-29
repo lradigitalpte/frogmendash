@@ -5,6 +5,7 @@ namespace Webkul\Sale\Filament\Clusters\Products\Resources;
 use Filament\Resources\Pages\Page;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Table;
+use Webkul\Inventory\Filament\Concerns\AddsOnHandQuantityColumn;
 use Webkul\Invoice\Filament\Clusters\Customer\Resources\ProductResource as BaseProductResource;
 use Webkul\Sale\Filament\Clusters\Products;
 use Webkul\Sale\Filament\Clusters\Products\Resources\ProductResource\Pages\CreateProduct;
@@ -17,6 +18,8 @@ use Webkul\Sale\Models\Product;
 
 class ProductResource extends BaseProductResource
 {
+    use AddsOnHandQuantityColumn;
+
     protected static ?string $model = Product::class;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-shopping-bag';
@@ -48,7 +51,7 @@ class ProductResource extends BaseProductResource
                 ->constraints($filtered),
         ]);
 
-        return $table;
+        return static::withOnHandQuantityColumn($table);
     }
 
     public static function getPages(): array

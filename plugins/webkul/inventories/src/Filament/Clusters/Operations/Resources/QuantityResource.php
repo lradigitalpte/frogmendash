@@ -38,6 +38,7 @@ use Webkul\Inventory\Models\Warehouse;
 use Webkul\Inventory\Settings\OperationSettings;
 use Webkul\Inventory\Settings\TraceabilitySettings;
 use Webkul\Inventory\Settings\WarehouseSettings;
+use Webkul\Inventory\Support\QuantityDisplay;
 use Webkul\Product\Settings\ProductSettings;
 
 class QuantityResource extends Resource
@@ -185,15 +186,18 @@ class QuantityResource extends Resource
                 TextColumn::make('available_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.available-quantity'))
                     ->sortable()
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.on-hand'))
                     ->sortable()
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->toggleable(isToggledHiddenByDefault: false),
                 TextInputColumn::make('counted_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.counted'))
                     ->sortable()
-                    ->rules(['numeric', 'min:0'])
+                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
+                    ->rules(['integer', 'min:0'])
                     ->beforeStateUpdated(function ($record, $state) {
                         $record->update([
                             'inventory_quantity_set'  => true,
@@ -211,7 +215,7 @@ class QuantityResource extends Resource
                 TextColumn::make('inventory_diff_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.difference'))
                     ->sortable()
-                    ->formatStateUsing(fn ($record) => $record->inventory_quantity_set ? $record->inventory_diff_quantity : '')
+                    ->formatStateUsing(fn ($record) => $record->inventory_quantity_set ? QuantityDisplay::format($record->inventory_diff_quantity) : '')
                     ->color(fn ($record) => $record->inventory_diff_quantity > 0 ? 'success' : 'danger'),
                 TextColumn::make('scheduled_at')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.scheduled-at'))

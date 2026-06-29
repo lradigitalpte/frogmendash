@@ -34,6 +34,7 @@ use Webkul\Inventory\Filament\Clusters\Products\Resources\ProductResource\Pages\
 use Webkul\Inventory\Models\Move;
 use Webkul\Inventory\Models\Product;
 use Webkul\Inventory\Settings\TraceabilitySettings;
+use Webkul\Inventory\Support\QuantityDisplay;
 use Webkul\Product\Enums\ProductType;
 
 class ProductResource extends BaseProductResource
@@ -184,7 +185,8 @@ class ProductResource extends BaseProductResource
             TextColumn::make('on_hand_quantity')
                 ->label(__('inventories::filament/clusters/products/resources/product.table.columns.on-hand-quantity'))
                 ->badge()
-                ->color(fn ($state): string => $state > 0 ? 'success' : 'gray')
+                ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
+                ->color(fn ($state): string => (float) $state > 0 ? 'success' : 'gray')
                 ->placeholder('0'),
         ]);
 

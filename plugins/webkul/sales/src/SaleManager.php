@@ -258,7 +258,9 @@ class SaleManager
                     continue;
                 }
 
-                $qty += $move->uom->computeQuantity($move->quantity, $line->uom, true, 'HALF-UP');
+                $moveQty = $move->quantity ?? $move->product_uom_qty ?? 0;
+
+                $qty += $move->uom->computeQuantity($moveQty, $line->uom, true, 'HALF-UP');
             }
 
             foreach ($incomingMoves as $move) {
@@ -266,7 +268,9 @@ class SaleManager
                     continue;
                 }
 
-                $qty -= $move->uom->computeQuantity($move->quantity, $line->uom, true, 'HALF-UP');
+                $moveQty = $move->quantity ?? $move->product_uom_qty ?? 0;
+
+                $qty -= $move->uom->computeQuantity($moveQty, $line->uom, true, 'HALF-UP');
             }
 
             $line->qty_delivered = $qty;
@@ -586,7 +590,7 @@ class SaleManager
                 ) {
                     $outgoingMoveIds[] = $move->id;
                 }
-            } elseif ($move->sourceLocation == InventoryEnums\LocationType::CUSTOMER && $move->is_refund) {
+            } elseif ($move->sourceLocation?->type == InventoryEnums\LocationType::CUSTOMER && $move->is_refund) {
                 $incomingMoveIds[] = $move->id;
             }
         }
