@@ -60,7 +60,7 @@ class ManageMoves extends ManageRelatedRecords
                 TextColumn::make('uom_qty')
                     ->label(__('inventories::filament/clusters/operations/resources/operation/pages/manage-moves.table.columns.quantity'))
                     ->sortable()
-                    ->color(fn ($record) => $record->destinationLocation->type == LocationType::INTERNAL ? 'success' : 'danger'),
+                    ->color(fn ($record) => $record->destinationLocation?->type == LocationType::INTERNAL ? 'success' : 'danger'),
                 TextColumn::make('state')
                     ->label(__('inventories::filament/clusters/operations/resources/operation/pages/manage-moves.table.columns.state'))
                     ->sortable()

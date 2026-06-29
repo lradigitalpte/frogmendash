@@ -478,12 +478,12 @@ class PurchaseOrder
                 'quantity'                => $line->product_uom_qty,
                 'uom_id'                  => $line->uom_id,
                 'partner_id'              => $operation->partner_id,
-                'warehouse_id'            => $operation->destinationLocation->warehouse_id,
+                'warehouse_id'            => $operation->destinationLocation?->warehouse_id,
                 'source_location_id'      => $operation->source_location_id,
                 'destination_location_id' => $operation->destination_location_id,
                 'operation_type_id'       => $operation->operation_type_id,
                 'final_location_id'       => $line->final_location_id,
-                'company_id'              => $operation->destinationLocation->company_id,
+                'company_id'              => $operation->destinationLocation?->company_id,
                 'purchase_order_line_id'  => $line->id,
             ]);
         }

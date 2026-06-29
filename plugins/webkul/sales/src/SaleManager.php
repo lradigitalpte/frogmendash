@@ -570,11 +570,11 @@ class SaleManager
         }
 
         foreach ($moves as $move) {
-            $isOutgoingStrict = $strict && $move->destinationLocation->type == InventoryEnums\LocationType::CUSTOMER;
+            $isOutgoingStrict = $strict && $move->destinationLocation?->type == InventoryEnums\LocationType::CUSTOMER;
 
             $isOutgoingNonStrict = ! $strict
                 && in_array($move->rule_id, $triggeringRuleIds)
-                && ($move->finalLocation ?? $move->destinationLocation->type) == InventoryEnums\LocationType::CUSTOMER;
+                && ($move->finalLocation ?? $move->destinationLocation?->type) == InventoryEnums\LocationType::CUSTOMER;
 
             if ($isOutgoingStrict || $isOutgoingNonStrict) {
                 if (

@@ -901,7 +901,7 @@ class OperationResource extends Resource
                 $move->product->tracking == ProductTracking::LOT
                 || $move->product->tracking == ProductTracking::SERIAL
             )
-            && $move->sourceLocation->type == LocationType::SUPPLIER
+            && $move->sourceLocation?->type == LocationType::SUPPLIER
         ) {
             $columns++;
         }
@@ -996,7 +996,7 @@ class OperationResource extends Resource
                                     }
                                 }
                             })
-                            ->visible($move->sourceLocation->type == LocationType::INTERNAL)
+                            ->visible($move->sourceLocation?->type == LocationType::INTERNAL)
                             ->disabled(fn (): bool => in_array($move->state, [MoveState::DONE, MoveState::CANCELED])),
                         Select::make('lot_id')
                             ->label(__('inventories::filament/clusters/operations/resources/operation.form.tabs.operations.fields.lines.fields.lot'))
@@ -1025,7 +1025,7 @@ class OperationResource extends Resource
                                         $move->product->tracking == ProductTracking::LOT
                                         || $move->product->tracking == ProductTracking::SERIAL
                                     )
-                                    && $move->sourceLocation->type == LocationType::SUPPLIER
+                                    && $move->sourceLocation?->type == LocationType::SUPPLIER
                             ),
                         Select::make('destination_location_id')
                             ->label(__('inventories::filament/clusters/operations/resources/operation.form.tabs.operations.fields.lines.fields.location'))

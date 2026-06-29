@@ -111,7 +111,7 @@ class InventoryManager
                 'package_id'              => $moveLine->package_id,
                 'quantity'                => -$moveLine->uom_qty,
                 'inventory_diff_quantity' => $moveLine->uom_qty,
-                'company_id'              => $moveLine->sourceLocation->company_id,
+                'company_id'              => $moveLine->sourceLocation?->company_id,
                 'creator_id'              => Auth::id(),
                 'incoming_at'             => now(),
             ]);
@@ -143,7 +143,7 @@ class InventoryManager
                 'inventory_diff_quantity' => -$moveLine->uom_qty,
                 'incoming_at'             => now(),
                 'creator_id'              => Auth::id(),
-                'company_id'              => $moveLine->destinationLocation->company_id,
+                'company_id'              => $moveLine->destinationLocation?->company_id,
             ]);
         }
 
@@ -337,7 +337,7 @@ class InventoryManager
 
         $availableQuantity = 0;
 
-        $isSupplierSource = $record->sourceLocation->type === LocationType::SUPPLIER;
+        $isSupplierSource = $record->sourceLocation?->type === LocationType::SUPPLIER;
 
         $productQuantities = collect();
 
@@ -350,7 +350,7 @@ class InventoryManager
                         ->orWhere('parent_id', $record->source_location_id);
                 })
                 ->when(
-                    $record->sourceLocation->type != LocationType::SUPPLIER
+                    $record->sourceLocation?->type != LocationType::SUPPLIER
                     && $record->product->tracking == ProductTracking::LOT,
                     fn ($query) => $query->whereNotNull('lot_id')
                 )

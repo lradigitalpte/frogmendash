@@ -99,10 +99,10 @@ class Move extends Model
      */
     public function isPurchaseReturn()
     {
-        return $this->destinationLocation->type === LocationType::SUPPLIER
+        return $this->destinationLocation?->type === LocationType::SUPPLIER
             || (
                 $this->originReturnedMove
-                && $this->destinationLocation->id === $this->destinationLocation->company->inter_company_location_id
+                && $this->destinationLocation?->id === $this->destinationLocation?->company?->inter_company_location_id
             );
     }
 
@@ -114,12 +114,12 @@ class Move extends Model
     public function isDropshipped()
     {
         return (
-            $this->sourceLocation->type === LocationType::SUPPLIER
-            || ($this->sourceLocation->type === LocationType::TRANSIT && ! $this->sourceLocation->company_id)
+            $this->sourceLocation?->type === LocationType::SUPPLIER
+            || ($this->sourceLocation?->type === LocationType::TRANSIT && ! $this->sourceLocation?->company_id)
         )
             && (
-                $this->destinationLocation->type === LocationType::CUSTOMER
-                || ($this->destinationLocation->type === LocationType::TRANSIT && ! $this->destinationLocation->company_id)
+                $this->destinationLocation?->type === LocationType::CUSTOMER
+                || ($this->destinationLocation?->type === LocationType::TRANSIT && ! $this->destinationLocation?->company_id)
             );
     }
 
@@ -131,12 +131,12 @@ class Move extends Model
     public function isDropshippedReturned()
     {
         return (
-            $this->sourceLocation->type === LocationType::CUSTOMER
-            || ($this->sourceLocation->type === LocationType::TRANSIT && ! $this->sourceLocation->company_id)
+            $this->sourceLocation?->type === LocationType::CUSTOMER
+            || ($this->sourceLocation?->type === LocationType::TRANSIT && ! $this->sourceLocation?->company_id)
         )
             && (
-                $this->destinationLocation->type === LocationType::SUPPLIER
-                || ($this->destinationLocation->type === LocationType::TRANSIT && ! $this->destinationLocation->company_id)
+                $this->destinationLocation?->type === LocationType::SUPPLIER
+                || ($this->destinationLocation?->type === LocationType::TRANSIT && ! $this->destinationLocation?->company_id)
             );
     }
 
