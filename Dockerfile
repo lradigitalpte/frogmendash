@@ -42,7 +42,18 @@ WORKDIR /app
 
 COPY . /app
 
-RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --ignore-platform-reqs \
+RUN for attempt in 1 2 3; do \
+        COMPOSER_ALLOW_SUPERUSER=1 composer install \
+            --no-dev \
+            --prefer-install=auto \
+            --optimize-autoloader \
+            --no-interaction \
+            --ignore-platform-reqs \
+        && break; \
+        if [ "$attempt" -eq 3 ]; then exit 1; fi; \
+        echo "Composer install failed (attempt ${attempt}), retrying in 15s..."; \
+        sleep 15; \
+    done \
     && npm ci \
     && npm run build \
     && mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache \
