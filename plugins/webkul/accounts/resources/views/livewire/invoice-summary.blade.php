@@ -75,6 +75,13 @@
                 <span>{{ money($subtotal, $currency?->name) }}</span>
             </div>
 
+            @if ($totalDiscount > 0)
+                <div class="invoice-item">
+                    <span>Discount</span>
+                    <span>-{{ money($totalDiscount, $currency?->name) }}</span>
+                </div>
+            @endif
+
             @if ($totalTax > 0)
                 <div class="invoice-item">
                     <span>Tax</span>

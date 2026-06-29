@@ -29,6 +29,7 @@ class QuotationSummary extends Component
     public function refreshSummary($totals)
     {
         $this->subtotal = $totals['subtotal'];
+        $this->totalDiscount = $totals['totalDiscount'] ?? 0;
         $this->totalTax = $totals['totalTax'];
         $this->grandTotal = $totals['grandTotal'];
         $this->amountTax = $totals['totalTax'];

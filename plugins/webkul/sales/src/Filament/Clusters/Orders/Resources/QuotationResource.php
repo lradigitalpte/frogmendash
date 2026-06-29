@@ -211,6 +211,7 @@ class QuotationResource extends Resource
                                         'currency'         => Currency::find($get('currency_id')),
                                         'enableMargin'     => $settings->enable_margin,
                                         'subtotal'         => $totals['subtotal'],
+                                        'totalDiscount'    => $totals['totalDiscount'],
                                         'totalTax'         => $totals['totalTax'],
                                         'grandTotal'       => $totals['grandTotal'],
                                         'margin'           => $totals['margin'],
@@ -860,6 +861,7 @@ class QuotationResource extends Resource
                                         'currency'         => $record->currency,
                                         'enableMargin'     => $settings->enable_margin,
                                         'subtotal'         => round($subtotal, 2),
+                                        'totalDiscount'    => round($record->total_discount, 2),
                                         'totalTax'         => round($totalTax, 2),
                                         'grandTotal'       => round($grandTotal, 2),
                                         'margin'           => round($margin, 2),
@@ -1806,6 +1808,7 @@ class QuotationResource extends Resource
     {
         $defaultTotals = [
             'subtotal'         => 0,
+            'totalDiscount'    => 0,
             'totalTax'         => 0,
             'grandTotal'       => 0,
             'margin'           => 0,
@@ -1821,6 +1824,7 @@ class QuotationResource extends Resource
         }
 
         $subtotal = 0;
+        $totalDiscount = 0;
         $totalTax = 0;
         $grandTotal = 0;
         $margin = 0;
@@ -1828,6 +1832,14 @@ class QuotationResource extends Resource
         foreach ($products as $product) {
             if (empty($product['product_id'])) {
                 continue;
+            }
+
+            $qty = floatval($product['product_qty'] ?? $product['product_uom_qty'] ?? 1);
+            $priceUnit = floatval($product['price_unit'] ?? 0);
+            $discount = floatval($product['discount'] ?? 0);
+
+            if ($discount > 0) {
+                $totalDiscount += $priceUnit * $qty * ($discount / 100);
             }
 
             $subtotal += floatval($product['price_subtotal'] ?? 0);
@@ -1840,6 +1852,7 @@ class QuotationResource extends Resource
 
         $totals = [
             'subtotal'         => round($subtotal, 2),
+            'totalDiscount'    => round($totalDiscount, 2),
             'totalTax'         => round($totalTax, 2),
             'grandTotal'       => round($grandTotal, 2),
             'margin'           => round($margin, 2),

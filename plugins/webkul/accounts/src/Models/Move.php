@@ -272,9 +272,18 @@ class Move extends Model implements Sortable
 
     public function getTotalDiscountAttribute()
     {
-        return $this->lines()
-            ->where('display_type', 'product')
-            ->sum('discount');
+        return (float) $this->lines()
+            ->where('display_type', DisplayType::PRODUCT)
+            ->get()
+            ->sum(function ($line) {
+                $discount = (float) ($line->discount ?? 0);
+
+                if ($discount <= 0) {
+                    return 0;
+                }
+
+                return round((float) $line->price_unit * (float) $line->quantity * ($discount / 100), 4);
+            });
     }
 
     public function isInbound($includeReceipts = true)

@@ -258,13 +258,14 @@ class InvoiceResource extends Resource
                                     $currency = Currency::find($get('currency_id'));
 
                                     return [
-                                        'record'     => $record,
-                                        'rounding'   => $totals['rounding'],
-                                        'amountTax'  => $totals['totalTax'],
-                                        'subtotal'   => $totals['subtotal'],
-                                        'totalTax'   => $totals['totalTax'],
-                                        'grandTotal' => $totals['grandTotal'] + $totals['rounding'],
-                                        'currency'   => $currency,
+                                        'record'        => $record,
+                                        'rounding'      => $totals['rounding'],
+                                        'amountTax'     => $totals['totalTax'],
+                                        'subtotal'      => $totals['subtotal'],
+                                        'totalDiscount' => $totals['totalDiscount'],
+                                        'totalTax'      => $totals['totalTax'],
+                                        'grandTotal'    => $totals['grandTotal'] + $totals['rounding'],
+                                        'currency'      => $currency,
                                     ];
                                 })
                                     ->key('invoiceSummary')
@@ -873,12 +874,13 @@ class InvoiceResource extends Resource
                                     $rounding = $record->roundingLines->sum('balance');
 
                                     return [
-                                        'currency'   => $record->currency,
-                                        'subtotal'   => $record->amount_untaxed ?? 0,
-                                        'totalTax'   => $record->amount_tax ?? 0,
-                                        'amountTax'  => $record->amount_tax ?? 0,
-                                        'grandTotal' => $record->amount_total ?? 0,
-                                        'rounding'   => $rounding,
+                                        'currency'      => $record->currency,
+                                        'subtotal'      => $record->amount_untaxed ?? 0,
+                                        'totalDiscount' => $record->total_discount ?? 0,
+                                        'totalTax'      => $record->amount_tax ?? 0,
+                                        'amountTax'     => $record->amount_tax ?? 0,
+                                        'grandTotal'    => $record->amount_total ?? 0,
+                                        'rounding'      => $rounding,
                                     ];
                                 }),
                             ]),
@@ -1379,10 +1381,11 @@ class InvoiceResource extends Resource
     private static function calculateMoveTotals(Get $get, $livewire): array
     {
         $defaultTotals = [
-            'subtotal'   => 0,
-            'totalTax'   => 0,
-            'grandTotal' => 0,
-            'rounding'   => 0,
+            'subtotal'      => 0,
+            'totalDiscount' => 0,
+            'totalTax'      => 0,
+            'grandTotal'    => 0,
+            'rounding'      => 0,
         ];
 
         $currencyId = $get('currency_id');
@@ -1461,8 +1464,23 @@ class InvoiceResource extends Resource
         [$baseLines] = AccountFacade::getRoundedBaseAndTaxLines($mockMove, false);
 
         $subtotal = 0;
+        $totalDiscount = 0;
         $grandTotal = 0;
         $rounding = 0;
+
+        foreach ($products as $productData) {
+            if (empty($productData['product_id'])) {
+                continue;
+            }
+
+            $qty = floatval($productData['quantity'] ?? 1);
+            $priceUnit = floatval($productData['price_unit'] ?? 0);
+            $discount = floatval($productData['discount'] ?? 0);
+
+            if ($discount > 0) {
+                $totalDiscount += $priceUnit * $qty * ($discount / 100);
+            }
+        }
 
         foreach ($baseLines as $baseLine) {
             $specialType = $baseLine['special_type'] ?? null;
@@ -1484,10 +1502,11 @@ class InvoiceResource extends Resource
         }
 
         $defaultTotals = [
-            'subtotal'   => round($subtotal, 2),
-            'totalTax'   => round($grandTotal - $subtotal, 2),
-            'grandTotal' => round($grandTotal, 2),
-            'rounding'   => round($rounding, 2),
+            'subtotal'      => round($subtotal, 2),
+            'totalDiscount' => round($totalDiscount, 2),
+            'totalTax'      => round($grandTotal - $subtotal, 2),
+            'grandTotal'    => round($grandTotal, 2),
+            'rounding'      => round($rounding, 2),
         ];
 
         $livewire->dispatch('itemUpdated', $defaultTotals);

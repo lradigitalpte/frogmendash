@@ -117,6 +117,23 @@ class Order extends Model
         return $this->lines->sum('qty_to_invoice');
     }
 
+    public function getTotalDiscountAttribute(): float
+    {
+        return (float) $this->lines
+            ->filter(fn ($line) => $line->product_id && ! $line->display_type)
+            ->sum(function ($line) {
+                $discount = (float) ($line->discount ?? 0);
+
+                if ($discount <= 0) {
+                    return 0;
+                }
+
+                $qty = (float) ($line->product_uom_qty ?? $line->product_qty ?? 0);
+
+                return round((float) $line->price_unit * $qty * ($discount / 100), 4);
+            });
+    }
+
     public function campaign()
     {
         return $this->belongsTo(UtmCampaign::class, 'campaign_id');

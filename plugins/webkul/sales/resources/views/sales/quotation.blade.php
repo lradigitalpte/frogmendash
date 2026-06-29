@@ -350,11 +350,13 @@
                         <td>-</td>
                         <td>{{ $record->currency->symbol }} {{ number_format($record->amount_tax, 2) }}</td>
                     </tr>
+                    @if ($record->total_discount > 0)
                     <tr>
                         <td>Discount</td>
                         <td>-</td>
                         <td>-{{ $record->currency->symbol }} {{ number_format($record->total_discount, 2) }}</td>
                     </tr>
+                    @endif
                     <tr>
                         <td style="border-top: 1px solid #FFFFFF;">
                             <b>Grand Total</b>
