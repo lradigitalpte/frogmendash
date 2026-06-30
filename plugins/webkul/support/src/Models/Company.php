@@ -177,21 +177,67 @@ class Company extends Model implements Sortable
     {
         $user = Auth::user();
 
-        if (! $user) {
+        if (! $user?->default_company_id) {
             return $query->whereRaw('0 = 1');
         }
 
-        $baseIds = $user->allowedCompanies()->pluck('companies.id')->toArray();
-        $baseIds[] = $user->default_company_id;
-        $baseIds = array_values(array_unique(array_filter($baseIds)));
+        $tenantIds = static::tenantCompanyIdsFor((int) $user->default_company_id);
 
-        if (empty($baseIds)) {
+        if (! User::isPlatformAdmin()) {
+            $allowedIds = $user->allowedCompanies()->pluck('companies.id')->toArray();
+            $allowedIds[] = $user->default_company_id;
+            $allowedIds = array_values(array_unique(array_filter($allowedIds)));
+
+            if (! empty($allowedIds)) {
+                $tenantIds = array_values(array_intersect($tenantIds, $allowedIds));
+            }
+        }
+
+        if (empty($tenantIds)) {
             return $query->whereRaw('0 = 1');
         }
 
-        return $query->where(function (Builder $q) use ($baseIds) {
-            $q->whereIn('id', $baseIds)->orWhereIn('parent_id', $baseIds);
-        });
+        return $query->whereIn('id', $tenantIds);
+    }
+
+    /**
+     * Root company plus every branch beneath it in the parent/child tree.
+     *
+     * @return list<int>
+     */
+    public static function tenantCompanyIdsFor(int $companyId): array
+    {
+        $company = static::find($companyId);
+
+        if (! $company) {
+            return [];
+        }
+
+        $root = $company;
+
+        while ($root->parent_id) {
+            $parent = static::find($root->parent_id);
+
+            if (! $parent) {
+                break;
+            }
+
+            $root = $parent;
+        }
+
+        $ids = [];
+        $queue = [$root->id];
+
+        while ($queue !== []) {
+            $id = array_shift($queue);
+            $ids[] = $id;
+
+            foreach (static::where('parent_id', $id)->pluck('id') as $childId) {
+                $queue[] = $childId;
+            }
+        }
+
+        return $ids;
     }
 
     protected static function newFactory(): CompanyFactory
