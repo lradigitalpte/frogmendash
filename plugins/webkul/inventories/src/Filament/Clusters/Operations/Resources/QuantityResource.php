@@ -131,6 +131,7 @@ class QuantityResource extends Resource
                 TextInput::make('counted_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.form.fields.counted-qty'))
                     ->numeric()
+                    ->integer()
                     ->minValue(0)
                     ->maxValue(99999999999)
                     ->default(0)
@@ -197,9 +198,11 @@ class QuantityResource extends Resource
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.counted'))
                     ->sortable()
                     ->type('number')
-                    ->rules(['numeric', 'min:0'])
+                    ->step(1)
+                    ->getStateUsing(fn (ProductQuantity $record): string => QuantityDisplay::format($record->counted_quantity))
+                    ->rules(['integer', 'min:0'])
                     ->updateStateUsing(function (ProductQuantity $record, $state) {
-                        $countedQuantity = (float) ($state ?? 0);
+                        $countedQuantity = QuantityDisplay::toInteger($state);
 
                         $record->update([
                             'counted_quantity'        => $countedQuantity,
