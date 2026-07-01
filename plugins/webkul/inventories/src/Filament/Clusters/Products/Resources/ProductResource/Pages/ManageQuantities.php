@@ -12,7 +12,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
@@ -305,12 +305,22 @@ class ManageQuantities extends ManageRelatedRecords
                             ->success()
                             ->send();
                     })
-                    ->summarize(Sum::make()),
+                    ->summarize(
+                        Summarizer::make()
+                            ->using(fn (): string => QuantityDisplay::format(
+                                $this->getTableRecords()->sum(fn ($record) => (float) $record->quantity)
+                            )),
+                    ),
                 TextColumn::make('reserved_quantity')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.reserved-quantity'))
                     ->sortable()
                     ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
-                    ->summarize(Sum::make()),
+                    ->summarize(
+                        Summarizer::make()
+                            ->using(fn (): string => QuantityDisplay::format(
+                                $this->getTableRecords()->sum(fn ($record) => (float) $record->reserved_quantity)
+                            )),
+                    ),
             ])
             ->headerActions([
                 CreateAction::make()
