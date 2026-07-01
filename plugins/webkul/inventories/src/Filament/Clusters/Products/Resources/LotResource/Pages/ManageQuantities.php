@@ -77,7 +77,6 @@ class ManageQuantities extends ManageRelatedRecords
                     ->label(__('inventories::filament/clusters/products/resources/lot/pages/manage-quantities.table.columns.on-hand'))
                     ->searchable()
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->rules([
                         'integer',
                         'min:1',

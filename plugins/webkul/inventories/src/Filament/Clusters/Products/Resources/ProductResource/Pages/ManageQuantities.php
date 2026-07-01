@@ -246,7 +246,6 @@ class ManageQuantities extends ManageRelatedRecords
                 TextInputColumn::make('quantity')
                     ->label(__('inventories::filament/clusters/products/resources/product/pages/manage-quantities.table.columns.on-hand'))
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->rules([
                         'integer',
                         'min:1',

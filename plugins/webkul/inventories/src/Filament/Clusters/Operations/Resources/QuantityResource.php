@@ -196,7 +196,6 @@ class QuantityResource extends Resource
                 TextInputColumn::make('counted_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.counted'))
                     ->sortable()
-                    ->formatStateUsing(fn ($state) => QuantityDisplay::format($state))
                     ->rules(['integer', 'min:0'])
                     ->beforeStateUpdated(function ($record, $state) {
                         $record->update([
