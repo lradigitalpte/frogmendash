@@ -248,7 +248,7 @@ class ManageQuantities extends ManageRelatedRecords
                     ->sortable()
                     ->rules([
                         'integer',
-                        'min:1',
+                        'min:0',
                         'max:'.($this->getOwnerRecord()->tracking == ProductTracking::SERIAL ? '1' : '999999999'),
                     ])
                     ->beforeStateUpdated(function ($record, $state) {

@@ -196,14 +196,20 @@ class QuantityResource extends Resource
                 TextInputColumn::make('counted_quantity')
                     ->label(__('inventories::filament/clusters/operations/resources/quantity.table.columns.counted'))
                     ->sortable()
-                    ->rules(['integer', 'min:0'])
-                    ->beforeStateUpdated(function ($record, $state) {
+                    ->type('number')
+                    ->rules(['numeric', 'min:0'])
+                    ->updateStateUsing(function (ProductQuantity $record, $state) {
+                        $countedQuantity = (float) ($state ?? 0);
+
                         $record->update([
+                            'counted_quantity'        => $countedQuantity,
                             'inventory_quantity_set'  => true,
-                            'inventory_diff_quantity' => $state - $record->quantity,
+                            'inventory_diff_quantity' => $countedQuantity - $record->quantity,
                         ]);
+
+                        return $countedQuantity;
                     })
-                    ->afterStateUpdated(function ($record, $state) {
+                    ->afterStateUpdated(function () {
                         Notification::make()
                             ->success()
                             ->title(__('inventories::filament/clusters/operations/resources/quantity.table.columns.on-hand-before-state-updated.notification.title'))
