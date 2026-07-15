@@ -44,7 +44,22 @@
 
         .invoice-sheet .totals { width: 100%; margin-top: 6px; }
         .invoice-sheet .totals > tbody > tr > td { vertical-align: top; }
-        .invoice-sheet .totals .sp { width: 60%; }
+        .invoice-sheet .totals .sp { width: 60%; padding-right: 16px; }
+        .invoice-sheet .notes-box {
+            border: 1px solid #e2e2e2;
+            min-height: 80px;
+            padding: 8px 10px;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+        .invoice-sheet .notes-box .notes-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        .invoice-sheet .notes-box p { margin: 0 0 4px; }
         .invoice-sheet .totals .box { width: 40%; }
         .invoice-sheet .totals .box table { width: 100%; }
         .invoice-sheet .totals .box td { padding: 6px 2px; }
@@ -131,7 +146,14 @@
 
         <table class="totals">
             <tr>
-                <td class="sp">&nbsp;</td>
+                <td class="sp">
+                    @if (filled(trim(strip_tags((string) $record->narration))))
+                        <div class="notes-box">
+                            <div class="notes-label">Notes</div>
+                            {!! str($record->narration)->sanitizeHtml() !!}
+                        </div>
+                    @endif
+                </td>
                 <td class="box">
                     <table>
                         <tr><td>Sub Total</td><td class="v">{{ money($record->amount_untaxed, $currency) }}</td></tr>

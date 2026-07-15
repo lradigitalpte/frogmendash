@@ -88,7 +88,20 @@
 
         .invoice-sheet .totals-table { width: 100%; margin-top: 6px; }
         .invoice-sheet .totals-table > tbody > tr > td { vertical-align: top; }
-        .invoice-sheet .totals-spacer { width: 55%; }
+        .invoice-sheet .totals-spacer { width: 55%; padding-right: 16px; }
+        .invoice-sheet .notes-box {
+            border: 1px solid #b9c2d0;
+            min-height: 90px;
+            padding: 8px 10px;
+            font-size: 11px;
+            line-height: 1.45;
+        }
+        .invoice-sheet .notes-box .notes-label {
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #1f2d5c;
+        }
+        .invoice-sheet .notes-box p { margin: 0 0 4px; }
         .invoice-sheet .totals-box { width: 45%; }
         .invoice-sheet .totals-box table { width: 100%; }
         .invoice-sheet .totals-box td { padding: 6px 10px; font-size: 12px; }
@@ -239,10 +252,17 @@
             </tbody>
         </table>
 
-        <!-- Totals -->
+        <!-- Notes (Term & Conditions) + Totals -->
         <table class="totals-table">
             <tr>
-                <td class="totals-spacer">&nbsp;</td>
+                <td class="totals-spacer">
+                    @if (filled(trim(strip_tags((string) $record->narration))))
+                        <div class="notes-box">
+                            <div class="notes-label">Notes</div>
+                            {!! str($record->narration)->sanitizeHtml() !!}
+                        </div>
+                    @endif
+                </td>
                 <td class="totals-box">
                     <table>
                         <tr>
